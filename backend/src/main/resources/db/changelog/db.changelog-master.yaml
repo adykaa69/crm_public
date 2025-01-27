@@ -1,0 +1,86 @@
+databaseChangeLog:
+  - property:
+      dbms: postgresql
+      name: now
+      value: current_timestamp
+  - property:
+      dbms: h2
+      name: now
+      value: now()
+  - changeSet:
+      id: 1
+      author: tomi
+      labels: table creation
+      changes:
+        - createTable:
+            tableName: residence
+            columns:
+              - column:
+                  name: id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: zip_code
+                  type: varchar(255)
+              - column:
+                  name: street_address
+                  type: varchar(255)
+              - column:
+                  name: address_line_2
+                  type: varchar(255)
+              - column:
+                  name: city
+                  type: varchar(100)
+              - column:
+                  name: country
+                  type: varchar(100)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueDate: ${now}
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
+        - createTable:
+            tableName: customer
+            columns:
+              - column:
+                  name: id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: residence_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_customer_residence
+                    references: residence(id)
+              - column:
+                  name: first_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: phone_number
+                  type: varchar(255)
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueDate: ${now}
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
