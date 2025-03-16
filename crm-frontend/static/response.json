@@ -1,0 +1,14 @@
+{
+    "status": "success",
+    "message": "All Customers retrieved successfully",
+    "data": {
+        "id": "1",
+        "firstName": "Adam",
+        "lastName": "Kosa",
+        "email": "foo@gmail.com",
+        "phoneNumber": "6969",
+        "relationship": "cousin",
+        "createdAt": "2022-01-01T00:00:00.000Z",
+        "updatedAt": "2022-01-01T00:00:00.000Z"
+    }
+}
