@@ -71,11 +71,19 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  name: nickname
+                  type: varchar(255)
+              - column:
                   name: email
                   type: varchar(255)
               - column:
                   name: phone_number
                   type: varchar(255)
+              - column:
+                  name: relationship
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: created_at
                   type: timestamp
@@ -84,3 +92,5 @@ databaseChangeLog:
                   name: updated_at
                   type: timestamp
                   defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
+
+
