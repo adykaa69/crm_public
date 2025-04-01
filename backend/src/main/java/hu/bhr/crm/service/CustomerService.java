@@ -7,6 +7,7 @@ import hu.bhr.crm.repository.CustomerRepository;
 import hu.bhr.crm.repository.entity.CustomerEntity;
 import hu.bhr.crm.validation.EmailValidation;
 import hu.bhr.crm.validation.FieldValidation;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -37,6 +38,7 @@ public class CustomerService {
         return customerMapper.customerEntityToCustomer(customerEntity);
     }
 
+    private EntityManager entityManager;
     /**
      * Creates a new customer and stores it in the database.
      * Responses with 201 Created if the customer is successfully created.
@@ -55,8 +57,8 @@ public class CustomerService {
         CustomerEntity customerEntity = customerMapper.customerToCustomerEntity((customer));
 
         // Save CustomerEntity to DB
-        customerEntity = repository.save(customerEntity);
+        CustomerEntity savedCustomerEntity = repository.save(customerEntity);
 
-        return customer;
+        return customerMapper.customerEntityToCustomer(savedCustomerEntity);
     }
 }

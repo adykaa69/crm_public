@@ -2,6 +2,7 @@ package hu.bhr.crm.repository.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
@@ -47,11 +48,11 @@ public class CustomerEntity {
     @Column(name = "relationship", nullable = false)
     private String relationship;
 
-    @CreationTimestamp
+    @CreationTimestamp(source = SourceType.DB)
     @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
-    @UpdateTimestamp
+    @UpdateTimestamp(source = SourceType.DB)
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
