@@ -22,7 +22,7 @@ public class CustomerService {
 
     /**
      * Gets one customer by their unique ID.
-     * Responses with 200 OK if the customer is responded with
+     * Responds with 200 OK if the customer is found.
      *
      * @param id the unique ID of the requested customer
      * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
@@ -39,7 +39,7 @@ public class CustomerService {
 
     /**
      * Creates a new customer and stores it in the database.
-     * Responses with 201 Created if the customer is successfully created.
+     * Responds with 201 Created if the customer is successfully created.
      *
      * @param customer the built Customer containing the new customer details
      * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
@@ -58,5 +58,23 @@ public class CustomerService {
         CustomerEntity savedCustomerEntity = repository.save(customerEntity);
 
         return customerMapper.customerEntityToCustomer(savedCustomerEntity);
+    }
+
+    /**
+     * Deletes one customer from the database by their unique ID.
+     * Responds with 200 OK if the customer is successfully deleted.
+     *
+     * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
+     * @param id the unique ID of the requested customer
+     * @return one customer in a {@link Customer}
+     */
+    public Customer deleteCustomer(String id) {
+        CustomerEntity customerEntity = repository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+
+        Customer deletedCustomer = customerMapper.customerEntityToCustomer(customerEntity);
+        repository.deleteById(id);
+
+        return deletedCustomer;
     }
 }

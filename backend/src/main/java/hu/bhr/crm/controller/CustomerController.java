@@ -24,7 +24,7 @@ public class CustomerController {
 
     /**
      * Gets one customer by their unique ID.
-     * Responses with 200 OK if the customer is responded with+-
+     * Responds with 200 OK if the customer is found.
      *
      * @param id the unique ID of the requested customer
      * @return one customer in a {@link PlatformResponse}
@@ -42,7 +42,7 @@ public class CustomerController {
 
     /**
      * Creates a new customer and stores it in the database.
-     * Responses with 201 Created if the customer is successfully created
+     * Responds with 201 Created if the customer is successfully created.
      *
      * @param customerRequest the data transfer object containing the new customer details
      * @return the created customer in a {@link PlatformResponse}
@@ -59,6 +59,23 @@ public class CustomerController {
 
 
         return new PlatformResponse<>("success", "Customer created successfully", customerResponse);
+    }
+
+    /**
+     * Deletes one customer from the database by their unique ID.
+     * Responds with 200 OK if the customer is successfully deleted.
+     *
+     * @param id the unique ID of the requested customer
+     * @return the deleted customer in a {@link PlatformResponse}
+     */
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable String id) {
+        Customer deletedCustomer = customerService.deleteCustomer(id);
+
+        CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
+
+        return new PlatformResponse<>("success", "Customer has been deleted successfully", customerResponse);
     }
 
 }
