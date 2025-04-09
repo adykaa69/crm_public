@@ -14,6 +14,8 @@ import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -58,7 +60,7 @@ public class CustomerStepDefinition {
     }
 
     @When("I send request to create the customer")
-    public void iSendARequestToCreateTheCustomer() throws Exception {
+    public void iSendARequestToCreateTheCustomer() throws  IOException, URISyntaxException, InterruptedException {
         String requestBody = objectMapper.writeValueAsString(customerRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -89,7 +91,7 @@ public class CustomerStepDefinition {
     }
 
     @And("I request customer with the created ID")
-    public void iRequestCustomerWithId() throws Exception {
+    public void iRequestCustomerWithId() throws URISyntaxException, IOException, InterruptedException {
         HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -117,5 +119,25 @@ public class CustomerStepDefinition {
         Assert.assertEquals("Relationship should match", customerResponse.relationship(), createdCustomer.relationship());
     }
 
-    //PlatformResponse<ErrorResponse> platformResponse = new PlatformResponse<>("success", "msg", new ErrorResponse("timestamp", "success", "error", "path"));
+    @Then("I delete customer with the created ID")
+    public void iDeleteCustomerWithNewlyCreatedId() throws URISyntaxException, IOException, InterruptedException {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new java.net.URI(SERVICE_URL + CUSTOMER_PATH + "/" + createdCustomerId))
+                .DELETE()
+                .build();
+
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    @Then("the customer should not exist anymore")
+    public void theCustomerShouldNotExistAnymore() throws URISyntaxException, IOException, InterruptedException {
+        HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+
+        Assert.assertEquals("Customer should not exist after deletion", 404, response.statusCode());
+    }
 }
