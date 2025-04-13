@@ -10,6 +10,8 @@ import hu.bhr.crm.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
@@ -27,7 +29,7 @@ public class CustomerController {
      * Responds with 200 OK if the customer is found.
      *
      * @param id the unique ID of the requested customer
-     * @return one customer in a {@link PlatformResponse}
+     * @return a {@link PlatformResponse} containing a {@link CustomerResponse}
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -41,11 +43,29 @@ public class CustomerController {
     }
 
     /**
+     * Gets all customers.
+     * Responds with 200 OK if all customers are found.
+     *
+     * @return a {@link PlatformResponse} containing a list of {@link CustomerResponse}
+     */
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public PlatformResponse<List<CustomerResponse>> getAllCustomers() {
+        List<Customer> customers = customerService.getAllCustomers();
+
+        List<CustomerResponse> customerResponses = customers.stream()
+                .map(customerMapper::customerToCustomerResponse)
+                .toList();
+
+        return new PlatformResponse<>("success", "All customers retrieved successfully", customerResponses);
+    }
+
+    /**
      * Creates a new customer and stores it in the database.
      * Responds with 201 Created if the customer is successfully created.
      *
      * @param customerRequest the data transfer object containing the new customer details
-     * @return the created customer in a {@link PlatformResponse}
+     * @return a {@link PlatformResponse} containing the created {@link CustomerResponse}
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -66,7 +86,7 @@ public class CustomerController {
      * Responds with 200 OK if the customer is successfully deleted.
      *
      * @param id the unique ID of the requested customer
-     * @return the deleted customer in a {@link PlatformResponse}
+     * @return a {@link PlatformResponse} containing the deleted {@link CustomerResponse}
      */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)

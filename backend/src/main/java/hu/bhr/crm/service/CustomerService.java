@@ -9,6 +9,8 @@ import hu.bhr.crm.validation.EmailValidation;
 import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CustomerService {
 
@@ -26,7 +28,7 @@ public class CustomerService {
      *
      * @param id the unique ID of the requested customer
      * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
-     * @return one customer in a {@link Customer}
+     * @return a {@link Customer} object corresponding to the given ID
      */
     public Customer getCustomerById(String id) {
 
@@ -38,13 +40,25 @@ public class CustomerService {
     }
 
     /**
+     * Gets all customers.
+     * Responds with 200 OK if all customers are found.
+     *
+     * @return a list of {@link Customer} objects
+     */
+    public List<Customer> getAllCustomers() {
+        return repository.findAll().stream()
+                .map(customerMapper::customerEntityToCustomer)
+                .toList();
+    }
+
+    /**
      * Creates a new customer and stores it in the database.
      * Responds with 201 Created if the customer is successfully created.
      *
      * @param customer the built Customer containing the new customer details
      * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
      * @throws hu.bhr.crm.exception.MissingFieldException if the relationship is not set
-     * @return the created customer in a {@link Customer}
+     * @return the created {@link Customer} object
      */
     public Customer registerCustomer(Customer customer) {
 
@@ -66,7 +80,7 @@ public class CustomerService {
      *
      * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
      * @param id the unique ID of the requested customer
-     * @return one customer in a {@link Customer}
+     * @return the deleted {@link Customer} object
      */
     public Customer deleteCustomer(String id) {
         CustomerEntity customerEntity = repository.findById(id)
