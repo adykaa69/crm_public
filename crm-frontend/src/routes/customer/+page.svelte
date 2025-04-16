@@ -23,7 +23,7 @@
 	<tbody>
 		{#if !data.data}
 			<tr>
-				<td colspan="5">Nincs megjeleníthető adat</td>
+				<td colspan="6">Nincs megjeleníthető adat</td>
 			</tr>
 		{:else}
 			{#each data.data as customer}

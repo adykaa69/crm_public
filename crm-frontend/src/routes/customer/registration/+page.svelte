@@ -21,30 +21,30 @@
 
 <h1>Új ügyfél regisztráció</h1>
 
-<form on:submit={handleSubmit}>
+<form method="POST" action="?/register">
 	<div>
 		<label for="firstName">Keresztnév:</label>
-		<input id="firstName" type="text" bind:value={formData.firstName} required />
+		<input id="firstName" name="firstName" type="text" bind:value={formData.firstName} required />
 	</div>
 	<div>
 		<label for="lastName">Vezetéknév:</label>
-		<input id="lastName" type="text" bind:value={formData.lastName} required />
+		<input id="lastName" name="lastName" type="text" bind:value={formData.lastName} required />
 	</div>
 	<div>
 		<label for="nickname">Becenév:</label>
-		<input id="nickname" type="text" bind:value={formData.nickname} />
+		<input id="nickname" name="nickname" type="text" bind:value={formData.nickname} />
 	</div>
 	<div>
 		<label for="email">Email:</label>
-		<input id="email" type="email" bind:value={formData.email} required />
+		<input id="email" name="email" type="email" bind:value={formData.email} required />
 	</div>
 	<div>
 		<label for="phoneNumber">Telefonszám:</label>
-		<input id="phoneNumber" type="tel" bind:value={formData.phoneNumber} required />
+		<input id="phoneNumber" name="phoneNumber" type="tel" bind:value={formData.phoneNumber} required />
 	</div>
 	<div>
 		<label for="relationship">Ismeretség:</label>
-		<input id="relationship" type="text" bind:value={formData.relationship} />
+		<input id="relationship" name="relationship" type="text" bind:value={formData.relationship} />
 	</div>
 	<button type="submit">Submit</button>
 </form>
