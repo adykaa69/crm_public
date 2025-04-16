@@ -13,7 +13,11 @@ export function httpPatch(path: string, data: any, header?: any) {
     return req(path, 'PATCH', header, data);
 }
 export function httpDelete(path: string, header?: any) {
-    return req(path, 'DELETE', header);
+    const res = fetch(baseApiUrl + path, {
+        method: 'DELETE',
+        mode: 'cors',
+    })
+    return res;
 }
 
 async function req(path: string, method = 'GET', header?: any, data?: any) {

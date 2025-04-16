@@ -88,6 +88,7 @@ public class CustomerController {
      * @param id the unique ID of the requested customer
      * @return a {@link PlatformResponse} containing the deleted {@link CustomerResponse}
      */
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable String id) {
