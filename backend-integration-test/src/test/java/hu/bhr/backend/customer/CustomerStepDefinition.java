@@ -20,6 +20,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 import static hu.bhr.backend.Constants.SERVICE_URL;
 
@@ -34,6 +36,7 @@ public class CustomerStepDefinition {
     private HttpResponse<String> response;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String createdCustomerId;
+    private final List<String> createdCustomerIds = new ArrayList<>();
 
     @Given("I have a new customer with first name {string}, last name {string}, nickname {string}, email {string}, phone number {string}, relationship {string}")
     public void iHaveANewCustomer(String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship) {
@@ -88,11 +91,21 @@ public class CustomerStepDefinition {
 
         customerResponse = platformResponse.data();
         createdCustomerId = platformResponse.data().id();
+
+        createdCustomerIds.add(createdCustomerId);
     }
 
     @And("I request customer with the created ID")
     public void iRequestCustomerWithId() throws URISyntaxException, IOException, InterruptedException {
         HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    @When("I request all customers")
+    public void iRequestAllCustomers() throws URISyntaxException, IOException, InterruptedException {
+        HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + CUSTOMER_PATH);
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
@@ -119,6 +132,20 @@ public class CustomerStepDefinition {
         Assert.assertEquals("Relationship should match", customerResponse.relationship(), createdCustomer.relationship());
     }
 
+    @Then("the response should contain all created customers")
+    public void theResponseShouldContainAllCreatedCustomers() throws IOException {
+        PlatformResponse<List<CustomerResponse>> platformResponse =
+                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<List<CustomerResponse>>>() {});
+
+        List<CustomerResponse> customersResponses = platformResponse.data();
+
+        for (String id: createdCustomerIds) {
+            boolean found = customersResponses.stream().anyMatch(c -> c.id().equals(id));
+            Assert.assertTrue("Customer with ID " + id + " should be in the response", found);
+        }
+
+    }
+
     @Then("I delete customer with the created ID")
     public void iDeleteCustomerWithNewlyCreatedId() throws URISyntaxException, IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
@@ -128,6 +155,22 @@ public class CustomerStepDefinition {
 
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+
+        createdCustomerIds.remove(createdCustomerId);
+    }
+
+    @Then("I delete all created customers")
+    public void iDeleteAllCreatedCustomers() throws URISyntaxException, IOException, InterruptedException {
+        for (String id: createdCustomerIds) {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(new java.net.URI(SERVICE_URL+ CUSTOMER_PATH + "/" + id))
+                    .DELETE()
+                    .build();
+
+            try (var client = HttpClient.newHttpClient()) {
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            }
         }
     }
 
@@ -139,5 +182,17 @@ public class CustomerStepDefinition {
         }
 
         Assert.assertEquals("Customer should not exist after deletion", 404, response.statusCode());
+    }
+
+    @Then("the created customers should not exist anymore")
+    public void theCreatedCustomersShouldNotExistAnymore() throws URISyntaxException, IOException, InterruptedException {
+        for (String id: createdCustomerIds) {
+            HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
+            try (var client = HttpClient.newHttpClient()) {
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            }
+
+            Assert.assertEquals("Customer with ID " + id + " should not exist after deletion", 404, response.statusCode());
+        }
     }
 }
