@@ -2,6 +2,7 @@ export type CustomerResponse = {
     id: string;
     firstName: string;
     lastName: string;
+    nickname: string;
     email: string;
     phoneNumber: string;
     relationship: string;
@@ -14,6 +15,7 @@ export function isCustomerResponse(object: any): object is CustomerResponse {
         typeof object.id === 'string' &&
         typeof object.firstName === 'string' &&
         typeof object.lastName === 'string' &&
+        typeof object.nickname === 'string' &&
         typeof object.email === 'string' &&
         typeof object.phoneNumber === 'string' &&
         typeof object.relationship === 'string' &&

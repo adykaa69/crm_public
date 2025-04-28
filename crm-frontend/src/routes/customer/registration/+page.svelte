@@ -1,50 +1,46 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
-
-	let formData = {
-		firstName: '',
-		lastName: '',
-		nickname: '',
-		email: '',
-		phoneNumber: '',
-		relationship: ''
-	};
-
-	function handleSubmit(event: Event) {
-		event.preventDefault();
-		goto('/customer');
-		alert('A beküldött adatok: ' + JSON.stringify(formData));
-		console.log('Form submitted:', formData);
-		// You can send `formData` to your backend API here
-	}
+	let { form } = $props();
 </script>
 
 <h1>Új ügyfél regisztráció</h1>
+{#if form?.errorMessage}
+	<p class="error">{form.errorMessage}</p>
+{/if}
 
 <form method="POST" action="?/register">
 	<div>
 		<label for="firstName">Keresztnév:</label>
-		<input id="firstName" name="firstName" type="text" bind:value={formData.firstName} required />
+		<input id="firstName" name="firstName" type="text" value={form?.registrationRequest.firstName ?? ''} />
 	</div>
 	<div>
 		<label for="lastName">Vezetéknév:</label>
-		<input id="lastName" name="lastName" type="text" bind:value={formData.lastName} required />
+		<input id="lastName" name="lastName" type="text" value={form?.registrationRequest.lastName ?? ''} />
 	</div>
 	<div>
 		<label for="nickname">Becenév:</label>
-		<input id="nickname" name="nickname" type="text" bind:value={formData.nickname} />
+		<input id="nickname" name="nickname" type="text" value={form?.registrationRequest.nickname ?? ''} />
 	</div>
 	<div>
 		<label for="email">Email:</label>
-		<input id="email" name="email" type="email" bind:value={formData.email} required />
+		<input id="email" name="email" type="email" value={form?.registrationRequest.email ?? ''} />
 	</div>
 	<div>
 		<label for="phoneNumber">Telefonszám:</label>
-		<input id="phoneNumber" name="phoneNumber" type="tel" bind:value={formData.phoneNumber} required />
+		<input
+			id="phoneNumber"
+			name="phoneNumber"
+			type="tel"
+			value={form?.registrationRequest.phoneNumber ?? ''}
+		/>
 	</div>
 	<div>
 		<label for="relationship">Ismeretség:</label>
-		<input id="relationship" name="relationship" type="text" bind:value={formData.relationship} />
+		<input
+			id="relationship"
+			name="relationship"
+			type="text"
+			value={form?.registrationRequest.relationship ?? ''}
+		/>
 	</div>
 	<button type="submit">Submit</button>
 </form>
@@ -83,5 +79,10 @@
 
 	button:hover {
 		background-color: #0056b3;
+	}
+	.error {
+		color: red;
+		text-align: center;
+		margin-bottom: 10px;
 	}
 </style>

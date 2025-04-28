@@ -29,6 +29,7 @@
 			<th>No.</th>
 			<th>Vezetéknév</th>
 			<th>Keresztnév</th>
+			<th>Becenév</th>
 			<th>Email</th>
 			<th>Telefonszám</th>
 			<th>Ismeretség</th>
@@ -47,6 +48,7 @@
 						<td>{incrementCounter()}</td>
 						<td>{customer.lastName}</td>
 						<td>{customer.firstName}</td>
+						<td>{customer.nickname}</td>
 						<td>{customer.email}</td>
 						<td>{customer.phoneNumber}</td>
 						<td>{customer.relationship}</td>
@@ -63,7 +65,7 @@
 
 <style>
 	table {
-		width: 50%;
+		width: 90%;
 		border-collapse: collapse;
 		border: 1px solid black;
 	}
