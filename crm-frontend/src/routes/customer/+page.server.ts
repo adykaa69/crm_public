@@ -2,9 +2,10 @@ import type { PageServerLoad } from "./$types";
 import type { PlatformApiResponse } from "$lib/model/platform-api-response";
 import type { CustomerResponse } from "$lib/model/customer-response";
 import type { ErrorResponse } from "$lib/model/error-response";
+import { getCustomers } from "$lib/utils/handle-customer";
 
 export const load: PageServerLoad = async () => {
-    const response = await fetch("http://localhost:8080/api/v1/customers");
+    const response = await getCustomers();
 
     const data = await response.json();
     if (response.status !== 200) {

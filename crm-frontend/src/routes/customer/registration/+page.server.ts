@@ -1,12 +1,12 @@
-import type { CustomerRequest } from '$lib/model/customer-request';
+import type { CustomerRegistrationRequest } from '$lib/model/customer-request';
 import { error, redirect, fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
-import { register } from './registration';
+import { register } from '$lib/utils/handle-customer';
 
 export const actions = {
     register: async (event) => {
         const formData = Object.fromEntries(await event.request.formData());
-        let registrationRequest: CustomerRequest = formData as CustomerRequest;
+        let registrationRequest: CustomerRegistrationRequest = formData as CustomerRegistrationRequest;
 
         if (!registrationRequest.firstName && !registrationRequest.nickname) {
             return fail(422, {

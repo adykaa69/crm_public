@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { isCustomerResponse, type CustomerResponse } from '$lib/model/customer-response.js';
-	import { deleteCustomer } from './delete-customer.js';
+	import { deleteCustomer } from '$lib/utils/handle-customer.js';
 
 	let { data } = $props();
 	let counter: number = 0;
@@ -13,10 +13,6 @@
 			await deleteCustomer(customer.id);
 			location.reload(); // Refresh the page after successful deletion
 		}
-	}
-
-	async function updateCust(customer: CustomerResponse) {
-		alert('Not implemented')
 	}
 </script>
 
@@ -54,7 +50,7 @@
 						<td>{customer.relationship}</td>
 						<td>
 							<button class="delete-button" onclick={() => deleteCust(customer)}>Törlés</button>
-							<button class="update-button" onclick={() => updateCust(customer)}>Szerkesztés</button>
+							<a class="update-button" href="/customer/update/{customer.id}">Szerkesztés</a>
 						</td>
 					</tr>
 				{/if}
@@ -90,7 +86,7 @@
 	button.delete-button:hover {
 		background-color: #ff1a1a;
 	}
-	button.update-button {
+	a.update-button {
 		cursor: pointer;
 		padding: 5px 10px;
 		background-color: #4d77ff;
@@ -98,7 +94,7 @@
 		border: none;
 		border-radius: 3px;
 	}
-	button.update-button:hover {
+	a.update-button:hover {
 		background-color: #1a1eff;
 	}
 </style>
