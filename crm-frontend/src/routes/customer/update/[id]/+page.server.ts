@@ -1,7 +1,7 @@
-import type { CustomerUpdateRequest } from "$lib/model/customer-request";
-import type { CustomerResponse } from "$lib/model/customer-response";
-import type { ErrorResponse } from "$lib/model/error-response";
-import type { PlatformApiResponse } from "$lib/model/platform-api-response";
+import type { CustomerUpdateRequest } from "$lib/models/customer-request";
+import type { CustomerResponse } from "$lib/models/customer-response";
+import type { ErrorResponse } from "$lib/models/error-response";
+import type { PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { redirect, type Actions } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";

@@ -1,4 +1,4 @@
-import type { CustomerRegistrationRequest } from '$lib/model/customer-request';
+import type { CustomerRegistrationRequest } from '$lib/models/customer-request';
 import { error, redirect, fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { register } from '$lib/utils/handle-customer';

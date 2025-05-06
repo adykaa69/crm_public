@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
-import type { PlatformApiResponse } from "$lib/model/platform-api-response";
-import type { CustomerResponse } from "$lib/model/customer-response";
-import type { ErrorResponse } from "$lib/model/error-response";
+import type { PlatformApiResponse } from "$lib/models/platform-api-response";
+import type { CustomerResponse } from "$lib/models/customer-response";
+import type { ErrorResponse } from "$lib/models/error-response";
 import { getCustomers } from "$lib/utils/handle-customer";
 
 export const load: PageServerLoad = async () => {

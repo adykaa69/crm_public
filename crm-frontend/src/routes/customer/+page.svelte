@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { isCustomerResponse, type CustomerResponse } from '$lib/model/customer-response.js';
+	import { isCustomerResponse, type CustomerResponse } from '$lib/models/customer-response.js';
 	import { deleteCustomer } from '$lib/utils/handle-customer.js';
 
 	let { data } = $props();

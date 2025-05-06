@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { type CustomerResponse } from '$lib/model/customer-response';
+	import { type CustomerResponse } from '$lib/models/customer-response';
 	import type { PageProps } from '../$types';
 
 	let { data }: PageProps = $props();
@@ -64,5 +64,5 @@
 		width: 100%;
 		padding: 8px;
 		box-sizing: border-box;
-	}s
+	}
 </style>
