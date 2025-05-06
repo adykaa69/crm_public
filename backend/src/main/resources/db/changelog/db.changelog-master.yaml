@@ -49,7 +49,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: varchar(255)
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -63,13 +63,9 @@ databaseChangeLog:
               - column:
                   name: first_name
                   type: varchar(255)
-                  constraints:
-                    nullable: false
               - column:
                   name: last_name
                   type: varchar(255)
-                  constraints:
-                    nullable: false
               - column:
                   name: nickname
                   type: varchar(255)
