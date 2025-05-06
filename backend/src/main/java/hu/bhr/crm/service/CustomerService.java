@@ -62,6 +62,8 @@ public class CustomerService {
      */
     public Customer registerCustomer(Customer customer) {
 
+        // Validations
+        FieldValidation.validateAtLeastOneIsNotEmpty(customer.firstName(), "First Name", customer.nickname(), "Nickname");
         FieldValidation.validateNotEmpty(customer.relationship(), "Relationship");
         EmailValidation.validate(customer.email());
 
