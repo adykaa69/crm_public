@@ -1,9 +1,10 @@
 package hu.bhr.crm.model;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 public record Customer(
-        String id,
+        UUID id,
         String firstName,
         String lastName,
         String nickname,
@@ -18,7 +19,7 @@ public record Customer(
     }
 
     public static class CustomerBuilder {
-        private String id;
+        private UUID id;
         private String firstName;
         private String lastName;
         private String nickname;
@@ -28,7 +29,7 @@ public record Customer(
         private Timestamp createdAt;
         private Timestamp updatedAt;
 
-        public CustomerBuilder id(String id) {
+        public CustomerBuilder id(UUID id) {
             this.id = id;
             return this;
         }

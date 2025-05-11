@@ -1,9 +1,12 @@
 package hu.bhr.crm.mapper;
 
+import hu.bhr.crm.controller.dto.CustomerRequest;
 import hu.bhr.crm.controller.dto.CustomerResponse;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.repository.entity.CustomerEntity;
 import org.springframework.stereotype.Component;
+
+import java.util.UUID;
 
 @Component
 public class CustomerMapper {
@@ -49,6 +52,20 @@ public class CustomerMapper {
                 customer.relationship(),
                 customer.createdAt(),
                 customer.updatedAt()
+        );
+    }
+
+    public Customer customerRequestToCustomer(UUID id, CustomerRequest customerRequest) {
+        return new Customer(
+                id,
+                customerRequest.firstName(),
+                customerRequest.lastName(),
+                customerRequest.nickname(),
+                customerRequest.email(),
+                customerRequest.phoneNumber(),
+                customerRequest.relationship(),
+                null,
+                null
         );
     }
 }

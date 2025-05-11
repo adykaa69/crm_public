@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/customers")
@@ -33,7 +34,7 @@ public class CustomerController {
      */
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PlatformResponse<CustomerResponse> getCustomer(@PathVariable String id) {
+    public PlatformResponse<CustomerResponse> getCustomer(@PathVariable UUID id) {
 
         Customer customer = customerService.getCustomerById(id);
 
@@ -91,7 +92,7 @@ public class CustomerController {
     @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable String id) {
+    public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable UUID id) {
         Customer deletedCustomer = customerService.deleteCustomer(id);
 
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
@@ -99,5 +100,25 @@ public class CustomerController {
         return new PlatformResponse<>("success", "Customer has been deleted successfully", customerResponse);
     }
 
+    /**
+     * Updates a customer in the database by their unique ID.
+     * Responds with 200 OK if the customer is successfully updated.
+     *
+     * @param id the unique ID of the requested customer
+     * @param customerRequest the data transfer object containing the updated customer details
+     * @return a {@link PlatformResponse} containing the updated {@link CustomerResponse}
+     */
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PlatformResponse<CustomerResponse> updateCustomer(
+            @PathVariable UUID id,
+            @RequestBody CustomerRequest customerRequest) {
+
+        Customer customer = customerMapper.customerRequestToCustomer(id, customerRequest);
+        Customer updatedCustomer = customerService.updateCustomer(customer);
+        CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);
+
+        return new PlatformResponse<>("success", "Customer updated successfully", customerResponse);
+    }
 }
 

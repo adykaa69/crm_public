@@ -6,12 +6,13 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Entity
 @Table(name = "customer")
 public class CustomerEntity {
 
-    public CustomerEntity(String id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, Timestamp createdAt, Timestamp updatedAt) {
+    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -28,7 +29,7 @@ public class CustomerEntity {
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
-    private String id;
+    private UUID id;
 
     @Column(name = "first_name")
     private String firstName;
@@ -56,11 +57,11 @@ public class CustomerEntity {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

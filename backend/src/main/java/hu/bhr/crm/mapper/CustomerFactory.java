@@ -15,7 +15,7 @@ public class CustomerFactory {
      */
     public static Customer createCustomer(CustomerRequest customerRequest) {
         return Customer.builder()
-                .id(UUID.randomUUID().toString())
+                .id(UUID.randomUUID())
                 .firstName(customerRequest.firstName())
                 .lastName(customerRequest.lastName())
                 .nickname(customerRequest.nickname())

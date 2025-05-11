@@ -10,6 +10,7 @@ import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
@@ -30,7 +31,7 @@ public class CustomerService {
      * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
      * @return a {@link Customer} object corresponding to the given ID
      */
-    public Customer getCustomerById(String id) {
+    public Customer getCustomerById(UUID id) {
 
         // Find CustomerEntity by ID
         CustomerEntity customerEntity = repository.findById(id)
@@ -56,8 +57,8 @@ public class CustomerService {
      * Responds with 201 Created if the customer is successfully created.
      *
      * @param customer the built Customer containing the new customer details
+     * @throws hu.bhr.crm.exception.MissingFieldException if neither first name nor nickname is set, or if relationship is missing
      * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
-     * @throws hu.bhr.crm.exception.MissingFieldException if the relationship is not set
      * @return the created {@link Customer} object
      */
     public Customer registerCustomer(Customer customer) {
@@ -84,7 +85,7 @@ public class CustomerService {
      * @param id the unique ID of the requested customer
      * @return the deleted {@link Customer} object
      */
-    public Customer deleteCustomer(String id) {
+    public Customer deleteCustomer(UUID id) {
         CustomerEntity customerEntity = repository.findById(id)
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
 
@@ -93,4 +94,32 @@ public class CustomerService {
 
         return deletedCustomer;
     }
+
+    /**
+     * Updates a customer in the database by their unique ID.
+     * Responds with 200 OK if the customer is successfully updated.
+     *
+     * @param customer the mapped Customer containing the updated customer details
+     * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
+     * @throws hu.bhr.crm.exception.MissingFieldException if neither first name nor nickname is set, or if relationship is missing
+     * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
+     * @return the updated {@link Customer} object
+     */
+    public Customer updateCustomer(Customer customer) {
+
+        // Find CustomerEntity by ID
+        CustomerEntity customerEntity = repository.findById(customer.id())
+                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+
+        // Validations
+        FieldValidation.validateAtLeastOneIsNotEmpty(customer.firstName(), "First Name", customer.nickname(), "Nickname");
+        FieldValidation.validateNotEmpty(customer.relationship(), "Relationship");
+        EmailValidation.validate(customer.email());
+
+        // Save CustomerEntity to DB
+        CustomerEntity savedCustomerEntity = repository.save(customerMapper.customerToCustomerEntity(customer));
+
+        return customerMapper.customerEntityToCustomer(savedCustomerEntity);
+    }
+
 }
