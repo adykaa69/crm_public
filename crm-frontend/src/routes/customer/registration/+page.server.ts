@@ -2,6 +2,9 @@ import type { CustomerRegistrationRequest } from '$lib/models/customer-request';
 import { error, redirect, fail } from '@sveltejs/kit';
 import type { Actions } from './$types';
 import { register } from '$lib/utils/handle-customer';
+import { isCustomerResponse } from '$lib/models/customer-response';
+import { isErrorResponse } from '$lib/models/error-response';
+import { isPlatformApiResponse } from '$lib/models/platform-api-response';
 
 export const actions = {
     register: async (event) => {
@@ -21,10 +24,21 @@ export const actions = {
         } else {
             let json = await res.json();
             console.log(json);
-            console.log(json.error);
-            throw error(res.status, {
-                message: json.error
-            });
+            console.log(isPlatformApiResponse(json));
+            console.log(isErrorResponse(json.data));
+            console.log(json.data.errorCode);
+            console.log(json.data.message);
+            console.log(json.data.timestamp);
+            if (isPlatformApiResponse(json) && isErrorResponse(json.data)) {
+                console.log("Error response:", json.data.message)
+                return fail(404,
+                    {
+                        errorMessage: json.data.message,
+                        registrationRequest
+                    }
+
+                )
+            }
         }
     }
 } satisfies Actions;

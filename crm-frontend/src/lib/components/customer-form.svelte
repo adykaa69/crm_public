@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { CustomerRegistrationRequest } from '$lib/models/customer-request';
 	import { type CustomerResponse } from '$lib/models/customer-response';
-	import type { PageProps } from '../../routes/$types';
 
 	export let action: string;
-	export let customer: CustomerResponse = {
+	export let customer: CustomerResponse | CustomerRegistrationRequest = {
 		id: '',
 		firstName: '',
 		lastName: '',
@@ -14,8 +14,6 @@
 		createdAt: '',
 		updatedAt: ''
 	};
-	// let { data }: PageProps = $props();
-	// let customer: CustomerResponse = data.data as CustomerResponse;
 </script>
 
 <form method="POST" {action}>

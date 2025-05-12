@@ -4,7 +4,7 @@ import type { ErrorResponse } from "$lib/models/error-response";
 import type { PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { redirect, type Actions } from "@sveltejs/kit";
-import type { PageServerLoad } from "../$types";
+import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 import { fail } from "@sveltejs/kit";
 

@@ -1,12 +1,12 @@
 export type ErrorResponse = {
-    errorMessage: string;
+    message: string;
     errorCode: string;
     timestamp: string;
 }
 
 export function isErrorResponse(object: any): object is ErrorResponse {
     return (
-        typeof object.errorMessage === 'string' &&
+        typeof object.message === 'string' &&
         typeof object.errorCode === 'string' &&
         typeof object.timestamp === 'string'
     );
