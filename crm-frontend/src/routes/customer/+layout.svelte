@@ -1,9 +1,10 @@
 <script lang="ts">
-	import '../../app.css';
-	let { children } = $props();
+  import "../../app.css";
+
+  let { children } = $props();
 </script>
 
 <nav>
-	<a href="/customer">Ügyfelek</a>
+  <a href="/customer">Ügyfelek</a>
 </nav>
 {@render children()}
