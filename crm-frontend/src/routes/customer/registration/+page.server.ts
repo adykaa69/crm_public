@@ -22,13 +22,7 @@ export const actions = {
         if (res.ok) {
             throw redirect(302, '/customer');
         } else {
-            let json = await res.json();
-            console.log(json);
-            console.log(isPlatformApiResponse(json));
-            console.log(isErrorResponse(json.data));
-            console.log(json.data.errorCode);
-            console.log(json.data.message);
-            console.log(json.data.timestamp);
+            const json = await res.json();
             if (isPlatformApiResponse(json) && isErrorResponse(json.data)) {
                 console.log("Error response:", json.data.message)
                 return fail(404,
