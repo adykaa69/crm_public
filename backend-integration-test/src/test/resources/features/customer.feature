@@ -49,4 +49,11 @@ Feature: Customer API testing
     And the response should contain the customer
     And the customer should not exist anymore
 
-
+  Scenario: Update customer by ID
+    Given I have a new customer with first name "Krúbi", last name "Krr", nickname "Krumpli", email "crewbi.krr@banana.com", phone number "69420", relationship "rapper"
+    And I send request to create the customer
+    When I update the customer with first name "Krúbi", last name "Krr", nickname "Vicces banános rapper", email "crewbi.krr@banana.com", phone number "69420", relationship "rapper"
+    Then return 200 status code
+    And the response should contain the customer
+    Then I delete customer with the created ID
+    And the customer should not exist anymore

@@ -195,4 +195,33 @@ public class CustomerStepDefinition {
             Assert.assertEquals("Customer with ID " + id + " should not exist after deletion", 404, response.statusCode());
         }
     }
+
+    @When("I update the customer with first name {string}, last name {string}, nickname {string}, email {string}, phone number {string}, relationship {string}")
+    public void iUpdateTheCustomer(String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship) throws URISyntaxException, IOException, InterruptedException {
+        CustomerRequest updatedRequest = new CustomerRequest(
+                firstName,
+                lastName,
+                nickname,
+                email,
+                phoneNumber,
+                relationship
+        );
+
+        String requestBody = objectMapper.writeValueAsString(updatedRequest);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new java.net.URI(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId)))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
+                .build();
+
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+
+        PlatformResponse<CustomerResponse> platformResponse =
+                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
+
+        customerResponse = platformResponse.data();
+    }
 }
