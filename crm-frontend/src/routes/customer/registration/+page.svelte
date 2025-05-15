@@ -13,17 +13,11 @@
   };
 </script>
 
-<h1>Új ügyfél regisztráció</h1>
+<!--<h1>Új ügyfél regisztráció</h1>-->
 
-<CustomerForm action="?/register" {customer} />
-{#if form?.errorMessage}
-  <p class="error">{form.errorMessage}</p>
-{/if}
-
-<style>
-  .error {
-    color: red;
-    text-align: center;
-    margin-bottom: 10px;
-  }
-</style>
+<CustomerForm
+  action="?/register"
+  title="Új ügyfél regisztráció"
+  {customer}
+  {form}
+/>

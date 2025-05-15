@@ -1,7 +1,13 @@
 import type { CustomerUpdateRequest } from "$lib/models/customer-request";
 import type { CustomerResponse } from "$lib/models/customer-response";
-import type { ErrorResponse } from "$lib/models/error-response";
-import type { PlatformApiResponse } from "$lib/models/platform-api-response";
+import {
+  type ErrorResponse,
+  isErrorResponse
+} from "$lib/models/error-response";
+import {
+  isPlatformApiResponse,
+  type PlatformApiResponse
+} from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
@@ -34,12 +40,14 @@ export const actions = {
     if (res.ok) {
       throw redirect(302, "/customer");
     } else {
-      let json = await res.json();
-      console.log(json);
-      console.log(json.error);
-      throw error(res.status, {
-        message: json.error
-      });
+      const json = await res.json();
+      if (isPlatformApiResponse(json) && isErrorResponse(json.data)) {
+        console.log("Error response:", json.data.errorMessage);
+        return fail(404, {
+          errorMessage: json.data.errorMessage,
+          updateRequest
+        });
+      }
     }
   }
 } satisfies Actions;

@@ -24,9 +24,9 @@ export const actions = {
     } else {
       const json = await res.json();
       if (isPlatformApiResponse(json) && isErrorResponse(json.data)) {
-        console.log("Error response:", json.data.message);
+        console.log("Error response:", json.data.errorMessage);
         return fail(404, {
-          errorMessage: json.data.message,
+          errorMessage: json.data.errorMessage,
           registrationRequest
         });
       }
