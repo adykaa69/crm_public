@@ -1,25 +1,24 @@
-export type CustomerResponse = {
-    id: string;
-    firstName: string;
-    lastName: string;
-    nickname: string;
-    email: string;
-    phoneNumber: string;
-    relationship: string;
-    createdAt: string;
-    updatedAt: string;
+export interface CustomerResponse {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  nickname?: string;
+  email?: string;
+  phoneNumber?: string;
+  relationship?: string;
+  residence?: ResidenceResponse;
+  createdAt: string;
+  updatedAt: string;
 }
 
-export function isCustomerResponse(object: any): object is CustomerResponse {
-    return (
-        typeof object.id === 'string' &&
-        typeof object.firstName === 'string' &&
-        typeof object.lastName === 'string' &&
-        typeof object.nickname === 'string' &&
-        typeof object.email === 'string' &&
-        typeof object.phoneNumber === 'string' &&
-        typeof object.relationship === 'string' &&
-        typeof object.createdAt === 'string' &&
-        typeof object.updatedAt === 'string'
-    );
+export interface ResidenceResponse {
+  residenceId: string;
+  customerId: string;
+  zipCode: string;
+  streetAddress: string;
+  addressLine2: string;
+  city: string;
+  country: string;
+  createdAt: string;
+  updatedAt: string;
 }

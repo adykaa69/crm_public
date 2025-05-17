@@ -1,15 +1,9 @@
 import type { CustomerUpdateRequest } from "$lib/models/customer-request";
 import type { CustomerResponse } from "$lib/models/customer-response";
-import {
-  type ErrorResponse,
-  isErrorResponse
-} from "$lib/models/error-response";
-import {
-  isPlatformApiResponse,
-  type PlatformApiResponse
-} from "$lib/models/platform-api-response";
+import { type ErrorResponse } from "$lib/models/error-response";
+import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
-import { type Actions, error, fail, redirect } from "@sveltejs/kit";
+import { type Actions, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -23,10 +17,9 @@ export const load: PageServerLoad = async ({ params }) => {
 };
 
 export const actions = {
-  updateCustomer: async ({ request, params }) => {
+  update: async ({ request, params }) => {
     const formData = Object.fromEntries(await request.formData());
-    const updateRequest: CustomerUpdateRequest =
-      formData as CustomerUpdateRequest;
+    const updateRequest: CustomerUpdateRequest = formData as CustomerUpdateRequest;
     updateRequest.customerId = typeof params.id === "string" ? params.id : "";
 
     if (!updateRequest.firstName && !updateRequest.nickname) {
@@ -36,18 +29,16 @@ export const actions = {
       });
     }
 
-    const res = await updateCustomer(updateRequest);
-    if (res.ok) {
+    const response = await updateCustomer(updateRequest);
+    if (response.ok) {
       throw redirect(302, "/customer");
     } else {
-      const json = await res.json();
-      if (isPlatformApiResponse(json) && isErrorResponse(json.data)) {
-        console.log("Error response:", json.data.errorMessage);
-        return fail(404, {
-          errorMessage: json.data.errorMessage,
-          updateRequest
-        });
-      }
+      const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
+      console.log("Error response:", errorResponse.data?.errorMessage);
+      return fail(404, {
+        errorMessage: errorResponse.data?.errorMessage,
+        updateRequest
+      });
     }
   }
 } satisfies Actions;

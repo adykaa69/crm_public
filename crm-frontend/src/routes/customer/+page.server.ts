@@ -1,5 +1,4 @@
 import type { PageServerLoad } from "./$types";
-import type { PlatformApiResponse } from "$lib/models/platform-api-response";
 import type { CustomerResponse } from "$lib/models/customer-response";
 import type { ErrorResponse } from "$lib/models/error-response";
 import { getCustomers } from "$lib/utils/handle-customer";
@@ -9,7 +8,7 @@ export const load: PageServerLoad = async () => {
 
   const data = await response.json();
   if (response.status !== 200) {
-    return data as PlatformApiResponse<ErrorResponse[]>;
+    return { errors: data.data as ErrorResponse[] };
   }
-  return data as PlatformApiResponse<CustomerResponse[]>;
+  return { costumers: data.data as CustomerResponse[] };
 };

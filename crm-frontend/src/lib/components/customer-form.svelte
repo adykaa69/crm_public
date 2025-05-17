@@ -4,18 +4,9 @@
 
   export let title: string;
   export let action: string;
-  export let customer: CustomerResponse | CustomerRegistrationRequest = {
-    id: "",
-    firstName: "",
-    lastName: "",
-    nickname: "",
-    email: "",
-    phoneNumber: "",
-    relationship: "",
-    createdAt: "",
-    updatedAt: ""
-  };
+  export let customer: CustomerResponse | CustomerRegistrationRequest;
   export let form;
+  export let isDisabled: boolean;
 </script>
 
 <h1>{title}</h1>
@@ -27,6 +18,7 @@
       name="firstName"
       type="text"
       value={customer.firstName}
+      disabled={isDisabled}
     />
   </div>
   <div>
@@ -36,6 +28,7 @@
       name="lastName"
       type="text"
       value={customer.lastName}
+      disabled={isDisabled}
     />
   </div>
   <div>
@@ -45,11 +38,18 @@
       name="nickname"
       type="text"
       value={customer.nickname}
+      disabled={isDisabled}
     />
   </div>
   <div>
     <label for="email">Email:</label>
-    <input id="email" name="email" type="email" value={customer.email} />
+    <input
+      id="email"
+      name="email"
+      type="email"
+      value={customer.email}
+      disabled={isDisabled}
+    />
   </div>
   <div>
     <label for="phoneNumber">Telefonszám:</label>
@@ -58,6 +58,7 @@
       name="phoneNumber"
       type="tel"
       value={customer.phoneNumber}
+      disabled={isDisabled}
     />
   </div>
   <div>
@@ -67,9 +68,65 @@
       name="relationship"
       type="text"
       value={customer.relationship}
+      disabled={isDisabled}
     />
   </div>
-  <button type="submit">Submit</button>
+  <div>
+    <label for="country">Ország:</label>
+    <input
+      id="country"
+      name="country"
+      type="text"
+      value={customer.residence?.country}
+      disabled={isDisabled}
+    />
+  </div>
+  <div>
+    <label for="zipCode">Irányítószám:</label>
+    <input
+      id="zipCode"
+      name="zipCode"
+      type="text"
+      value={customer.residence?.zipCode}
+      disabled={isDisabled}
+    />
+  </div>
+  <div>
+    <label for="city">Település:</label>
+    <input
+      id="city"
+      name="city"
+      type="text"
+      value={customer.residence?.city}
+      disabled={isDisabled}
+    />
+  </div>
+  <div>
+    <label for="streetAddress">Lakcím:</label>
+    <input
+      id="streetAddress"
+      name="streetAddress"
+      type="text"
+      value={customer.residence?.streetAddress}
+      disabled={isDisabled}
+    />
+  </div>
+  <div>
+    <label for="addressLine2">Egyéb cím:</label>
+    <input
+      id="addressLine2"
+      name="addressLine2"
+      type="text"
+      value={customer.residence?.addressLine2}
+      disabled={isDisabled}
+    />
+  </div>
+  <button
+    class="update {isDisabled ? '' : 'enabled'} something"
+    type="submit"
+    disabled={isDisabled}
+    >Submit
+  </button>
 </form>
 
 {#if form?.errorMessage}
@@ -110,5 +167,22 @@
     color: red;
     text-align: center;
     margin-bottom: 10px;
+  }
+
+  button.update {
+    padding: 5px 10px;
+    background-color: #82a3ff;
+    color: white;
+    border: none;
+    border-radius: 3px;
+  }
+
+  button.enabled {
+    cursor: pointer;
+    background-color: #2a2eff;
+  }
+
+  button.enabled:hover {
+    background-color: #070aa1;
   }
 </style>
