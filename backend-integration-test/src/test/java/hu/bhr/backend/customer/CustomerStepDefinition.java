@@ -7,6 +7,7 @@ import hu.bhr.backend.customer.dto.ErrorResponse;
 import hu.bhr.backend.customer.dto.PlatformResponse;
 import io.cucumber.core.internal.com.fasterxml.jackson.core.type.TypeReference;
 import io.cucumber.core.internal.com.fasterxml.jackson.databind.ObjectMapper;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -14,8 +15,6 @@ import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -29,41 +28,36 @@ import static hu.bhr.backend.Constants.SERVICE_URL;
 public class CustomerStepDefinition {
 
     private static final String CUSTOMER_PATH = "/api/v1/customers";
-    private static final String CUSTOMER_BY_ID_PATH = CUSTOMER_PATH + "/%s"; // Customer ID endpoint
+    private static final String CUSTOMER_BY_ID_PATH = CUSTOMER_PATH + "/%s";
 
     private CustomerResponse customerResponse;
-    private CustomerRequest customerRequest;
     private HttpResponse<String> response;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private String createdCustomerId;
     private final List<String> createdCustomerIds = new ArrayList<>();
 
-    @Given("I have a new customer with first name {string}, last name {string}, nickname {string}, email {string}, phone number {string}, relationship {string}")
-    public void iHaveANewCustomer(String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship) {
-        customerRequest = new CustomerRequest(
-                firstName,
-                lastName,
-                nickname,
-                email,
-                phoneNumber,
-                relationship
-        );
+    @Given("a new customer is created")
+    public void aNewCustomerIsCreated() throws Exception {
+        createNewCustomer(1);
     }
 
-    @Given("I have a new customer with first name {string}, last name {string}, nickname {string}, email {string}, phone number {string}")
-    public void iHaveANewCustomerWithoutRelationship(String firstName, String lastName, String nickname, String email, String phoneNumber) {
-        customerRequest = new CustomerRequest(
-                firstName,
-                lastName,
-                nickname,
-                email,
-                phoneNumber,
-                null
-        );
+    @Given("{int} new customers are created")
+    public void newCustomersAreCreated(int numberOfCustomers) throws Exception {
+        for (int i = 1; i < numberOfCustomers; i++) {
+            createNewCustomer(i);
+        }
     }
 
-    @When("I send request to create the customer")
-    public void iSendARequestToCreateTheCustomer() throws  IOException, URISyntaxException, InterruptedException {
+    public void createNewCustomer(int customerNumber) throws Exception {
+        CustomerRequest customerRequest = new CustomerRequest(
+                "customer_FirstName" + customerNumber,
+                "customer_LastName" + customerNumber,
+                "customer_Nickname" + customerNumber,
+                "customer_" + customerNumber + "@email.com",
+                "customer_PhoneNumber" + customerNumber,
+                "customer_Relationship" + customerNumber
+        );
+
         String requestBody = objectMapper.writeValueAsString(customerRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
@@ -95,29 +89,24 @@ public class CustomerStepDefinition {
         createdCustomerIds.add(createdCustomerId);
     }
 
-    @And("I request customer with the created ID")
-    public void iRequestCustomerWithId() throws URISyntaxException, IOException, InterruptedException {
+    @When("the customer is retrieved by ID")
+    public void theCustomerIsRetrievedByID() throws Exception {
         HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
     }
 
-    @When("I request all customers")
-    public void iRequestAllCustomers() throws URISyntaxException, IOException, InterruptedException {
+    @When("all customers are retrieved")
+    public void allCustomersAreRetrieved() throws Exception {
         HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + CUSTOMER_PATH);
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
     }
 
-    @Then("return {int} status code")
-    public void returnStatusCode(int httpStatusCode) {
-        Assert.assertEquals("The status code must be " + httpStatusCode, httpStatusCode, response.statusCode());
-    }
-
-    @Then("the response should contain the customer")
-    public void theResponseShouldContainTheNewlyCreatedCustomer() throws Exception {
+    @Then("the response should contain the customer's details")
+    public void theResponseShouldContainTheCustomerDetails() throws Exception {
         PlatformResponse<CustomerResponse> platformResponse =
                 objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {
                 });
@@ -132,8 +121,8 @@ public class CustomerStepDefinition {
         Assert.assertEquals("Relationship should match", customerResponse.relationship(), createdCustomer.relationship());
     }
 
-    @Then("the response should contain all created customers")
-    public void theResponseShouldContainAllCreatedCustomers() throws IOException {
+    @Then("the response should contain all customer's details")
+    public void theResponseShouldContainAllCustomersDetails() throws Exception {
         PlatformResponse<List<CustomerResponse>> platformResponse =
                 objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<List<CustomerResponse>>>() {});
 
@@ -143,11 +132,25 @@ public class CustomerStepDefinition {
             boolean found = customersResponses.stream().anyMatch(c -> c.id().equals(id));
             Assert.assertTrue("Customer with ID " + id + " should be in the response", found);
         }
-
     }
 
-    @Then("I delete customer with the created ID")
-    public void iDeleteCustomerWithNewlyCreatedId() throws URISyntaxException, IOException, InterruptedException {
+    @And("the status code should be {int}")
+    public void theStatusCodeShouldBe(int httpStatusCode) {
+        Assert.assertEquals("The status code must be " + httpStatusCode, httpStatusCode, response.statusCode());
+    }
+
+    @Given("the customer database is empty")
+    public void theCustomerDatabaseIsEmpty() throws Exception {
+        allCustomersAreRetrieved();
+
+        PlatformResponse<List<CustomerResponse>> platformResponse =
+                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<List<CustomerResponse>>>() {});
+
+        Assert.assertTrue("Retrieved customer list should be empty", platformResponse.data().isEmpty());
+    }
+
+    @When("the created customer is deleted")
+    public void theCreatedCustomerIsDeleted() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(new java.net.URI(SERVICE_URL + CUSTOMER_PATH + "/" + createdCustomerId))
                 .DELETE()
@@ -160,22 +163,8 @@ public class CustomerStepDefinition {
         createdCustomerIds.remove(createdCustomerId);
     }
 
-    @Then("I delete all created customers")
-    public void iDeleteAllCreatedCustomers() throws URISyntaxException, IOException, InterruptedException {
-        for (String id: createdCustomerIds) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(new java.net.URI(SERVICE_URL+ CUSTOMER_PATH + "/" + id))
-                    .DELETE()
-                    .build();
-
-            try (var client = HttpClient.newHttpClient()) {
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            }
-        }
-    }
-
-    @Then("the customer should not exist anymore")
-    public void theCustomerShouldNotExistAnymore() throws URISyntaxException, IOException, InterruptedException {
+    @And("the created customer should no longer exist in the database")
+    public void theCreatedCustomerShouldNoLongerExistInTheDatabase() throws Exception {
         HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
         try (var client = HttpClient.newHttpClient()) {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -184,27 +173,15 @@ public class CustomerStepDefinition {
         Assert.assertEquals("Customer should not exist after deletion", 404, response.statusCode());
     }
 
-    @Then("the created customers should not exist anymore")
-    public void theCreatedCustomersShouldNotExistAnymore() throws URISyntaxException, IOException, InterruptedException {
-        for (String id: createdCustomerIds) {
-            HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId));
-            try (var client = HttpClient.newHttpClient()) {
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            }
-
-            Assert.assertEquals("Customer with ID " + id + " should not exist after deletion", 404, response.statusCode());
-        }
-    }
-
-    @When("I update the customer with first name {string}, last name {string}, nickname {string}, email {string}, phone number {string}, relationship {string}")
-    public void iUpdateTheCustomer(String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship) throws URISyntaxException, IOException, InterruptedException {
+    @When("the created customer's details are updated")
+    public void theCreatedCustomerDetailsAreUpdated() throws Exception {
         CustomerRequest updatedRequest = new CustomerRequest(
-                firstName,
-                lastName,
-                nickname,
-                email,
-                phoneNumber,
-                relationship
+                "updatedCustomerFirstName",
+                "updatedCustomerLastName",
+                "updatedCustomerNickname",
+                "updatedCustomer@email.com",
+                "updatedCustomerPhoneNumber",
+                "updatedCustomerRelationship"
         );
 
         String requestBody = objectMapper.writeValueAsString(updatedRequest);
@@ -223,5 +200,26 @@ public class CustomerStepDefinition {
                 objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
 
         customerResponse = platformResponse.data();
+    }
+
+    @Then("the response should contain the updated customer's details")
+    public void theResponseShouldContainTheUpdatedCustomerDetails() throws Exception {
+        theResponseShouldContainTheCustomerDetails();
+    }
+
+    @After
+    public void cleanUpAfterScenario() throws Exception {
+        if (!createdCustomerIds.isEmpty()) {
+            for (String id: createdCustomerIds) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(new java.net.URI(SERVICE_URL+ CUSTOMER_PATH + "/" + id))
+                        .DELETE()
+                        .build();
+
+                try (var client = HttpClient.newHttpClient()) {
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                }
+            }
+        }
     }
 }
