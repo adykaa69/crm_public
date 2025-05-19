@@ -15,6 +15,7 @@ import io.cucumber.java.en.When;
 import org.junit.Assert;
 import org.springframework.stereotype.Component;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -50,18 +51,21 @@ public class CustomerStepDefinition {
 
     public void createNewCustomer(int customerNumber) throws Exception {
         CustomerRequest customerRequest = new CustomerRequest(
-                "customer_FirstName" + customerNumber,
-                "customer_LastName" + customerNumber,
-                "customer_Nickname" + customerNumber,
+                "customer_firstName" + customerNumber,
+                "customer_lastName" + customerNumber,
+                "customer_nickname" + customerNumber,
                 "customer_" + customerNumber + "@email.com",
-                "customer_PhoneNumber" + customerNumber,
-                "customer_Relationship" + customerNumber
+                "customer_phoneNumber" + customerNumber,
+                "customer_relationship" + customerNumber
         );
+        sendCustomerRequest(customerRequest);
+    }
 
+    public void sendCustomerRequest(CustomerRequest customerRequest) throws Exception {
         String requestBody = objectMapper.writeValueAsString(customerRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new java.net.URI(SERVICE_URL + CUSTOMER_PATH))
+                .uri(new URI(SERVICE_URL + CUSTOMER_PATH))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
                 .build();
@@ -70,23 +74,15 @@ public class CustomerStepDefinition {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
 
-        // Check if the response contains an error (validation failure)
-        if (response.statusCode() == 500) {
-            PlatformResponse<ErrorResponse> errorResponse =
-                    objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<ErrorResponse>>() {});
-            System.out.println("Validation Error: " + errorResponse.message());
-            return; // Do not proceed further if the request was invalid
+        if (response.statusCode() == 201) {
+            // Deserialize response and store created customer ID
+            PlatformResponse<CustomerResponse> platformResponse =
+                    objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
+
+            customerResponse = platformResponse.data();
+            createdCustomerId = platformResponse.data().id();
+            createdCustomerIds.add(createdCustomerId);
         }
-
-        // Deserialize response and store created customer ID
-        PlatformResponse<CustomerResponse> platformResponse =
-                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
-
-
-        customerResponse = platformResponse.data();
-        createdCustomerId = platformResponse.data().id();
-
-        createdCustomerIds.add(createdCustomerId);
     }
 
     @When("the customer is retrieved by ID")
@@ -152,7 +148,7 @@ public class CustomerStepDefinition {
     @When("the created customer is deleted")
     public void theCreatedCustomerIsDeleted() throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new java.net.URI(SERVICE_URL + CUSTOMER_PATH + "/" + createdCustomerId))
+                .uri(new URI(SERVICE_URL + CUSTOMER_PATH + "/" + createdCustomerId))
                 .DELETE()
                 .build();
 
@@ -173,21 +169,25 @@ public class CustomerStepDefinition {
         Assert.assertEquals("Customer should not exist after deletion", 404, response.statusCode());
     }
 
+
     @When("the created customer's details are updated")
     public void theCreatedCustomerDetailsAreUpdated() throws Exception {
         CustomerRequest updatedRequest = new CustomerRequest(
-                "updatedCustomerFirstName",
-                "updatedCustomerLastName",
-                "updatedCustomerNickname",
-                "updatedCustomer@email.com",
-                "updatedCustomerPhoneNumber",
-                "updatedCustomerRelationship"
+                "customer_updatedFirstName",
+                "customer_updatedLastName",
+                "customer_updatedNickname",
+                "customer_updated@email.com",
+                "customer_updatedPhoneNumber",
+                "customer_updatedRelationship"
         );
+        sendUpdatedRequest(updatedRequest);
+    }
 
+    public void sendUpdatedRequest(CustomerRequest updatedRequest) throws Exception {
         String requestBody = objectMapper.writeValueAsString(updatedRequest);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(new java.net.URI(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId)))
+                .uri(new URI(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, createdCustomerId)))
                 .header("Content-Type", "application/json")
                 .PUT(HttpRequest.BodyPublishers.ofString(requestBody, StandardCharsets.UTF_8))
                 .build();
@@ -196,10 +196,12 @@ public class CustomerStepDefinition {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         }
 
-        PlatformResponse<CustomerResponse> platformResponse =
-                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
+        if (response.statusCode() == 200) {
+            PlatformResponse<CustomerResponse> platformResponse =
+                    objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<CustomerResponse>>() {});
 
-        customerResponse = platformResponse.data();
+            customerResponse = platformResponse.data();
+        }
     }
 
     @Then("the response should contain the updated customer's details")
@@ -207,12 +209,120 @@ public class CustomerStepDefinition {
         theResponseShouldContainTheCustomerDetails();
     }
 
+    @When("the customer with ID {string} is requested")
+    public void theCustomerWithNonExistentIdIsRequested(String ID) throws Exception {
+        HttpRequest request = HttpRequestFactory.createGet(SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, ID));
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    @Then("the response should contain the error message: {string}")
+    public void theResponseShouldContainTheErrorMessage(String expectedErrorMessage) throws Exception {
+        PlatformResponse<ErrorResponse> platformResponse =
+                objectMapper.readValue(response.body(), new TypeReference<PlatformResponse<ErrorResponse>>() {});
+
+        ErrorResponse errorResponse = platformResponse.data();
+
+        Assert.assertEquals(expectedErrorMessage, errorResponse.errorMessage());
+    }
+
+    @When("a new customer is created without relationship")
+    public void aNewCustomerIsCreatedWithoutRelationship() throws Exception {
+        CustomerRequest customerRequest = new CustomerRequest(
+                "customer_firstName",
+                "customer_lastName",
+                "customer_nickname",
+                "customer_@email.com",
+                "customer_phoneNumber",
+                null
+        );
+        sendCustomerRequest(customerRequest);
+    }
+
+    @When("a new customer is created without first name and nickname")
+    public void aNewCustomerIsCreatedWithoutFirstNameAndNickname() throws Exception {
+        CustomerRequest customerRequest = new CustomerRequest(
+                "",
+                "customer_lastName",
+                null,
+                "customer_@email.com",
+                "customer_phoneNumber",
+                "customer_relationship"
+        );
+        sendCustomerRequest(customerRequest);
+    }
+
+    @When("a new customer is created with invalid email")
+    public void aNewCustomerIsCreatedWithInvalidEmail() throws Exception {
+        CustomerRequest customerRequest = new CustomerRequest(
+                "customer_firstName",
+                "customer_lastName",
+                "customer_nickname",
+                "customer_email.com",
+                "customer_phoneNumber",
+                "customer_relationship"
+        );
+        sendCustomerRequest(customerRequest);
+    }
+
+    @When("the customer with ID {string} is requested to be deleted")
+    public void theCustomerWithNonExistingIdIsRequestedToBeDeleted(String ID) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(new URI(SERVICE_URL + CUSTOMER_PATH + "/" + ID))
+                .DELETE()
+                .build();
+
+        try (var client = HttpClient.newHttpClient()) {
+            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        }
+    }
+
+    @When("the created customer's details are updated without relationship")
+    public void theCreatedCustomerDetailsAreUpdatedWithoutRelationship() throws Exception {
+        CustomerRequest updatedRequest = new CustomerRequest(
+                "customer_updatedFirstName",
+                "customer_updatedLastName",
+                "customer_updatedNickname",
+                "customer_updated@email.com",
+                "customer_updatedPhoneNumber",
+                null
+        );
+        sendUpdatedRequest(updatedRequest);
+    }
+
+    @When("the created customer's details are updated without first name and nickname")
+    public void theCreatedCustomerDetailsAreUpdatedWithoutFirstNameAndNickname() throws Exception {
+        CustomerRequest updatedRequest = new CustomerRequest(
+                " ",
+                "customer_updatedLastName",
+                "",
+                "customer_updated@email.com",
+                "customer_updatedPhoneNumber",
+                "customer_updatedRelationship"
+        );
+        sendUpdatedRequest(updatedRequest);
+    }
+
+    @When("the created customer's details are updated with an invalid email")
+    public void theCreatedCustomerDetailsAreUpdatedWithAnInvalidEmail() throws Exception {
+        CustomerRequest updatedRequest = new CustomerRequest(
+                "customer_updatedFirstName",
+                "customer_updatedLastName",
+                "customer_updatedNickname",
+                "customer_updated@email",
+                "customer_updatedPhoneNumber",
+                "customer_updatedRelationship"
+        );
+        sendUpdatedRequest(updatedRequest);
+    }
+
     @After
     public void cleanUpAfterScenario() throws Exception {
         if (!createdCustomerIds.isEmpty()) {
             for (String id: createdCustomerIds) {
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(new java.net.URI(SERVICE_URL+ CUSTOMER_PATH + "/" + id))
+                        .uri(new URI(SERVICE_URL+ CUSTOMER_PATH + "/" + id))
                         .DELETE()
                         .build();
 
