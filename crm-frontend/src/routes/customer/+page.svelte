@@ -39,9 +39,7 @@
           <td>{customer.phoneNumber}</td>
           <td>{customer.relationship}</td>
           <td>
-            <a class="update-button" href="/customer/update/{customer.id}">
-              Részletek
-            </a>
+            <a class="update-button" href="/customer/{customer.id}">Részletek</a>
           </td>
         </tr>
       {/each}
