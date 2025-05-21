@@ -2,6 +2,8 @@ package hu.bhr.crm.exception;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -12,9 +14,12 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CustomerNotFoundException.class)
     public PlatformResponse<ErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+        log.warn("Customer not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ErrorCode.CUSTOMER_NOT_FOUND.getCode(),
                 ex.getMessage(),
@@ -27,6 +32,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidEmailException.class)
     public PlatformResponse<ErrorResponse> handleInvalidEmailException(InvalidEmailException ex) {
+        log.warn("Invalid email exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ErrorCode.EMAIL_INVALID.getCode(),
                 ex.getMessage(),
@@ -39,6 +45,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingFieldException.class)
     public PlatformResponse<ErrorResponse> handleMissingFieldException(MissingFieldException ex) {
+        log.warn("Missing field exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ErrorCode.MISSING_FIELD.getCode(),
                 ex.getMessage(),
@@ -50,7 +57,8 @@ public class GlobalExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public PlatformResponse<ErrorResponse> handleGeneralException(Exception e) {
+    public PlatformResponse<ErrorResponse> handleGeneralException(Exception ex) {
+        log.error("Unexpected error occurred", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
                 "An unexpected error occurred.",

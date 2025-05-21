@@ -7,6 +7,8 @@ import hu.bhr.crm.mapper.CustomerFactory;
 import hu.bhr.crm.mapper.CustomerMapper;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.service.CustomerService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +21,7 @@ public class CustomerController {
 
     private final CustomerService customerService;
     private final CustomerMapper customerMapper;
+    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
     public CustomerController(CustomerService customerService, CustomerMapper customerMapper) {
         this.customerService = customerService;
@@ -35,10 +38,10 @@ public class CustomerController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> getCustomer(@PathVariable UUID id) {
-
+        log.debug("Fetching customer with id: {}", id);
         Customer customer = customerService.getCustomerById(id);
-
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(customer);
+        log.info("Customer with id {} retrieved successfully", id);
 
         return new PlatformResponse<>("success", "Customer retrieved successfully", customerResponse);
     }
@@ -52,11 +55,13 @@ public class CustomerController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerResponse>> getAllCustomers() {
+        log.debug("Fetching all customers");
         List<Customer> customers = customerService.getAllCustomers();
 
         List<CustomerResponse> customerResponses = customers.stream()
                 .map(customerMapper::customerToCustomerResponse)
                 .toList();
+        log.info("All customers retrieved successfully");
 
         return new PlatformResponse<>("success", "All customers retrieved successfully", customerResponses);
     }
@@ -71,13 +76,10 @@ public class CustomerController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<CustomerResponse> registerCustomer(@RequestBody CustomerRequest customerRequest) {
-
         Customer customer = CustomerFactory.createCustomer(customerRequest);
-
         Customer createdCustomer = customerService.registerCustomer(customer);
-
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(createdCustomer);
-
+        log.info("Customer created successfully with id: {}", createdCustomer.id());
 
         return new PlatformResponse<>("success", "Customer created successfully", customerResponse);
     }
@@ -93,9 +95,10 @@ public class CustomerController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable UUID id) {
+        log.debug("Deleting customer with id: {}", id);
         Customer deletedCustomer = customerService.deleteCustomer(id);
-
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
+        log.info("Customer deleted successfully with id: {}", id);
 
         return new PlatformResponse<>("success", "Customer has been deleted successfully", customerResponse);
     }
@@ -114,9 +117,11 @@ public class CustomerController {
             @PathVariable UUID id,
             @RequestBody CustomerRequest customerRequest) {
 
+        log.debug("Updating customer with id: {}", id);
         Customer customer = customerMapper.customerRequestToCustomer(id, customerRequest);
         Customer updatedCustomer = customerService.updateCustomer(customer);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);
+        log.info("Customer updated successfully with id: {}", id);
 
         return new PlatformResponse<>("success", "Customer updated successfully", customerResponse);
     }
