@@ -53,10 +53,11 @@ public class CustomerService {
     }
 
     /**
-     * Creates a new customer and stores it in the database.
+     * Creates a new customer along with their residence and stores it in the database.
      * Responds with 201 Created if the customer is successfully created.
      *
-     * @param customer the built Customer containing the new customer details
+     * @param customer the built Customer containing the new customer details,
+     *                 including their residence information
      * @throws hu.bhr.crm.exception.MissingFieldException if neither first name nor nickname is set, or if relationship is missing
      * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
      * @return the created {@link Customer} object

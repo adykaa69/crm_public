@@ -6,5 +6,6 @@ public record CustomerRequest(
         String nickname,
         String email,
         String phoneNumber,
-        String relationship
+        String relationship,
+        ResidenceRequest residence
 ) {}

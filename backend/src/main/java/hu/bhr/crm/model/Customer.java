@@ -11,6 +11,7 @@ public record Customer(
         String email,
         String phoneNumber,
         String relationship,
+        Residence residence,
         Timestamp createdAt,
         Timestamp updatedAt
 ) {
@@ -26,6 +27,7 @@ public record Customer(
         private String email;
         private String phoneNumber;
         private String relationship;
+        private Residence residence;
         private Timestamp createdAt;
         private Timestamp updatedAt;
 
@@ -64,6 +66,11 @@ public record Customer(
             return this;
         }
 
+        public CustomerBuilder residence(Residence residence) {
+            this.residence = residence;
+            return this;
+        }
+
         public CustomerBuilder createdAt(Timestamp createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -75,7 +82,7 @@ public record Customer(
         }
 
         public Customer build() {
-            return new Customer(id, firstName, lastName, nickname, email, phoneNumber, relationship, createdAt, updatedAt);
+            return new Customer(id, firstName, lastName, nickname, email, phoneNumber, relationship, residence, createdAt, updatedAt);
         }
     }
 }

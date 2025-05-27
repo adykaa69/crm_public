@@ -17,7 +17,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: varchar(255)
+                  type: uuid
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -55,7 +55,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: residence_id
-                  type: varchar(255)
+                  type: uuid
                   constraints:
                     nullable: true
                     foreignKeyName: fk_customer_residence

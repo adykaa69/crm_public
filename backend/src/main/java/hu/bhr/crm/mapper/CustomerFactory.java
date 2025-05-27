@@ -2,6 +2,7 @@ package hu.bhr.crm.mapper;
 
 import hu.bhr.crm.controller.dto.CustomerRequest;
 import hu.bhr.crm.model.Customer;
+import hu.bhr.crm.model.Residence;
 
 import java.util.UUID;
 
@@ -14,6 +15,11 @@ public class CustomerFactory {
      * @return one built customer in a {@link Customer}
      */
     public static Customer createCustomer(CustomerRequest customerRequest) {
+        Residence residence = null;
+        if (customerRequest.residence() != null) {
+            residence = ResidenceFactory.createResidence(customerRequest.residence());
+        }
+
         return Customer.builder()
                 .id(UUID.randomUUID())
                 .firstName(customerRequest.firstName())
@@ -22,6 +28,7 @@ public class CustomerFactory {
                 .email(customerRequest.email())
                 .phoneNumber(customerRequest.phoneNumber())
                 .relationship((customerRequest.relationship()))
+                .residence(residence)
                 .build();
     }
 }

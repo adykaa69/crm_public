@@ -12,7 +12,7 @@ import java.util.UUID;
 @Table(name = "customer")
 public class CustomerEntity {
 
-    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, Timestamp createdAt, Timestamp updatedAt) {
+    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, ResidenceEntity residence, Timestamp createdAt, Timestamp updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -20,6 +20,7 @@ public class CustomerEntity {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.relationship = relationship;
+        this.residence = residence;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -48,6 +49,10 @@ public class CustomerEntity {
 
     @Column(name = "relationship", nullable = false)
     private String relationship;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "residence_id", referencedColumnName = "id")
+    private ResidenceEntity residence;
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name = "created_at", updatable = false)
@@ -96,6 +101,17 @@ public class CustomerEntity {
     public String getRelationship() { return relationship; }
 
     public void setRelationship(String relationship) { this.relationship = relationship; }
+
+    public ResidenceEntity getResidence() {
+        return residence;
+    }
+
+    public void setResidence(ResidenceEntity residence) {
+        this.residence = residence;
+        if (residence != null) {
+            residence.setCustomer(this);
+        }
+    }
 
     public Timestamp getCreatedAt() {
         return createdAt;
