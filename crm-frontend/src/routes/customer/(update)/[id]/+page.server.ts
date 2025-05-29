@@ -3,7 +3,7 @@ import type { CustomerResponse } from "$lib/models/customer-response";
 import { type ErrorResponse } from "$lib/models/error-response";
 import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
-import { type Actions, fail, redirect } from "@sveltejs/kit";
+import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -30,11 +30,14 @@ export const actions = {
     }
 
     const response = await updateCustomer(updateRequest);
+
     if (response.ok) {
       throw redirect(302, "/customer");
+    } else if (response.status === 500) {
+      await getErrorResponse(response);
+      throw error(500, "Az ügyfél frissítése sikertelen szerver hiba miatt.");
     } else {
-      const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      const errorResponse: PlatformApiResponse<ErrorResponse> = await getErrorResponse(response);
       return fail(404, {
         errorMessage: errorResponse.data?.errorMessage,
         updateRequest
@@ -42,3 +45,11 @@ export const actions = {
     }
   }
 } satisfies Actions;
+
+async function getErrorResponse(response: Response): Promise<PlatformApiResponse<ErrorResponse>> {
+  const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
+  console.log("Error occurred while updating customer. Response:");
+  console.log(errorResponse);
+  // console.log("Error response:", errorResponse.data?.errorMessage);
+  return errorResponse;
+}

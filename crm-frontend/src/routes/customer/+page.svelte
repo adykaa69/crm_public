@@ -20,6 +20,7 @@
       <th>Email</th>
       <th>Telefonszám</th>
       <th>Ismeretség</th>
+      <th>Település</th>
       <th>Műveletek</th>
     </tr>
   </thead>
@@ -38,6 +39,7 @@
           <td>{customer.email}</td>
           <td>{customer.phoneNumber}</td>
           <td>{customer.relationship}</td>
+          <td>{customer.residence?.city}</td>
           <td>
             <a class="update-button" href="/customer/{customer.id}">Részletek</a>
           </td>
