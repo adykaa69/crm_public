@@ -44,6 +44,10 @@ public class ResidenceMapper {
     }
 
     public ResidenceResponse residenceToResidenceResponse(Residence residence) {
+        if (residence == null) {
+            return null;
+        }
+
         return new ResidenceResponse(
                 residence.id(),
                 residence.zipCode(),
@@ -57,6 +61,10 @@ public class ResidenceMapper {
     }
 
     public Residence residenceRequestToResidence(ResidenceRequest residenceRequest) {
+        if (residenceRequest == null) {
+            return null;
+        }
+
         return Residence.builder()
                 .zipCode(residenceRequest.zipCode())
                 .streetAddress(residenceRequest.streetAddress())

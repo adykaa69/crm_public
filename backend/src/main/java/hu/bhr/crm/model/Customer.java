@@ -15,6 +15,10 @@ public record Customer(
         Timestamp createdAt,
         Timestamp updatedAt
 ) {
+    public Customer withResidence(Residence residence) {
+        return new Customer(id, firstName, lastName, nickname, email, phoneNumber, relationship, residence, createdAt, updatedAt);
+    }
+
     public static CustomerBuilder builder() {
         return new CustomerBuilder();
     }

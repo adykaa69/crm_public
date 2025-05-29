@@ -50,7 +50,7 @@ public class CustomerEntity {
     @Column(name = "relationship", nullable = false)
     private String relationship;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "residence_id", referencedColumnName = "id")
     private ResidenceEntity residence;
 

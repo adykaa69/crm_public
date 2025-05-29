@@ -118,8 +118,8 @@ public class CustomerController {
             @RequestBody CustomerRequest customerRequest) {
 
         log.debug("Updating customer with id: {}", id);
-        Customer customer = customerMapper.customerRequestToCustomer(id, customerRequest);
-        Customer updatedCustomer = customerService.updateCustomer(customer);
+        Customer customerPayload = customerMapper.customerRequestToCustomer(id, customerRequest);
+        Customer updatedCustomer = customerService.updateCustomer(customerPayload);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);
         log.info("Customer updated successfully with id: {}", id);
 

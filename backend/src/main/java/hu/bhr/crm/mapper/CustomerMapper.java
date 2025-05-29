@@ -6,7 +6,6 @@ import hu.bhr.crm.controller.dto.ResidenceResponse;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.Residence;
 import hu.bhr.crm.repository.entity.CustomerEntity;
-import hu.bhr.crm.repository.entity.ResidenceEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
@@ -50,20 +49,13 @@ public class CustomerMapper {
         customerEntity.setEmail(customer.email());
         customerEntity.setPhoneNumber(customer.phoneNumber());
         customerEntity.setRelationship(customer.relationship());
-
-        ResidenceEntity residenceEntity = residenceMapper.residenceToResidenceEntity(customer.residence());
-        if (residenceEntity != null) {
-            customerEntity.setResidence(residenceEntity);
-        }
+        customerEntity.setResidence(residenceMapper.residenceToResidenceEntity(customer.residence()));
 
         return customerEntity;
     }
 
     public CustomerResponse customerToCustomerResponse(Customer customer) {
-        ResidenceResponse residenceResponse = null;
-        if (customer.residence() != null) {
-            residenceResponse = residenceMapper.residenceToResidenceResponse(customer.residence());
-        }
+        ResidenceResponse residenceResponse = residenceMapper.residenceToResidenceResponse(customer.residence());
 
         return new CustomerResponse(
                 customer.id(),
@@ -80,6 +72,8 @@ public class CustomerMapper {
     }
 
     public Customer customerRequestToCustomer(UUID id, CustomerRequest customerRequest) {
+        Residence residence = residenceMapper.residenceRequestToResidence(customerRequest.residence());
+
         return new Customer(
                 id,
                 customerRequest.firstName(),
@@ -88,7 +82,7 @@ public class CustomerMapper {
                 customerRequest.email(),
                 customerRequest.phoneNumber(),
                 customerRequest.relationship(),
-                residenceMapper.residenceRequestToResidence(customerRequest.residence()),
+                residence,
                 null,
                 null
         );

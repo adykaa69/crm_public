@@ -13,6 +13,11 @@ public record Residence(
         Timestamp createdAt,
         Timestamp updatedAt
 ) {
+
+    public Residence withId(UUID id) {
+        return new Residence(id, zipCode, streetAddress, addressLine2, city, country, createdAt, updatedAt);
+    }
+
     public static ResidenceBuilder builder() {
         return new ResidenceBuilder();
     }
