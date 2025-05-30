@@ -35,8 +35,6 @@ dependencies {
     implementation("org.liquibase:liquibase-core:$liquiBaseVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
 
-    runtimeOnly ("com.h2database:h2:2.3.232")
-
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     // JUnit platform dependencies
