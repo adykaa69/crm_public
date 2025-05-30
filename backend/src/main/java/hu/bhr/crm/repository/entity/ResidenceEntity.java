@@ -53,7 +53,8 @@ public class ResidenceEntity {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    @OneToOne(mappedBy = "residence")
+    @OneToOne
+    @JoinColumn(name = "customer_id", nullable = false, unique = true)
     private CustomerEntity customer;
 
     public CustomerEntity getCustomer() {
