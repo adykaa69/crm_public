@@ -1,10 +1,8 @@
+<img src="/bemer_logo.svg" alt="Bemer_logo" />
+
 <style>
-  nav {
-    background-image: url("static/bemer_logo.svg");
-    position: absolute;
-    width: 90px;
-    height: 90px;
-    left: 0px;
-    top: calc (50% -90px / 2);
+  img {
+    max-height: 45px;
+    max-width: 45px;
   }
 </style>
