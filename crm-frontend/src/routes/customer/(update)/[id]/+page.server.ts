@@ -5,6 +5,7 @@ import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
+import { nestData } from "$lib/utils/form-data-parser";
 
 export const load: PageServerLoad = async ({ params }) => {
   const response = await getCustomer(params.id);
@@ -19,7 +20,7 @@ export const load: PageServerLoad = async ({ params }) => {
 export const actions = {
   update: async ({ request, params }) => {
     const formData = Object.fromEntries(await request.formData());
-    const updateRequest: CustomerUpdateRequest = formData as CustomerUpdateRequest;
+    const updateRequest = nestData<CustomerUpdateRequest>(formData);
     updateRequest.customerId = typeof params.id === "string" ? params.id : "";
 
     if (!updateRequest.firstName && !updateRequest.nickname) {

@@ -13,69 +13,33 @@
 <form method="POST" {action}>
   <div>
     <label for="firstName">Keresztnév:</label>
-    <input
-      id="firstName"
-      name="firstName"
-      type="text"
-      value={customer.firstName}
-      disabled={isDisabled}
-    />
+    <input id="firstName" name="firstName" type="text" value={customer.firstName} disabled={isDisabled} />
   </div>
   <div>
     <label for="lastName">Vezetéknév:</label>
-    <input
-      id="lastName"
-      name="lastName"
-      type="text"
-      value={customer.lastName}
-      disabled={isDisabled}
-    />
+    <input id="lastName" name="lastName" type="text" value={customer.lastName} disabled={isDisabled} />
   </div>
   <div>
     <label for="nickname">Becenév:</label>
-    <input
-      id="nickname"
-      name="nickname"
-      type="text"
-      value={customer.nickname}
-      disabled={isDisabled}
-    />
+    <input id="nickname" name="nickname" type="text" value={customer.nickname} disabled={isDisabled} />
   </div>
   <div>
     <label for="email">Email:</label>
-    <input
-      id="email"
-      name="email"
-      type="email"
-      value={customer.email}
-      disabled={isDisabled}
-    />
+    <input id="email" name="email" type="email" value={customer.email} disabled={isDisabled} />
   </div>
   <div>
     <label for="phoneNumber">Telefonszám:</label>
-    <input
-      id="phoneNumber"
-      name="phoneNumber"
-      type="tel"
-      value={customer.phoneNumber}
-      disabled={isDisabled}
-    />
+    <input id="phoneNumber" name="phoneNumber" type="tel" value={customer.phoneNumber} disabled={isDisabled} />
   </div>
   <div>
     <label for="relationship">Ismeretség:</label>
-    <input
-      id="relationship"
-      name="relationship"
-      type="text"
-      value={customer.relationship}
-      disabled={isDisabled}
-    />
+    <input id="relationship" name="relationship" type="text" value={customer.relationship} disabled={isDisabled} />
   </div>
   <div>
     <label for="country">Ország:</label>
     <input
       id="country"
-      name="country"
+      name="residence.country"
       type="text"
       value={customer.residence?.country}
       disabled={isDisabled}
@@ -85,7 +49,7 @@
     <label for="zipCode">Irányítószám:</label>
     <input
       id="zipCode"
-      name="zipCode"
+      name="residence.zipCode"
       type="text"
       value={customer.residence?.zipCode}
       disabled={isDisabled}
@@ -93,19 +57,13 @@
   </div>
   <div>
     <label for="city">Település:</label>
-    <input
-      id="city"
-      name="city"
-      type="text"
-      value={customer.residence?.city}
-      disabled={isDisabled}
-    />
+    <input id="city" name="residence.city" type="text" value={customer.residence?.city} disabled={isDisabled} />
   </div>
   <div>
     <label for="streetAddress">Lakcím:</label>
     <input
       id="streetAddress"
-      name="streetAddress"
+      name="residence.streetAddress"
       type="text"
       value={customer.residence?.streetAddress}
       disabled={isDisabled}
@@ -115,18 +73,13 @@
     <label for="addressLine2">Egyéb cím:</label>
     <input
       id="addressLine2"
-      name="addressLine2"
+      name="residence.addressLine2"
       type="text"
       value={customer.residence?.addressLine2}
       disabled={isDisabled}
     />
   </div>
-  <button
-    class="update {isDisabled ? '' : 'enabled'} something"
-    type="submit"
-    disabled={isDisabled}
-    >Submit
-  </button>
+  <button class="update {isDisabled ? '' : 'enabled'}" type="submit" disabled={isDisabled}>Submit</button>
 </form>
 
 {#if form?.errorMessage}

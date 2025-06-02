@@ -16,6 +16,7 @@ export interface CustomerUpdateRequest {
   email?: string;
   phoneNumber?: string;
   relationship?: string;
+  residence?: ResidenceUpdateRequest;
 }
 
 export interface ResidenceRegistrationRequest {
