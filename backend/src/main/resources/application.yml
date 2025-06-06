@@ -24,3 +24,10 @@ spring:
     password: ${POSTGRES_PASSWORD}
     driverClassName: org.postgresql.Driver
 
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}
+      username: ${MONGODB_ROOT_USERNAME}
+      password: ${MONGODB_ROOT_PASSWORD}
+
+
