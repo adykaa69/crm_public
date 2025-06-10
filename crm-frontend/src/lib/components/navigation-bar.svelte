@@ -1,30 +1,15 @@
 <script lang="ts">
-  import type { SvelteComponent } from "svelte";
   import { page } from "$app/state";
+  import { getTitleByHref } from "$lib/utils/handle-constants";
+  import Logo from "./logo.svelte";
 
-  export let title: string;
-  export let items: {
-    href: string;
-    label: string;
-    ariaCurrent: boolean;
-    component: typeof SvelteComponent;
-  }[] = [];
+  let title: string = $derived(getTitleByHref(page.url.pathname));
 </script>
 
 <nav class="container">
-  <ul>
-    {#each items as item}
-      <li>
-        <a
-          href={item.href}
-          aria-label={item.label}
-          aria-current={item.ariaCurrent ? page.url.pathname === item.href : false}
-        >
-          <svelte:component this={item.component} />
-        </a>
-      </li>
-    {/each}
-  </ul>
+  <a href="/">
+    <Logo />
+  </a>
   <h1>{title}</h1>
 </nav>
 

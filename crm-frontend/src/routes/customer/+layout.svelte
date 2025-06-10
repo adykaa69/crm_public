@@ -4,7 +4,7 @@
   let { children, data } = $props();
 </script>
 
-<nav>
+<!-- <nav>
   <a href="/customer">{data.title}</a>
-</nav>
+</nav> -->
 {@render children()}
