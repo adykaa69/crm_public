@@ -41,11 +41,6 @@
     padding: 10px;
   }
 
-  a {
-    /* background: #514ef3; */
-    /* border: 1px solid #514ef3; */
-  }
-
   nav {
     background: rgba(246, 250, 253, 0.9);
     /* background: rgba(115, 132, 145, 0.9); */

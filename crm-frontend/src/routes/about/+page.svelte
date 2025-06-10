@@ -1,1 +1,5 @@
-<h1>Ez a rólunk oldal, ha bármi kérdésed van kérdezz bárkit, rám ne számíts</h1>
+<script lang="ts">
+  import About from "$lib/components/about.svelte";
+</script>
+
+<About />

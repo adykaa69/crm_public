@@ -21,7 +21,6 @@
 </script>
 
 <label class="switch">
-  <!--  <span>Szerkesztési mód</span>-->
   Szerkesztési mód
   <input type="checkbox" onclick={toggleDisabled} />
 </label>

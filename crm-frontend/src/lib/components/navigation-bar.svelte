@@ -23,20 +23,6 @@
     background: rgba(246, 250, 253, 0.9);
   }
 
-  nav a[aria-current="true"] {
-    border-bottom: 2px solid;
-  }
-
-  ul {
-    display: flex;
-    flex-direction: row;
-  }
-
-  li {
-    align-content: center;
-    max-height: 45px;
-  }
-
   .container {
     display: flex;
     flex-direction: row;

@@ -51,6 +51,5 @@ async function getErrorResponse(response: Response): Promise<PlatformApiResponse
   const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
   console.log("Error occurred while updating customer. Response:");
   console.log(errorResponse);
-  // console.log("Error response:", errorResponse.data?.errorMessage);
   return errorResponse;
 }
