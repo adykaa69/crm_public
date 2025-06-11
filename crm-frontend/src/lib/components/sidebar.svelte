@@ -1,14 +1,19 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { items } from "$lib/constants";
+
+  let pathname = $derived(page.url.pathname);
 </script>
 
 <nav>
   <ul>
     {#each items as item}
-      <li aria-current={page.url.pathname === item.href}>
+      <li aria-current={pathname === item.href || pathname === item.btnHref}>
         <a href={item.href} aria-label={item.label}>
-          <img src={page.url.pathname === item.href ? item.activeIcon : item.inactiveIcon} alt={item.label} />
+          <img
+            src={pathname === item.href || pathname === item.btnHref ? item.activeIcon : item.inactiveIcon}
+            alt={item.label}
+          />
         </a>
       </li>
     {/each}

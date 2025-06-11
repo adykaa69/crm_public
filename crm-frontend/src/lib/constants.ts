@@ -9,14 +9,18 @@ export const items = [
     activeIcon: "/dashboard_active_logo.svg",
     inactiveIcon: "/dashboard_inactive_logo.svg",
     label: "dashboard",
-    title: "Kezdőoldal"
+    title: "Kezdőoldal",
+    btnName: "Hozzáadás",
+    btnHref: "/"
   },
   {
     href: "/customer",
     activeIcon: "/customer_active_logo.svg",
     inactiveIcon: "/customer_inactive_logo.svg",
     label: "customer",
-    title: "Ügyfelek"
+    title: "Ügyfelek",
+    btnName: "Ügyfél hozzáadása",
+    btnHref: "/customer/registration"
   },
   {
     href: "/about",

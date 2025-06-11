@@ -7,9 +7,6 @@
   }
 </script>
 
-<h1>Ez az ügyfél oldal</h1>
-<a href="/customer/registration">Új ügyfél</a>
-<!-- <input type="button" onclick={a} value="Új ügyfél"> -->
 <table>
   <thead>
     <tr>
