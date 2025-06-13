@@ -32,7 +32,7 @@ services:
       - backend
       
   mongo:
-    image: mongo:7.0
+    image: docker.io/library/mongo:8.0.10
     container_name: mongo
     ports:
       - "27017:27017"

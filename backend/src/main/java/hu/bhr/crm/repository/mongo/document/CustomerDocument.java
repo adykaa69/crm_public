@@ -1,47 +1,82 @@
 package hu.bhr.crm.repository.mongo.document;
 
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+import java.util.UUID;
+
 @Document
-public class CustomerDocument {
+public class CustomerDocument implements Persistable<UUID> {
 
     @Id
-    String id;
-    String customerId;
-    String notes;
+    private UUID id;
+    private UUID customerId;
+    private String note;
+
+    @CreatedDate
+    private Instant createdAt;
+
+    @LastModifiedDate
+    private Instant updatedAt;
 
     public CustomerDocument() {
     }
 
-    public CustomerDocument(String id, String customerId, String notes) {
-        this.id = id;
-        this.customerId = customerId;
-        this.notes = notes;
+    @Override
+    public boolean isNew() {
+        return getCreatedAt() == null;
     }
 
-    public String getId() {
+    public CustomerDocument(UUID id, UUID customerId, String note, Instant createdAt, Instant updatedAt) {
+        this.id = id;
+        this.customerId = customerId;
+        this.note = note;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public String getCustomerId() {
+    public UUID getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(String customerId) {
+    public void setCustomerId(UUID customerId) {
         this.customerId = customerId;
     }
 
-    public String getNotes() {
-        return notes;
+    public String getNote() {
+        return note;
     }
 
-    public void setNotes(String notes) {
-        this.notes = notes;
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     @Override
@@ -49,7 +84,7 @@ public class CustomerDocument {
         return "CustomerDocument{" +
                 "id='" + id + '\'' +
                 ", customerId='" + customerId + '\'' +
-                ", notes='" + notes + '\'' +
+                ", note='" + note + '\'' +
                 '}';
     }
 }

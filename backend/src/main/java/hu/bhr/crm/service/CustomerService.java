@@ -18,10 +18,12 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository repository;
+    private final CustomerDetailsService customerDetailsService;
     private final CustomerMapper customerMapper;
 
-    public CustomerService(CustomerRepository repository, CustomerMapper customerMapper) {
+    public CustomerService(CustomerRepository repository, CustomerDetailsService customerDetailsService, CustomerMapper customerMapper) {
         this.repository = repository;
+        this.customerDetailsService = customerDetailsService;
         this.customerMapper = customerMapper;
     }
 
@@ -84,6 +86,9 @@ public class CustomerService {
 
         Customer deletedCustomer = customerMapper.customerEntityToCustomer(customerEntity);
         repository.deleteById(id);
+
+        // Delete all documents related to the customer
+        customerDetailsService.deleteCustomerDetailsByCustomerId(id);
 
         return deletedCustomer;
     }
