@@ -6,15 +6,19 @@ services:
     container_name: crm
     depends_on:
       - postgres
+      - mongo
     ports:
       - "5588:8080"
-    env_file: ../../env_files/crm.env
     environment:
       CONFIG_ENV: ${PROFILE_ARG}
       POSTGRES_JDBC_URL: jdbc:postgresql://postgres:5432/postgres
       POSTGRES_USERNAME: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      MONGODB_URI: mongodb://mongo:27017/crm
+      MONGODB_CRM_HOST: ${MONGODB_CRM_HOST}
+      MONGODB_CRM_PORT: ${MONGODB_CRM_PORT}
+      MONGODB_CRM_DATABASE: ${MONGODB_CRM_DATABASE}
+      MONGODB_CRM_USERNAME: ${MONGODB_CRM_USERNAME}
+      MONGODB_CRM_PASSWORD: ${MONGODB_CRM_PASSWORD}
     networks:
       - backend
 
@@ -23,7 +27,6 @@ services:
     container_name: postgres
     ports:
       - "5432:5432"
-    env_file: ../../env_files/crm.env
     environment:
       POSTGRES_USER: ${POSTGRES_USERNAME}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -36,7 +39,6 @@ services:
     container_name: mongo
     ports:
       - "27017:27017"
-    env_file: ../../env_files/crm.env
     environment:
       MONGO_INITDB_DATABASE: crm
       MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USERNAME}

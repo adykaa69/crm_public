@@ -26,8 +26,10 @@ spring:
 
   data:
     mongodb:
-      uri: ${MONGODB_URI}
-      username: ${MONGODB_ROOT_USERNAME}
-      password: ${MONGODB_ROOT_PASSWORD}
+      host: ${MONGODB_CRM_HOST}
+      port: ${MONGODB_CRM_PORT}
+      database: ${MONGODB_CRM_DATABASE}
+      username: ${MONGODB_CRM_USERNAME}
+      password: ${MONGODB_CRM_PASSWORD}
 
 

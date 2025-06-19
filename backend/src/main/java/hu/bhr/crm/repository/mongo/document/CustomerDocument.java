@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.util.UUID;
 
-@Document
+@Document(collection = "customer_details")
 public class CustomerDocument implements Persistable<UUID> {
 
     @Id
