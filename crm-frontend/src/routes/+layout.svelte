@@ -9,7 +9,13 @@
 <NavigationBar />
 <div style="display: flex; min-height: calc(100vh - 45px);">
   <Sidebar />
-  <main style="flex: 1;">
+  <main>
     {@render children()}
   </main>
 </div>
+
+<style>
+  main {
+    flex: 1;
+  }
+</style>

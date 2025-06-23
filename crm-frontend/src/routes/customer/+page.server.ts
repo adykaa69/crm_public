@@ -10,5 +10,5 @@ export const load: PageServerLoad = async () => {
   if (response.status !== 200) {
     return { errors: data.data as ErrorResponse[] };
   }
-  return { costumers: data.data as CustomerResponse[] };
+  return { customers: data.data as CustomerResponse[] };
 };

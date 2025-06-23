@@ -47,8 +47,6 @@
   }
 
   nav {
-    background: rgba(246, 250, 253, 0.9);
-    /* background: rgba(115, 132, 145, 0.9); */
     display: flex;
     flex-direction: column;
     max-width: fit-content;

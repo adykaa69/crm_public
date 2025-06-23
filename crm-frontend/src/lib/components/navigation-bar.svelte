@@ -36,7 +36,6 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: rgba(246, 250, 253, 0.9);
     min-height: 45px;
   }
 
