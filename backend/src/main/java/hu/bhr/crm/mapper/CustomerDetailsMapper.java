@@ -7,6 +7,8 @@ import hu.bhr.crm.repository.mongo.document.CustomerDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.UUID;
+
 @Mapper(componentModel = "spring")
 public interface CustomerDetailsMapper {
     CustomerDetails customerDocumentToCustomerDetails(CustomerDocument customerDocument);
@@ -15,9 +17,9 @@ public interface CustomerDetailsMapper {
 
     CustomerDetailsResponse customerDetailsToCustomerDetailsResponse(CustomerDetails customerDetails);
 
-    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "id", source = "id")
     @Mapping(target = "customerId", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    CustomerDetails customerDetailsRequestToCustomerDetails(CustomerDetailsRequest customerDetailsRequest);
+    CustomerDetails customerDetailsRequestToCustomerDetails(UUID id, CustomerDetailsRequest customerDetailsRequest);
 }
