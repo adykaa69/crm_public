@@ -12,6 +12,17 @@ databaseChangeLog:
       author: tomi
       labels: table creation
       changes:
+        - sql:
+            sql: "CREATE TYPE status AS ENUM (
+                    'open',
+                    'in_progress',
+                    'on_hold',
+                    'completed',
+                    'cancelled',
+                    'blocked',
+                    'archived'
+                  );"
+
         - createTable:
               tableName: customer
               columns:
@@ -90,4 +101,49 @@ databaseChangeLog:
                   type: timestamp
                   defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
 
-
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tasks_customer
+                    references: customer(id)
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: reminder
+                  type: timestamp
+              - column:
+                  name: due_date
+                  type: timestamp
+              - column:
+                  name: status
+                  type: status
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+                  defaultValueDate: ${now}
+              - column:
+                  name: completed_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
