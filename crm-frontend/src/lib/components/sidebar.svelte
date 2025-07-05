@@ -3,17 +3,15 @@
   import { items } from "$lib/constants";
 
   let pathname = $derived(page.url.pathname);
+  let pathNameChunk = $derived(pathname.match("^(\/[^/]*)")?.at(0));
 </script>
 
 <nav>
   <ul>
     {#each items as item}
-      <li aria-current={pathname === item.href || pathname === item.btnHref}>
+      <li aria-current={pathNameChunk === item.href}>
         <a href={item.href} aria-label={item.label}>
-          <img
-            src={pathname === item.href || pathname === item.btnHref ? item.activeIcon : item.inactiveIcon}
-            alt={item.label}
-          />
+          <img src={pathNameChunk === item.href ? item.activeIcon : item.inactiveIcon} alt={item.label} />
         </a>
       </li>
     {/each}

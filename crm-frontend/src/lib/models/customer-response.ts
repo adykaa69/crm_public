@@ -1,12 +1,12 @@
 export interface CustomerResponse {
   id: string;
-  firstName?: string;
-  lastName?: string;
-  nickname?: string;
-  email?: string;
-  phoneNumber?: string;
-  relationship?: string;
-  residence?: ResidenceResponse;
+  firstName: string;
+  lastName: string;
+  nickname: string;
+  email: string;
+  phoneNumber: string;
+  relationship: string;
+  residence: ResidenceResponse;
   createdAt: string;
   updatedAt: string;
 }

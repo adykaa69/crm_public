@@ -3,9 +3,12 @@
   import { type CustomerResponse } from "$lib/models/customer-response";
   import { deleteCustomer } from "$lib/utils/handle-customer";
   import { goto } from "$app/navigation";
+  import CustomerDetails from "$lib/components/customer-details.svelte";
+  import type { CustomerDetailsResponse } from "$lib/models/customer-details.js";
 
   let { data, form } = $props();
-  let customer: CustomerResponse = data.data as CustomerResponse;
+  // let customer: CustomerResponse = data.data as CustomerResponse;
+  let customerDetails: CustomerDetailsResponse[] = [];
   let isDisabled = $state(true);
 
   function toggleDisabled() {
@@ -24,15 +27,12 @@
   Szerkesztési mód
   <input type="checkbox" onclick={toggleDisabled} />
 </label>
-<CustomerForm action="?/update" {isDisabled} title="Ügyfél adat szerkesztése" {customer} {form} />
-
-<button
-  class="delete {isDisabled ? '' : 'enabled'}"
-  onclick={() => confirmCustomerDeletion(customer)}
-  disabled={isDisabled}
->
-  Törlés
-</button>
+<CustomerDetails
+  {isDisabled}
+  customer={data.customer as CustomerResponse}
+  customerDetails={data.customerDetails as CustomerDetailsResponse[]}
+  {form}
+/>
 
 <style>
   button.delete {
