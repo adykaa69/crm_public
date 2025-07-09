@@ -35,6 +35,19 @@ public class SpecificExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(CustomerDetailsNotFoundException.class)
+    public PlatformResponse<ErrorResponse> handleCustomerDetailsNotFoundException(CustomerDetailsNotFoundException ex) {
+        log.warn("Customer details not found", ex);
+        ErrorResponse errorResponse = new ErrorResponse(
+                ErrorCode.CUSTOMER_DETAILS_NOT_FOUND.getCode(),
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new PlatformResponse<>("error", "Error occurred during customer details retrieval", errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TaskNotFoundException.class)
     public PlatformResponse<ErrorResponse> handleTaskNotFoundException(TaskNotFoundException ex) {
         log.warn("Task not found", ex);
