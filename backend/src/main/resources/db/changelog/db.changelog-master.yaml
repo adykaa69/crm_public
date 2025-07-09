@@ -3,25 +3,22 @@ databaseChangeLog:
       dbms: postgresql
       name: now
       value: current_timestamp
-  - property:
-      dbms: h2
-      name: now
-      value: now()
   - changeSet:
       id: 1
       author: tomi
       labels: table creation
       changes:
         - sql:
-            sql: "CREATE TYPE status AS ENUM (
-                    'open',
-                    'in_progress',
-                    'on_hold',
-                    'completed',
-                    'cancelled',
-                    'blocked',
-                    'archived'
-                  );"
+            sql: >
+              CREATE TYPE status AS ENUM (
+                      'OPEN',
+                      'IN_PROGRESS',
+                      'ON_HOLD',
+                      'BLOCKED',
+                      'COMPLETED',
+                      'CANCELLED',
+                      'ARCHIVED'
+                    );
 
         - createTable:
               tableName: customer
@@ -114,7 +111,6 @@ databaseChangeLog:
                   name: customer_id
                   type: uuid
                   constraints:
-                    nullable: false
                     foreignKeyName: fk_tasks_customer
                     references: customer(id)
               - column:
@@ -134,8 +130,6 @@ databaseChangeLog:
               - column:
                   name: status
                   type: status
-                  constraints:
-                    nullable: false
               - column:
                   name: created_at
                   type: timestamp

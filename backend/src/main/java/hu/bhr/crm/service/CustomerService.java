@@ -134,5 +134,4 @@ public class CustomerService {
         FieldValidation.validateNotEmpty(customer.relationship(), "Relationship");
         EmailValidation.validate(customer.email());
     }
-
 }
