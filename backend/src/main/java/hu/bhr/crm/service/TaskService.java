@@ -1,7 +1,6 @@
 package hu.bhr.crm.service;
 
 import hu.bhr.crm.controller.dto.TaskRequest;
-import hu.bhr.crm.exception.CustomerNotFoundException;
 import hu.bhr.crm.exception.TaskNotFoundException;
 import hu.bhr.crm.mapper.TaskFactory;
 import hu.bhr.crm.mapper.TaskMapper;
@@ -9,11 +8,11 @@ import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
-import hu.bhr.crm.repository.entity.CustomerEntity;
 import hu.bhr.crm.repository.entity.TaskEntity;
 import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,8 +29,44 @@ public class TaskService {
     }
 
     /**
-     * Saves a new task for a customer.
-     * Validates the task's title and checks if the customer exists.
+     * Gets one task by its unique ID.
+     *
+     * @param id the unique ID of the requested task
+     * @return a {@link Task} object corresponding to the given ID
+     * @throws TaskNotFoundException if the task with the given ID does not exist (returns HTTP 404 Not Found)
+     */
+    public Task getTaskById(UUID id) {
+        TaskEntity taskEntity = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        return taskMapper.taskEntityToTask(taskEntity);
+    }
+
+    /**
+     * Gets all tasks.
+     *
+     * @return a list of {@link Task} objects
+     */
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll().stream()
+                .map(taskMapper::taskEntityToTask)
+                .toList();
+    }
+
+    /**
+     * Gets all tasks associated with a specific customer by their unique ID.
+     *
+     * @param customerId the unique ID of the customer whose tasks are requested
+     * @return a list of {@link Task} objects corresponding to the given customer ID
+     */
+    public List<Task> getAllTasksByCustomerId(UUID customerId) {
+        return taskRepository.findAllByCustomerId(customerId).stream()
+                .map(taskMapper::taskEntityToTask)
+                .toList();
+    }
+
+    /**
+     * Saves a new task.
+     * Validates the task's title and if a customer ID is provided, check if the customer exists.
      *
      * @param taskRequest the built task to be saved
      * @return the saved {@link Task} object
@@ -55,6 +90,37 @@ public class TaskService {
         savedTaskEntity = taskRepository.findById(savedTaskEntity.getId())
                 .orElseThrow(() -> new TaskNotFoundException("Failed to retrieve saved task"));
         return taskMapper.taskEntityToTask(savedTaskEntity);
+    }
+
+    public Task deleteTask(UUID id) {
+        TaskEntity taskEntity = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+        Task deletedTask = taskMapper.taskEntityToTask(taskEntity);
+        taskRepository.deleteById(id);
+        return deletedTask;
+    }
+
+    public Task updateTask(UUID id, TaskRequest taskRequest) {
+        TaskEntity taskEntity = taskRepository.findById(id)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+
+        FieldValidation.validateNotEmpty(taskRequest.title(), "Title");
+
+        Customer customer = null;
+        if (taskRequest.customerId() != null) {
+            customer = customerService.getCustomerById(taskRequest.customerId());
+        }
+
+        Task updatedTask = TaskFactory.createTaskWithId(id, taskRequest, customer);
+
+        TaskEntity updatedTaskEntity = taskMapper.taskToTaskEntity(updatedTask);
+        updatedTaskEntity = taskRepository.save(updatedTaskEntity);
+
+        setCompletedAtIfCompleted(updatedTaskEntity);
+        updatedTaskEntity = taskRepository.findById(updatedTaskEntity.getId())
+                .orElseThrow(() -> new TaskNotFoundException("Failed to retrieve saved task"));
+        return taskMapper.taskEntityToTask(updatedTaskEntity);
     }
 
     private void setCompletedAtIfCompleted(TaskEntity taskEntity) {

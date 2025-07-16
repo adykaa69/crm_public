@@ -28,4 +28,18 @@ public class TaskFactory {
                         : taskRequest.status())
                 .build();
     }
+
+    public static Task createTaskWithId(UUID id, TaskRequest taskRequest, Customer customer) {
+        return Task.builder()
+                .id(id)
+                .customer(customer)
+                .title(taskRequest.title())
+                .description(taskRequest.description())
+                .reminder(taskRequest.reminder())
+                .dueDate(taskRequest.dueDate())
+                .status(taskRequest.status() == null
+                        ? TaskStatus.OPEN
+                        : taskRequest.status())
+                .build();
+    }
 }

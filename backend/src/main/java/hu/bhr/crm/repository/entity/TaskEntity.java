@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.SourceType;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
 import java.sql.Timestamp;
@@ -57,7 +58,7 @@ public class TaskEntity {
     @Column(name = "completed_at")
     private Timestamp completedAt;
 
-    @CreationTimestamp(source = SourceType.DB)
+    @UpdateTimestamp(source = SourceType.DB)
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 

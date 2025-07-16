@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -21,4 +22,6 @@ public interface TaskRepository extends JpaRepository<TaskEntity, UUID> {
            SET t.completedAt = CURRENT_TIMESTAMP
            WHERE t.status = :status AND t.id = :id""")
     void setCompletedAtIfCompleted(@Param("id") UUID id, @Param("status") TaskStatus status);
+
+    List<TaskEntity> findAllByCustomerId(UUID customerId);
 }

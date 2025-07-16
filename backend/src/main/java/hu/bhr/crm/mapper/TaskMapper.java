@@ -6,7 +6,7 @@ import hu.bhr.crm.repository.entity.TaskEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = CustomerMapper.class)
 public interface TaskMapper {
 
     Task taskEntityToTask(TaskEntity taskEntity);
