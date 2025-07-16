@@ -128,5 +128,19 @@ public class TaskService {
             taskRepository.setCompletedAtIfCompleted(taskEntity.getId(), TaskStatus.COMPLETED);
         }
     }
+
+    public void detachCustomerFromTasks(UUID customerId) {
+        List<TaskEntity> relatedTasks = taskRepository.findAllByCustomerId(customerId);
+        for (TaskEntity task : relatedTasks) {
+            task.setCustomer(null);
+            String originalDescription = task.getDescription();
+            String note = "The related customer has been deleted.";
+            task.setDescription((originalDescription == null || originalDescription.isBlank())
+                    ? note
+                    : originalDescription + " " + note);
+        }
+
+        taskRepository.saveAll(relatedTasks);
+    }
 }
 

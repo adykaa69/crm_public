@@ -4,7 +4,6 @@ import hu.bhr.crm.exception.CustomerDetailsNotFoundException;
 import hu.bhr.crm.exception.CustomerNotFoundException;
 import hu.bhr.crm.mapper.CustomerDetailsMapper;
 import hu.bhr.crm.model.CustomerDetails;
-import hu.bhr.crm.repository.CustomerRepository;
 import hu.bhr.crm.repository.mongo.CustomerDocumentRepository;
 import hu.bhr.crm.repository.mongo.document.CustomerDocument;
 import hu.bhr.crm.validation.FieldValidation;
@@ -18,12 +17,12 @@ public class CustomerDetailsService {
 
     private final CustomerDocumentRepository customerDocumentRepository;
     private final CustomerDetailsMapper mapper;
-    private final CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
-    public CustomerDetailsService(CustomerDocumentRepository customerDocumentRepository, CustomerDetailsMapper mapper, CustomerRepository customerRepository) {
+    public CustomerDetailsService(CustomerDocumentRepository customerDocumentRepository, CustomerDetailsMapper mapper, CustomerService customerService) {
         this.customerDocumentRepository = customerDocumentRepository;
         this.mapper = mapper;
-        this.customerRepository = customerRepository;
+        this.customerService = customerService;
     }
 
     /**
@@ -63,9 +62,7 @@ public class CustomerDetailsService {
     public CustomerDetails saveCustomerDetails(CustomerDetails customerDetails) {
         FieldValidation.validateNotEmpty(customerDetails.note(), "Note");
 
-        if (!customerRepository.existsById(customerDetails.customerId())) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
+        customerService.validateCustomerExists(customerDetails.customerId());
 
         CustomerDocument customerDocument = mapper.customerDetailsToCustomerDocument(customerDetails);
         CustomerDocument savedDocument = customerDocumentRepository.save(customerDocument);
@@ -105,11 +102,7 @@ public class CustomerDetailsService {
         CustomerDocument existingDocument = customerDocumentRepository.findById(customerDetails.id())
                 .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));
 
-        // Check if the customer exists
-        UUID customerId = existingDocument.getCustomerId();
-        if (!customerRepository.existsById(customerId)) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
+        customerService.validateCustomerExists(existingDocument.getCustomerId());
 
         // Update the existing document with new values
         existingDocument.setNote(customerDetails.note());

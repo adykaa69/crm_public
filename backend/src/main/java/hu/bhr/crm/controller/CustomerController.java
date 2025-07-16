@@ -6,7 +6,7 @@ import hu.bhr.crm.controller.dto.PlatformResponse;
 import hu.bhr.crm.mapper.CustomerFactory;
 import hu.bhr.crm.mapper.CustomerMapper;
 import hu.bhr.crm.model.Customer;
-import hu.bhr.crm.service.CustomerService;
+import hu.bhr.crm.service.CustomerServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -19,12 +19,12 @@ import java.util.UUID;
 @RequestMapping("/api/v1/customers")
 public class CustomerController {
 
-    private final CustomerService customerService;
+    private final CustomerServiceFacade customerServiceFacade;
     private final CustomerMapper customerMapper;
     private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
 
-    public CustomerController(CustomerService customerService, CustomerMapper customerMapper) {
-        this.customerService = customerService;
+    public CustomerController(CustomerServiceFacade customerServiceFacade, CustomerMapper customerMapper) {
+        this.customerServiceFacade = customerServiceFacade;
         this.customerMapper = customerMapper;
     }
 
@@ -39,7 +39,7 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> getCustomer(@PathVariable UUID id) {
         log.debug("Fetching customer with id: {}", id);
-        Customer customer = customerService.getCustomerById(id);
+        Customer customer = customerServiceFacade.getCustomerById(id);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(customer);
         log.info("Customer with id {} retrieved successfully", id);
 
@@ -56,7 +56,7 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerResponse>> getAllCustomers() {
         log.debug("Fetching all customers");
-        List<Customer> customers = customerService.getAllCustomers();
+        List<Customer> customers = customerServiceFacade.getAllCustomers();
 
         List<CustomerResponse> customerResponses = customers.stream()
                 .map(customerMapper::customerToCustomerResponse)
@@ -77,7 +77,7 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<CustomerResponse> registerCustomer(@RequestBody CustomerRequest customerRequest) {
         Customer customer = CustomerFactory.createCustomer(customerRequest);
-        Customer createdCustomer = customerService.registerCustomer(customer);
+        Customer createdCustomer = customerServiceFacade.registerCustomer(customer);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(createdCustomer);
         log.info("Customer created successfully with id: {}", createdCustomer.id());
 
@@ -96,7 +96,7 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable UUID id) {
         log.debug("Deleting customer with id: {}", id);
-        Customer deletedCustomer = customerService.deleteCustomer(id);
+        Customer deletedCustomer = customerServiceFacade.deleteCustomer(id);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
         log.info("Customer deleted successfully with id: {}", id);
 
@@ -119,7 +119,7 @@ public class CustomerController {
 
         log.debug("Updating customer with id: {}", id);
         Customer customerPayload = customerMapper.customerRequestToCustomer(id, customerRequest);
-        Customer updatedCustomer = customerService.updateCustomer(customerPayload);
+        Customer updatedCustomer = customerServiceFacade.updateCustomer(customerPayload);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);
         log.info("Customer updated successfully with id: {}", id);
 

@@ -18,12 +18,10 @@ import java.util.UUID;
 public class CustomerService {
 
     private final CustomerRepository repository;
-    private final CustomerDetailsService customerDetailsService;
     private final CustomerMapper customerMapper;
 
-    public CustomerService(CustomerRepository repository, CustomerDetailsService customerDetailsService, CustomerMapper customerMapper) {
+    public CustomerService(CustomerRepository repository, CustomerMapper customerMapper) {
         this.repository = repository;
-        this.customerDetailsService = customerDetailsService;
         this.customerMapper = customerMapper;
     }
 
@@ -87,9 +85,6 @@ public class CustomerService {
         Customer deletedCustomer = customerMapper.customerEntityToCustomer(customerEntity);
         repository.deleteById(id);
 
-        // Delete all documents related to the customer
-        customerDetailsService.deleteCustomerDetailsByCustomerId(id);
-
         return deletedCustomer;
     }
 
@@ -133,5 +128,11 @@ public class CustomerService {
         FieldValidation.validateAtLeastOneIsNotEmpty(customer.firstName(), "First Name", customer.nickname(), "Nickname");
         FieldValidation.validateNotEmpty(customer.relationship(), "Relationship");
         EmailValidation.validate(customer.email());
+    }
+
+    public void validateCustomerExists(UUID id) {
+        if (!repository.existsById(id)) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
     }
 }
