@@ -1,5 +1,6 @@
 package hu.bhr.crm.controller;
 
+import hu.bhr.crm.controller.api.CustomerDetailsControllerApi;
 import hu.bhr.crm.controller.dto.CustomerDetailsRequest;
 import hu.bhr.crm.controller.dto.CustomerDetailsResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/customers")
-public class CustomerDetailsController {
+public class CustomerDetailsController implements CustomerDetailsControllerApi {
 
     private final CustomerDetailsService service;
     private final CustomerDetailsMapper mapper;
@@ -35,6 +36,7 @@ public class CustomerDetailsController {
      * @param id the unique ID of the requested customer details
      * @return a {@link PlatformResponse} containing a {@link CustomerDetailsResponse}
      */
+    @Override
     @GetMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> getCustomerDetails(@PathVariable UUID id) {
@@ -53,6 +55,7 @@ public class CustomerDetailsController {
      * @param customerId the unique ID of the customer whose details are requested
      * @return a {@link PlatformResponse} containing a list of {@link CustomerDetailsResponse}
      */
+    @Override
     @GetMapping("/{customerId}/details")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerDetailsResponse>> getAllCustomerDetails(@PathVariable UUID customerId) {
@@ -73,6 +76,7 @@ public class CustomerDetailsController {
      * @param request the data transfer object containing the new customer details
      * @return a {@link PlatformResponse} containing the created {@link CustomerDetailsResponse}
      */
+    @Override
     @PostMapping("/{customerId}/details")
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<CustomerDetailsResponse> registerCustomerDetails(
@@ -94,6 +98,7 @@ public class CustomerDetailsController {
      * @param id the unique ID of the customer details to be deleted
      * @return a {@link PlatformResponse} containing the deleted {@link CustomerDetailsResponse}
      */
+    @Override
     @DeleteMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> deleteCustomerDetails(@PathVariable UUID id) {
@@ -113,6 +118,7 @@ public class CustomerDetailsController {
      * @param customerDetailsRequest the data transfer object containing the updated customer details
      * @return a {@link PlatformResponse} containing the updated {@link CustomerDetailsResponse}
      */
+    @Override
     @PutMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> updateCustomerDetails(

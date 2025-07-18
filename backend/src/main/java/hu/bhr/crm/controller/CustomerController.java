@@ -1,5 +1,6 @@
 package hu.bhr.crm.controller;
 
+import hu.bhr.crm.controller.api.CustomerControllerApi;
 import hu.bhr.crm.controller.dto.CustomerRequest;
 import hu.bhr.crm.controller.dto.CustomerResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
@@ -17,7 +18,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/customers")
-public class CustomerController {
+public class CustomerController implements CustomerControllerApi {
 
     private final CustomerServiceFacade customerServiceFacade;
     private final CustomerMapper customerMapper;
@@ -35,6 +36,7 @@ public class CustomerController {
      * @param id the unique ID of the requested customer
      * @return a {@link PlatformResponse} containing a {@link CustomerResponse}
      */
+    @Override
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> getCustomer(@PathVariable UUID id) {
@@ -52,6 +54,7 @@ public class CustomerController {
      *
      * @return a {@link PlatformResponse} containing a list of {@link CustomerResponse}
      */
+    @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerResponse>> getAllCustomers() {
@@ -73,6 +76,7 @@ public class CustomerController {
      * @param customerRequest the data transfer object containing the new customer details
      * @return a {@link PlatformResponse} containing the created {@link CustomerResponse}
      */
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<CustomerResponse> registerCustomer(@RequestBody CustomerRequest customerRequest) {
@@ -91,6 +95,7 @@ public class CustomerController {
      * @param id the unique ID of the requested customer
      * @return a {@link PlatformResponse} containing the deleted {@link CustomerResponse}
      */
+    @Override
     @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
@@ -111,6 +116,7 @@ public class CustomerController {
      * @param customerRequest the data transfer object containing the updated customer details
      * @return a {@link PlatformResponse} containing the updated {@link CustomerResponse}
      */
+    @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> updateCustomer(

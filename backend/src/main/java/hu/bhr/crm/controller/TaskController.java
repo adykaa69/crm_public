@@ -1,5 +1,6 @@
 package hu.bhr.crm.controller;
 
+import hu.bhr.crm.controller.api.TaskControllerApi;
 import hu.bhr.crm.controller.dto.PlatformResponse;
 import hu.bhr.crm.controller.dto.TaskRequest;
 import hu.bhr.crm.controller.dto.TaskResponse;
@@ -16,7 +17,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/tasks")
-public class TaskController {
+public class TaskController implements TaskControllerApi {
 
     private final TaskService taskService;
     private final TaskMapper taskMapper;
@@ -34,6 +35,7 @@ public class TaskController {
      * @param id the unique ID of the requested task
      * @return a {@link PlatformResponse} containing a {@link TaskResponse}
      */
+    @Override
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<TaskResponse> getTask(@PathVariable UUID id) {
@@ -51,6 +53,7 @@ public class TaskController {
      *
      * @return a {@link PlatformResponse} containing a list of {@link TaskResponse}
      */
+    @Override
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<TaskResponse>> getAllTasks() {
@@ -71,6 +74,7 @@ public class TaskController {
      * @param customerId the unique ID of the customer whose tasks are requested
      * @return a {@link PlatformResponse} containing a list of {@link TaskResponse}
      */
+    @Override
     @GetMapping("/{customerId}/tasks")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<TaskResponse>> getAllTasksByCustomerId(@PathVariable UUID customerId) {
@@ -91,6 +95,7 @@ public class TaskController {
      * @param taskRequest the data transfer object containing the new task details
      * @return a {@link PlatformResponse} containing a {@link TaskResponse}
      */
+    @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<TaskResponse> registerTask(@RequestBody TaskRequest taskRequest) {
@@ -106,6 +111,7 @@ public class TaskController {
         return new PlatformResponse<>("success", "Task created successfully", taskResponse);
     }
 
+    @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<TaskResponse> deleteTask(@PathVariable UUID id) {
@@ -117,6 +123,7 @@ public class TaskController {
         return new PlatformResponse<>("success", "Task deleted successfully", taskResponse);
     }
 
+    @Override
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<TaskResponse> updateTask(
