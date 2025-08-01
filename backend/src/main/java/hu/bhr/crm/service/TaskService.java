@@ -9,7 +9,6 @@ import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
 import hu.bhr.crm.repository.entity.TaskEntity;
-import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -74,8 +73,6 @@ public class TaskService {
      * @throws TaskNotFoundException if the task could not be retrieved
      */
     public Task saveTask(TaskRequest taskRequest) {
-        FieldValidation.validateNotEmpty(taskRequest.title(), "Title");
-
         Customer customer = null;
         if (taskRequest.customerId() != null) {
             customer = customerService.getCustomerById(taskRequest.customerId());
@@ -104,8 +101,6 @@ public class TaskService {
     public Task updateTask(UUID id, TaskRequest taskRequest) {
         TaskEntity taskEntity = taskRepository.findById(id)
                 .orElseThrow(() -> new TaskNotFoundException("Task not found"));
-
-        FieldValidation.validateNotEmpty(taskRequest.title(), "Title");
 
         Customer customer = null;
         if (taskRequest.customerId() != null) {

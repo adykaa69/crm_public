@@ -7,6 +7,7 @@ import hu.bhr.crm.controller.dto.TaskResponse;
 import hu.bhr.crm.mapper.TaskMapper;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.service.TaskService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -98,7 +99,7 @@ public class TaskController implements TaskControllerApi {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PlatformResponse<TaskResponse> registerTask(@RequestBody TaskRequest taskRequest) {
+    public PlatformResponse<TaskResponse> registerTask(@RequestBody @Valid TaskRequest taskRequest) {
         Task savedTask = taskService.saveTask(taskRequest);
         TaskResponse taskResponse = taskMapper.taskToTaskResponse(savedTask);
 
@@ -128,7 +129,7 @@ public class TaskController implements TaskControllerApi {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<TaskResponse> updateTask(
             @PathVariable UUID id,
-            @RequestBody TaskRequest taskRequest) {
+            @RequestBody @Valid TaskRequest taskRequest) {
         log.info("Updating task with id: {}", id);
         Task updatedTask = taskService.updateTask(id, taskRequest);
         TaskResponse taskResponse = taskMapper.taskToTaskResponse(updatedTask);

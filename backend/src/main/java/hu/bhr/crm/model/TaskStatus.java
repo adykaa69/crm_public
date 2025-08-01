@@ -1,7 +1,7 @@
 package hu.bhr.crm.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import hu.bhr.crm.validation.EnumValidation;
+import hu.bhr.crm.mapper.EnumUtils;
 
 public enum TaskStatus {
     OPEN,
@@ -14,8 +14,7 @@ public enum TaskStatus {
 
     @JsonCreator
     public static TaskStatus fromString(String status) {
-        String normalized = status.trim().toUpperCase().replace(" ", "_");
-        EnumValidation.validateEnum(TaskStatus.class, normalized);
+        String normalized = EnumUtils.normalizeEnumName(status);
         return TaskStatus.valueOf(normalized);
     }
 }

@@ -2,7 +2,6 @@ package hu.bhr.crm.exception.handler;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
-import hu.bhr.crm.exception.code.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -18,14 +17,13 @@ import java.time.LocalDateTime;
 @Order(Ordered.LOWEST_PRECEDENCE)
 public class FallbackExceptionHandler {
 
-    private static final Logger log = LoggerFactory.getLogger(SpecificExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(FallbackExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public PlatformResponse<ErrorResponse> handleGeneralException(Exception ex) {
         log.error("Unexpected error occurred", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.INTERNAL_SERVER_ERROR.getCode(),
                 "An unexpected error occurred.",
                 LocalDateTime.now()
         );

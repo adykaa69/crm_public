@@ -8,6 +8,7 @@ import hu.bhr.crm.mapper.CustomerDetailsFactory;
 import hu.bhr.crm.mapper.CustomerDetailsMapper;
 import hu.bhr.crm.model.CustomerDetails;
 import hu.bhr.crm.service.CustomerDetailsService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -81,7 +82,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     @ResponseStatus(HttpStatus.CREATED)
     public PlatformResponse<CustomerDetailsResponse> registerCustomerDetails(
             @PathVariable UUID customerId,
-            @RequestBody CustomerDetailsRequest request
+            @RequestBody @Valid CustomerDetailsRequest request
     ) {
         CustomerDetails customerDetails = CustomerDetailsFactory.createCustomerDetails(customerId, request);
         CustomerDetails savedCustomerDetails = service.saveCustomerDetails(customerDetails);
@@ -123,7 +124,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> updateCustomerDetails(
             @PathVariable UUID id,
-            @RequestBody CustomerDetailsRequest customerDetailsRequest) {
+            @RequestBody @Valid CustomerDetailsRequest customerDetailsRequest) {
 
         log.debug("Updating customer details with id: {}", id);
         CustomerDetails customerDetails = mapper.customerDetailsRequestToCustomerDetails(id, customerDetailsRequest);

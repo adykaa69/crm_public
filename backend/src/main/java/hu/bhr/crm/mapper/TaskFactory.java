@@ -4,6 +4,7 @@ import hu.bhr.crm.controller.dto.TaskRequest;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.UUID;
 
@@ -23,9 +24,9 @@ public class TaskFactory {
                 .description(taskRequest.description())
                 .reminder(taskRequest.reminder())
                 .dueDate(taskRequest.dueDate())
-                .status(taskRequest.status() == null
+                .status(StringUtils.isBlank(taskRequest.status())
                         ? TaskStatus.OPEN
-                        : taskRequest.status())
+                        : convertStatus(taskRequest.status()))
                 .build();
     }
 
@@ -37,9 +38,13 @@ public class TaskFactory {
                 .description(taskRequest.description())
                 .reminder(taskRequest.reminder())
                 .dueDate(taskRequest.dueDate())
-                .status(taskRequest.status() == null
+                .status(StringUtils.isBlank(taskRequest.status())
                         ? TaskStatus.OPEN
-                        : taskRequest.status())
+                        : convertStatus(taskRequest.status()))
                 .build();
+    }
+
+    private static TaskStatus convertStatus(String status) {
+        return TaskStatus.fromString(status);
     }
 }

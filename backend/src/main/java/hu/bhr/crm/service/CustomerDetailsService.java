@@ -6,7 +6,6 @@ import hu.bhr.crm.mapper.CustomerDetailsMapper;
 import hu.bhr.crm.model.CustomerDetails;
 import hu.bhr.crm.repository.mongo.CustomerDocumentRepository;
 import hu.bhr.crm.repository.mongo.document.CustomerDocument;
-import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,8 +59,6 @@ public class CustomerDetailsService {
      * @throws hu.bhr.crm.exception.MissingFieldException if field "note" is missing
      */
     public CustomerDetails saveCustomerDetails(CustomerDetails customerDetails) {
-        FieldValidation.validateNotEmpty(customerDetails.note(), "Note");
-
         customerService.validateCustomerExists(customerDetails.customerId());
 
         CustomerDocument customerDocument = mapper.customerDetailsToCustomerDocument(customerDetails);
@@ -96,8 +93,6 @@ public class CustomerDetailsService {
      * @throws hu.bhr.crm.exception.MissingFieldException if field "note" is missing
      */
     public CustomerDetails updateCustomerDetails(CustomerDetails customerDetails) {
-        FieldValidation.validateNotEmpty(customerDetails.note(), "Note");
-
         // Check if the customer details exist
         CustomerDocument existingDocument = customerDocumentRepository.findById(customerDetails.id())
                 .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));

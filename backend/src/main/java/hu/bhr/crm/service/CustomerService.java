@@ -7,8 +7,6 @@ import hu.bhr.crm.model.Residence;
 import hu.bhr.crm.repository.CustomerRepository;
 import hu.bhr.crm.repository.entity.CustomerEntity;
 import hu.bhr.crm.repository.entity.ResidenceEntity;
-import hu.bhr.crm.validation.EmailValidation;
-import hu.bhr.crm.validation.FieldValidation;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -63,7 +61,6 @@ public class CustomerService {
      * @throws hu.bhr.crm.exception.InvalidEmailException if the given email is invalid
      */
     public Customer registerCustomer(Customer customer) {
-        validateFields(customer);
         CustomerEntity customerEntity = customerMapper.customerToCustomerEntity(customer);
         CustomerEntity savedCustomerEntity = repository.save(customerEntity);
 
@@ -101,7 +98,6 @@ public class CustomerService {
     public Customer updateCustomer(Customer customerPayload) {
         CustomerEntity customerEntity = repository.findById(customerPayload.id())
                 .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
-        validateFields(customerPayload);
         Customer updatedCustomer = mergeResidence(customerEntity.getResidence(), customerPayload);
         CustomerEntity savedCustomerEntity = repository.save(customerMapper.customerToCustomerEntity(updatedCustomer));
 
@@ -122,12 +118,6 @@ public class CustomerService {
         }
 
         return customerPayload.withResidence(updatedResidence);
-    }
-
-    private void validateFields(Customer customer) {
-        FieldValidation.validateAtLeastOneIsNotEmpty(customer.firstName(), "First Name", customer.nickname(), "Nickname");
-        FieldValidation.validateNotEmpty(customer.relationship(), "Relationship");
-        EmailValidation.validate(customer.email());
     }
 
     public void validateCustomerExists(UUID id) {

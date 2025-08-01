@@ -8,6 +8,7 @@ import hu.bhr.crm.mapper.CustomerFactory;
 import hu.bhr.crm.mapper.CustomerMapper;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.service.CustomerServiceFacade;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -79,7 +80,7 @@ public class CustomerController implements CustomerControllerApi {
     @Override
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PlatformResponse<CustomerResponse> registerCustomer(@RequestBody CustomerRequest customerRequest) {
+    public PlatformResponse<CustomerResponse> registerCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         Customer customer = CustomerFactory.createCustomer(customerRequest);
         Customer createdCustomer = customerServiceFacade.registerCustomer(customer);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(createdCustomer);
@@ -121,7 +122,7 @@ public class CustomerController implements CustomerControllerApi {
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> updateCustomer(
             @PathVariable UUID id,
-            @RequestBody CustomerRequest customerRequest) {
+            @RequestBody @Valid CustomerRequest customerRequest) {
 
         log.debug("Updating customer with id: {}", id);
         Customer customerPayload = customerMapper.customerRequestToCustomer(id, customerRequest);

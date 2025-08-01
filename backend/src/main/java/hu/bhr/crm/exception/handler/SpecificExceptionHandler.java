@@ -2,18 +2,20 @@ package hu.bhr.crm.exception.handler;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
+import hu.bhr.crm.controller.dto.ValidationErrorResponse;
 import hu.bhr.crm.exception.*;
-import hu.bhr.crm.exception.code.ErrorCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
@@ -26,7 +28,6 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {
         log.warn("Customer not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.CUSTOMER_NOT_FOUND.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -39,7 +40,6 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleCustomerDetailsNotFoundException(CustomerDetailsNotFoundException ex) {
         log.warn("Customer details not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.CUSTOMER_DETAILS_NOT_FOUND.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -52,7 +52,6 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleTaskNotFoundException(TaskNotFoundException ex) {
         log.warn("Task not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.TASK_NOT_FOUND.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -65,7 +64,6 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleInvalidEmailException(InvalidEmailException ex) {
         log.warn("Invalid email exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.EMAIL_INVALID.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -78,7 +76,6 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleMissingFieldException(MissingFieldException ex) {
         log.warn("Missing field exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.MISSING_FIELD.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
@@ -91,11 +88,24 @@ public class SpecificExceptionHandler {
     public PlatformResponse<ErrorResponse> handleInvalidStatusException(InvalidStatusException ex) {
         log.warn("Invalid status exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
-                ErrorCode.INVALID_STATUS.getCode(),
                 ex.getMessage(),
                 LocalDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during task processing", errorResponse);
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public PlatformResponse<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        log.warn("Invalid request", ex);
+        List<ErrorResponse> errors = ex.getBindingResult().getAllErrors().stream()
+                .map(error -> new ErrorResponse(
+                        error.getDefaultMessage(),
+                        LocalDateTime.now()
+                ))
+                .toList();
+
+        return new PlatformResponse<>("error", "Validation error during request processing", new ValidationErrorResponse(errors));
     }
 }
