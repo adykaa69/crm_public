@@ -41,7 +41,7 @@ public class CustomerController implements CustomerControllerApi {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> getCustomer(@PathVariable UUID id) {
-        log.debug("Fetching customer with id: {}", id);
+        log.info("Fetching customer with id: {}", id);
         Customer customer = customerServiceFacade.getCustomerById(id);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(customer);
         log.info("Customer with id {} retrieved successfully", id);
@@ -59,7 +59,7 @@ public class CustomerController implements CustomerControllerApi {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerResponse>> getAllCustomers() {
-        log.debug("Fetching all customers");
+        log.info("Fetching all customers");
         List<Customer> customers = customerServiceFacade.getAllCustomers();
 
         List<CustomerResponse> customerResponses = customers.stream()
@@ -101,7 +101,7 @@ public class CustomerController implements CustomerControllerApi {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable UUID id) {
-        log.debug("Deleting customer with id: {}", id);
+        log.info("Deleting customer with id: {}", id);
         Customer deletedCustomer = customerServiceFacade.deleteCustomer(id);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
         log.info("Customer deleted successfully with id: {}", id);
@@ -124,7 +124,7 @@ public class CustomerController implements CustomerControllerApi {
             @PathVariable UUID id,
             @RequestBody @Valid CustomerRequest customerRequest) {
 
-        log.debug("Updating customer with id: {}", id);
+        log.info("Updating customer with id: {}", id);
         Customer customerPayload = customerMapper.customerRequestToCustomer(id, customerRequest);
         Customer updatedCustomer = customerServiceFacade.updateCustomer(customerPayload);
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);

@@ -41,7 +41,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     @GetMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> getCustomerDetails(@PathVariable UUID id) {
-        log.debug("Fetching customer details with id: {}", id);
+        log.info("Fetching customer details with id: {}", id);
         CustomerDetails customerDetails = service.getCustomerDetailsById(id);
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(customerDetails);
         log.info("Customer details with id {} retrieved successfully", id);
@@ -60,7 +60,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     @GetMapping("/{customerId}/details")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<List<CustomerDetailsResponse>> getAllCustomerDetails(@PathVariable UUID customerId) {
-        log.debug("Fetching all customer details for customer with id: {}", customerId);
+        log.info("Fetching all customer details for customer with id: {}", customerId);
         List<CustomerDetails> customerDetailsList = service.getAllCustomerDetails(customerId);
         List<CustomerDetailsResponse> customerDetailsResponses = customerDetailsList.stream()
                 .map(mapper::customerDetailsToCustomerDetailsResponse)
@@ -103,7 +103,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     @DeleteMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> deleteCustomerDetails(@PathVariable UUID id) {
-        log.debug("Deleting customer details with id: {}", id);
+        log.info("Deleting customer details with id: {}", id);
         CustomerDetails deletedCustomerDetails = service.deleteCustomerDetailsById(id);
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(deletedCustomerDetails);
         log.info("Customer details with id {} deleted successfully", id);
@@ -126,7 +126,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
             @PathVariable UUID id,
             @RequestBody @Valid CustomerDetailsRequest customerDetailsRequest) {
 
-        log.debug("Updating customer details with id: {}", id);
+        log.info("Updating customer details with id: {}", id);
         CustomerDetails customerDetails = mapper.customerDetailsRequestToCustomerDetails(id, customerDetailsRequest);
         CustomerDetails updatedCustomerDetails = service.updateCustomerDetails(customerDetails);
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(updatedCustomerDetails);
