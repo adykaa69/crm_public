@@ -31,22 +31,22 @@ databaseChangeLog:
                       nullable: false
                 - column:
                     name: first_name
-                    type: varchar(255)
+                    type: text
                 - column:
                     name: last_name
-                    type: varchar(255)
+                    type: text
                 - column:
                     name: nickname
-                    type: varchar(255)
+                    type: text
                 - column:
                     name: email
-                    type: varchar(255)
+                    type: text
                 - column:
                     name: phone_number
-                    type: varchar(255)
+                    type: text
                 - column:
                     name: relationship
-                    type: varchar(255)
+                    type: text
                     constraints:
                       nullable: false
                 - column:
@@ -76,19 +76,19 @@ databaseChangeLog:
                     references: customer(id)
               - column:
                   name: zip_code
-                  type: varchar(255)
+                  type: text
               - column:
                   name: street_address
-                  type: varchar(255)
+                  type: text
               - column:
                   name: address_line_2
-                  type: varchar(255)
+                  type: text
               - column:
                   name: city
-                  type: varchar(100)
+                  type: text
               - column:
                   name: country
-                  type: varchar(100)
+                  type: text
               - column:
                   name: created_at
                   type: timestamp
@@ -115,7 +115,7 @@ databaseChangeLog:
                     references: customer(id)
               - column:
                   name: title
-                  type: varchar(255)
+                  type: text
                   constraints:
                     nullable: false
               - column:
