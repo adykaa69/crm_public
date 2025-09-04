@@ -9,9 +9,12 @@ import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
 import hu.bhr.crm.repository.entity.TaskEntity;
+import hu.bhr.crm.scheduler.EmailSchedulerService;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -20,11 +23,14 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
     private final CustomerService customerService;
+    private final EmailSchedulerService emailSchedulerService;
 
-    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, CustomerService customerService) {
+    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, CustomerService customerService,
+                       EmailSchedulerService emailSchedulerService)  {
         this.taskRepository = taskRepository;
         this.taskMapper = taskMapper;
         this.customerService = customerService;
+        this.emailSchedulerService = emailSchedulerService;
     }
 
     /**
@@ -86,12 +92,16 @@ public class TaskService {
 
         savedTaskEntity = taskRepository.findById(savedTaskEntity.getId())
                 .orElseThrow(() -> new TaskNotFoundException("Failed to retrieve saved task"));
+
+        scheduleEmailIfReminderExists(savedTaskEntity, taskRequest);
+
         return taskMapper.taskEntityToTask(savedTaskEntity);
     }
 
     public Task deleteTask(UUID id) {
-        TaskEntity taskEntity = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        TaskEntity taskEntity = findTaskEntity(id);
+
+        emailSchedulerService.deleteEmailSchedule(id);
 
         Task deletedTask = taskMapper.taskEntityToTask(taskEntity);
         taskRepository.deleteById(id);
@@ -99,8 +109,7 @@ public class TaskService {
     }
 
     public Task updateTask(UUID id, TaskRequest taskRequest) {
-        TaskEntity taskEntity = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+        TaskEntity oldTaskEntity = findTaskEntity(id);
 
         Customer customer = null;
         if (taskRequest.customerId() != null) {
@@ -111,6 +120,8 @@ public class TaskService {
 
         TaskEntity updatedTaskEntity = taskMapper.taskToTaskEntity(updatedTask);
         updatedTaskEntity = taskRepository.save(updatedTaskEntity);
+
+        handleReminderUpdate(oldTaskEntity.getReminder(), updatedTaskEntity.getReminder(), id);
 
         setCompletedAtIfCompleted(updatedTaskEntity);
         updatedTaskEntity = taskRepository.findById(updatedTaskEntity.getId())
@@ -136,6 +147,32 @@ public class TaskService {
         }
 
         taskRepository.saveAll(relatedTasks);
+    }
+
+    private TaskEntity findTaskEntity(UUID taskId) {
+        return taskRepository.findById(taskId)
+                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+    }
+
+    private void scheduleEmailIfReminderExists(TaskEntity taskEntity, TaskRequest taskRequest) {
+        if (taskRequest.reminder() != null) {
+            emailSchedulerService.scheduleEmail(
+                    taskEntity.getId(),
+                    taskRequest.reminder()
+            );
+        }
+    }
+
+    private void handleReminderUpdate(Timestamp oldReminder, Timestamp newReminder, UUID taskId) {
+        if (oldReminder == null) {
+            emailSchedulerService.scheduleEmail(taskId, newReminder);
+
+        } else if (newReminder == null) {
+            emailSchedulerService.deleteEmailSchedule(taskId);
+
+        } else if (!Objects.equals(oldReminder, newReminder)) {
+            emailSchedulerService.updateEmailScheduleTime(taskId, newReminder);
+        }
     }
 }
 

@@ -29,8 +29,6 @@ repositories {
 dependencies {
 
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    // implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-    // implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.liquibase:liquibase-core:$liquiBaseVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
@@ -38,6 +36,8 @@ dependencies {
     annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("org.springframework.boot:spring-boot-starter-quartz")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 

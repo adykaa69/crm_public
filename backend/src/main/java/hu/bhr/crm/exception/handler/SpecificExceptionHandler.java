@@ -95,6 +95,18 @@ public class SpecificExceptionHandler {
         return new PlatformResponse<>("error", "Error occurred during task processing", errorResponse);
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(EmailSendingException.class)
+    public void handleEmailSendingException(EmailSendingException ex) {
+        log.error("Email sending exception", ex);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(EmailScheduleException.class)
+    public void handleEmailScheduleException(EmailScheduleException ex) {
+        log.error("Email scheduling exception", ex);
+    }
+
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public PlatformResponse<ValidationErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {

@@ -1,11 +1,15 @@
 spring:
+  jackson:
+    timezone: Europe/Budapest
   banner:
     location: classpath:logo.ascii
   mail:
-    host: ${EMAIL_HOST}
-    port: ${EMAIL_PORT}
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
+    from: ${REMINDER_EMAIL_FROM}
+    to: ${TEMP_EMAIL_TO}
+    host: ${REMINDER_EMAIL_HOST}
+    port: ${REMINDER_EMAIL_PORT}
+    username: ${REMINDER_EMAIL_USERNAME}
+    password: ${REMINDER_EMAIL_PASSWORD}
     properties:
       mail:
         smtp:
@@ -32,4 +36,14 @@ spring:
       username: ${MONGODB_CRM_USERNAME}
       password: ${MONGODB_CRM_PASSWORD}
 
+  quartz:
+    jdbc:
+      initialize-schema: never
+    job-store-type: jdbc
+    properties:
+      org:
+        quartz:
+          jobStore:
+            driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
+            tablePrefix: system.qrtz_
 
