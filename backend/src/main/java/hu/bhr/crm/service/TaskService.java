@@ -13,6 +13,7 @@ import hu.bhr.crm.scheduler.EmailSchedulerService;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -163,7 +164,7 @@ public class TaskService {
         }
     }
 
-    private void handleReminderUpdate(Timestamp oldReminder, Timestamp newReminder, UUID taskId) {
+    private void handleReminderUpdate(ZonedDateTime oldReminder, ZonedDateTime newReminder, UUID taskId) {
         if (oldReminder == null) {
             emailSchedulerService.scheduleEmail(taskId, newReminder);
 

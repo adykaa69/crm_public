@@ -5,6 +5,8 @@ import hu.bhr.crm.controller.dto.PlatformResponse;
 import hu.bhr.crm.controller.dto.ValidationErrorResponse;
 import hu.bhr.crm.exception.CustomerDetailsNotFoundException;
 import hu.bhr.crm.exception.CustomerNotFoundException;
+import hu.bhr.crm.exception.EmailScheduleException;
+import hu.bhr.crm.exception.EmailSendingException;
 import hu.bhr.crm.exception.InvalidEmailException;
 import hu.bhr.crm.exception.InvalidStatusException;
 import hu.bhr.crm.exception.MissingFieldException;

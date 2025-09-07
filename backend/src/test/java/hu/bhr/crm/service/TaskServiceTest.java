@@ -8,8 +8,7 @@ import hu.bhr.crm.scheduler.EmailSchedulerService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Timestamp;
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,7 +45,7 @@ class TaskServiceTest {
 
         TaskEntity newTaskEntity = new TaskEntity();
         newTaskEntity.setId(taskId);
-        newTaskEntity.setReminder(Timestamp.from(Instant.now()));
+        newTaskEntity.setReminder(ZonedDateTime.now());
 
         when(taskRepository.findById(taskId)).
                 thenReturn(Optional.of(oldTaskEntity)).
@@ -79,7 +78,7 @@ class TaskServiceTest {
 
         TaskEntity oldTaskEntity = new TaskEntity();
         oldTaskEntity.setId(taskId);
-        oldTaskEntity.setReminder(Timestamp.from(Instant.now()));
+        oldTaskEntity.setReminder(ZonedDateTime.now());
 
         TaskEntity newTaskEntity = new TaskEntity();
         newTaskEntity.setId(taskId);
@@ -116,11 +115,11 @@ class TaskServiceTest {
 
         TaskEntity oldTaskEntity = new TaskEntity();
         oldTaskEntity.setId(taskId);
-        oldTaskEntity.setReminder(Timestamp.from(Instant.now()));
+        oldTaskEntity.setReminder(ZonedDateTime.now());
 
         TaskEntity newTaskEntity = new TaskEntity();
         newTaskEntity.setId(taskId);
-        newTaskEntity.setReminder(Timestamp.from(Instant.now().plusSeconds(3600)));
+        newTaskEntity.setReminder(ZonedDateTime.now().plusSeconds(3600));
 
         when(taskRepository.findById(taskId)).
                 thenReturn(Optional.of(oldTaskEntity)).
@@ -150,7 +149,7 @@ class TaskServiceTest {
     @Test
     void testHandleReminderUpdate_whenOldEqualsNew_shouldDoNothing() {
         UUID taskId = UUID.randomUUID();
-        Timestamp reminder = Timestamp.from(Instant.now());
+        ZonedDateTime reminder = ZonedDateTime.now();
 
         TaskEntity oldTaskEntity = new TaskEntity();
         oldTaskEntity.setId(taskId);

@@ -1,11 +1,11 @@
 package hu.bhr.crm.model;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public record EmailContent(
         String taskTitle,
-        Timestamp dueDate,
+        ZonedDateTime dueDate,
         String taskDescription,
 
         String customerFirstName,
@@ -22,7 +22,7 @@ public record EmailContent(
 
     public static class EmailContentBuilder {
         private String taskTitle;
-        private Timestamp dueDate;
+        private ZonedDateTime dueDate;
         private String taskDescription;
 
         private String customerFirstName;
@@ -38,7 +38,7 @@ public record EmailContent(
             return this;
         }
 
-        public EmailContentBuilder dueDate(Timestamp dueDate) {
+        public EmailContentBuilder dueDate(ZonedDateTime dueDate) {
             this.dueDate = dueDate;
             return this;
         }
