@@ -3,7 +3,12 @@ package hu.bhr.crm.exception.handler;
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.controller.dto.PlatformResponse;
 import hu.bhr.crm.controller.dto.ValidationErrorResponse;
-import hu.bhr.crm.exception.*;
+import hu.bhr.crm.exception.CustomerDetailsNotFoundException;
+import hu.bhr.crm.exception.CustomerNotFoundException;
+import hu.bhr.crm.exception.InvalidEmailException;
+import hu.bhr.crm.exception.InvalidStatusException;
+import hu.bhr.crm.exception.MissingFieldException;
+import hu.bhr.crm.exception.TaskNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -14,7 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @RestControllerAdvice
@@ -29,7 +34,7 @@ public class SpecificExceptionHandler {
         log.warn("Customer not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during requesting customer", errorResponse);
@@ -41,7 +46,7 @@ public class SpecificExceptionHandler {
         log.warn("Customer details not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during customer details retrieval", errorResponse);
@@ -53,7 +58,7 @@ public class SpecificExceptionHandler {
         log.warn("Task not found", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during task retrieval", errorResponse);
@@ -65,7 +70,7 @@ public class SpecificExceptionHandler {
         log.warn("Invalid email exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during customer registration", errorResponse);
@@ -77,7 +82,7 @@ public class SpecificExceptionHandler {
         log.warn("Missing field exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during customer registration", errorResponse);
@@ -89,7 +94,7 @@ public class SpecificExceptionHandler {
         log.warn("Invalid status exception", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 ex.getMessage(),
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Error occurred during task processing", errorResponse);
@@ -114,7 +119,7 @@ public class SpecificExceptionHandler {
         List<ErrorResponse> errors = ex.getBindingResult().getAllErrors().stream()
                 .map(error -> new ErrorResponse(
                         error.getDefaultMessage(),
-                        LocalDateTime.now()
+                        ZonedDateTime.now()
                 ))
                 .toList();
 

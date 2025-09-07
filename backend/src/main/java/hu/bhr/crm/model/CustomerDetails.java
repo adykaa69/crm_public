@@ -1,14 +1,14 @@
 package hu.bhr.crm.model;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record CustomerDetails(
         UUID id,
         UUID customerId,
         String note,
-        Instant createdAt,
-        Instant updatedAt
+        ZonedDateTime createdAt,
+        ZonedDateTime updatedAt
 ) {
 
     public static CustomerDetailsBuilder builder() {
@@ -19,8 +19,8 @@ public record CustomerDetails(
         private UUID id;
         private UUID customerId;
         private String note;
-        private Instant createdAt;
-        private Instant updatedAt;
+        private ZonedDateTime createdAt;
+        private ZonedDateTime updatedAt;
 
         public CustomerDetailsBuilder id(UUID id) {
             this.id = id;
@@ -37,12 +37,12 @@ public record CustomerDetails(
             return this;
         }
 
-        public CustomerDetailsBuilder createdAt(Instant createdAt) {
+        public CustomerDetailsBuilder createdAt(ZonedDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public CustomerDetailsBuilder updatedAt(Instant updatedAt) {
+        public CustomerDetailsBuilder updatedAt(ZonedDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }

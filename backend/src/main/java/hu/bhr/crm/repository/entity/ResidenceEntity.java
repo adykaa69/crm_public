@@ -1,18 +1,23 @@
 package hu.bhr.crm.repository.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "residence")
 public class ResidenceEntity {
 
-    public ResidenceEntity(UUID id, String zipCode, String streetAddress, String addressLine2, String city, String country, Timestamp createdAt, Timestamp updatedAt) {
+    public ResidenceEntity(UUID id, String zipCode, String streetAddress, String addressLine2, String city, String country, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
@@ -47,11 +52,11 @@ public class ResidenceEntity {
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
+    private ZonedDateTime createdAt;
 
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private ZonedDateTime updatedAt;
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
@@ -113,19 +118,19 @@ public class ResidenceEntity {
         this.country = country;
     }
 
-    public Timestamp getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

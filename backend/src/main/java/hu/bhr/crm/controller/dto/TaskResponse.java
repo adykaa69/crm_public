@@ -2,7 +2,7 @@ package hu.bhr.crm.controller.dto;
 
 import hu.bhr.crm.model.TaskStatus;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record TaskResponse(
@@ -10,10 +10,10 @@ public record TaskResponse(
         UUID customerId,
         String title,
         String description,
-        Timestamp reminder,
-        Timestamp dueDate,
+        ZonedDateTime reminder,
+        ZonedDateTime dueDate,
         TaskStatus status,
-        Timestamp createdAt,
-        Timestamp completedAt,
-        Timestamp updatedAt
+        ZonedDateTime createdAt,
+        ZonedDateTime completedAt,
+        ZonedDateTime updatedAt
 ) {}

@@ -1,21 +1,28 @@
 package hu.bhr.crm.repository.entity;
 
 import hu.bhr.crm.model.TaskStatus;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "task")
 public class TaskEntity {
 
-    public TaskEntity(UUID id, String title, String description, Timestamp reminder, Timestamp dueDate, TaskStatus status, Timestamp createdAt, Timestamp completedAt, Timestamp updatedAt) {
+    public TaskEntity(UUID id, String title, String description, ZonedDateTime reminder, ZonedDateTime dueDate, TaskStatus status, ZonedDateTime createdAt, ZonedDateTime completedAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -41,10 +48,10 @@ public class TaskEntity {
     private String description;
 
     @Column(name = "reminder")
-    private Timestamp reminder;
+    private ZonedDateTime reminder;
 
     @Column(name = "due_date")
-    private Timestamp dueDate;
+    private ZonedDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -53,14 +60,14 @@ public class TaskEntity {
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(name = "completed_at")
-    private Timestamp completedAt;
+    private ZonedDateTime completedAt;
 
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private ZonedDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -98,19 +105,19 @@ public class TaskEntity {
         this.description = description;
     }
 
-    public Timestamp getReminder() {
+    public ZonedDateTime getReminder() {
         return reminder;
     }
 
-    public void setReminder(Timestamp reminder) {
+    public void setReminder(ZonedDateTime reminder) {
         this.reminder = reminder;
     }
 
-    public Timestamp getDueDate() {
+    public ZonedDateTime getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(Timestamp dueDate) {
+    public void setDueDate(ZonedDateTime dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -122,27 +129,27 @@ public class TaskEntity {
         this.status = status;
     }
 
-    public Timestamp getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getCompletedAt() {
+    public ZonedDateTime getCompletedAt() {
         return completedAt;
     }
 
-    public void setCompletedAt(Timestamp completedAt) {
+    public void setCompletedAt(ZonedDateTime completedAt) {
         this.completedAt = completedAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

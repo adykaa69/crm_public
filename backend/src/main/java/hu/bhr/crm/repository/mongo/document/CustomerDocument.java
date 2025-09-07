@@ -6,7 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Document(collection = "customer_details")
@@ -18,10 +18,10 @@ public class CustomerDocument implements Persistable<UUID> {
     private String note;
 
     @CreatedDate
-    private Instant createdAt;
+    private ZonedDateTime createdAt;
 
     @LastModifiedDate
-    private Instant updatedAt;
+    private ZonedDateTime updatedAt;
 
     public CustomerDocument() {
     }
@@ -31,7 +31,7 @@ public class CustomerDocument implements Persistable<UUID> {
         return getCreatedAt() == null;
     }
 
-    public CustomerDocument(UUID id, UUID customerId, String note, Instant createdAt, Instant updatedAt) {
+    public CustomerDocument(UUID id, UUID customerId, String note, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.customerId = customerId;
         this.note = note;
@@ -63,19 +63,19 @@ public class CustomerDocument implements Persistable<UUID> {
         this.note = note;
     }
 
-    public Instant getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Instant createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Instant updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 

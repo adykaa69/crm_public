@@ -1,8 +1,8 @@
 package hu.bhr.crm.controller.dto;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 public record ErrorResponse(
         String errorMessage,
-        LocalDateTime timestamp
+        ZonedDateTime timestamp
 ) {}

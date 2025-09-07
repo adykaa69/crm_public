@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @RestControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE)
@@ -25,7 +25,7 @@ public class FallbackExceptionHandler {
         log.error("Unexpected error occurred", ex);
         ErrorResponse errorResponse = new ErrorResponse(
                 "An unexpected error occurred.",
-                LocalDateTime.now()
+                ZonedDateTime.now()
         );
 
         return new PlatformResponse<>("error", "Unexpected error during request processing", errorResponse);

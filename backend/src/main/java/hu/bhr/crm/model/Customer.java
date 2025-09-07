@@ -1,6 +1,6 @@
 package hu.bhr.crm.model;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record Customer(
@@ -12,8 +12,8 @@ public record Customer(
         String phoneNumber,
         String relationship,
         Residence residence,
-        Timestamp createdAt,
-        Timestamp updatedAt
+        ZonedDateTime createdAt,
+        ZonedDateTime updatedAt
 ) {
     public Customer withResidence(Residence residence) {
         return new Customer(id, firstName, lastName, nickname, email, phoneNumber, relationship, residence, createdAt, updatedAt);
@@ -32,8 +32,8 @@ public record Customer(
         private String phoneNumber;
         private String relationship;
         private Residence residence;
-        private Timestamp createdAt;
-        private Timestamp updatedAt;
+        private ZonedDateTime createdAt;
+        private ZonedDateTime updatedAt;
 
         public CustomerBuilder id(UUID id) {
             this.id = id;
@@ -75,12 +75,12 @@ public record Customer(
             return this;
         }
 
-        public CustomerBuilder createdAt(Timestamp createdAt) {
+        public CustomerBuilder createdAt(ZonedDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public CustomerBuilder updatedAt(Timestamp updatedAt) {
+        public CustomerBuilder updatedAt(ZonedDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }

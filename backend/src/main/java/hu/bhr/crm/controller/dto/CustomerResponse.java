@@ -1,6 +1,6 @@
 package hu.bhr.crm.controller.dto;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public record CustomerResponse(
@@ -12,6 +12,6 @@ public record CustomerResponse(
         String phoneNumber,
         String relationship,
         ResidenceResponse residence,
-        Timestamp createdAt,
-        Timestamp updatedAt
+        ZonedDateTime createdAt,
+        ZonedDateTime updatedAt
 ) {}

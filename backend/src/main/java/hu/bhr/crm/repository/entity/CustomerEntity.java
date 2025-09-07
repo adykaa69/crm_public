@@ -1,18 +1,23 @@
 package hu.bhr.crm.repository.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "customer")
 public class CustomerEntity {
 
-    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, ResidenceEntity residence, Timestamp createdAt, Timestamp updatedAt) {
+    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, ResidenceEntity residence, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -38,7 +43,7 @@ public class CustomerEntity {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name= "nickname")
+    @Column(name = "nickname")
     private String nickname;
 
     @Column(name = "email", unique = true)
@@ -55,11 +60,11 @@ public class CustomerEntity {
 
     @CreationTimestamp(source = SourceType.DB)
     @Column(name = "created_at", updatable = false)
-    private Timestamp createdAt;
+    private ZonedDateTime createdAt;
 
     @UpdateTimestamp(source = SourceType.DB)
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private ZonedDateTime updatedAt;
 
     public UUID getId() {
         return id;
@@ -85,21 +90,37 @@ public class CustomerEntity {
         this.lastName = lastName;
     }
 
-    public String getNickname() { return nickname;}
+    public String getNickname() {
+        return nickname;
+    }
 
-    public void setNickname(String nickname) { this.nickname = nickname; }
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
-    public String getEmail() { return email; }
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public String getPhoneNumber() { return phoneNumber; }
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-    public void setPhoneNumber(String phoneNumber) {this.phoneNumber = phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
-    public String getRelationship() { return relationship; }
+    public String getRelationship() {
+        return relationship;
+    }
 
-    public void setRelationship(String relationship) { this.relationship = relationship; }
+    public void setRelationship(String relationship) {
+        this.relationship = relationship;
+    }
 
     public ResidenceEntity getResidence() {
         return residence;
@@ -112,19 +133,19 @@ public class CustomerEntity {
         }
     }
 
-    public Timestamp getCreatedAt() {
+    public ZonedDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(Timestamp createdAt) {
+    public void setCreatedAt(ZonedDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public Timestamp getUpdatedAt() {
+    public ZonedDateTime getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(Timestamp updatedAt) {
+    public void setUpdatedAt(ZonedDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 
