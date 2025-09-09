@@ -9,6 +9,7 @@ import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
@@ -20,7 +21,7 @@ public class EmailSchedulerService {
         this.scheduler = scheduler;
     }
 
-    public void scheduleEmail(UUID taskId, Timestamp reminderDate) {
+    public void scheduleEmail(UUID taskId, ZonedDateTime reminderDate) {
         try {
             var jobDetail = EmailJobDetailFactory.createEmailJobDetail(taskId);
             var trigger = EmailTriggerFactory.createTrigger(taskId, reminderDate);
@@ -52,7 +53,7 @@ public class EmailSchedulerService {
         }
     }
 
-    public void updateEmailScheduleTime(UUID taskId, Timestamp reminderDate) {
+    public void updateEmailScheduleTime(UUID taskId, ZonedDateTime reminderDate) {
         try {
             TriggerKey triggerKey = TriggerKey.triggerKey(
                     EmailSchedulerConstants.EMAIL_TRIGGER_KEY_PREFIX + taskId,
