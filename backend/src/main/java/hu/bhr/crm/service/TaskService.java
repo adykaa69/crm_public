@@ -12,7 +12,7 @@ import hu.bhr.crm.repository.entity.TaskEntity;
 import hu.bhr.crm.scheduler.EmailSchedulerService;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -80,20 +80,7 @@ public class TaskService {
      * @throws TaskNotFoundException if the task could not be retrieved
      */
     public Task saveTask(TaskRequest taskRequest) {
-        Customer customer = null;
-        if (taskRequest.customerId() != null) {
-            customer = customerService.getCustomerById(taskRequest.customerId());
-        }
-
-        Task task = TaskFactory.createTask(taskRequest, customer);
-        TaskEntity taskEntity = taskMapper.taskToTaskEntity(task);
-        TaskEntity savedTaskEntity = taskRepository.save(taskEntity);
-
-        setCompletedAtIfCompleted(savedTaskEntity);
-
-        savedTaskEntity = taskRepository.findById(savedTaskEntity.getId())
-                .orElseThrow(() -> new TaskNotFoundException("Failed to retrieve saved task"));
-
+        TaskEntity savedTaskEntity = buildAndSaveTaskEntity(null, taskRequest);
         scheduleEmailIfReminderExists(savedTaskEntity, taskRequest);
 
         return taskMapper.taskEntityToTask(savedTaskEntity);
@@ -111,28 +98,34 @@ public class TaskService {
 
     public Task updateTask(UUID id, TaskRequest taskRequest) {
         TaskEntity oldTaskEntity = findTaskEntity(id);
+        TaskEntity updatedTaskEntity = buildAndSaveTaskEntity(id, taskRequest);
+        handleReminderUpdate(oldTaskEntity.getReminder(), updatedTaskEntity.getReminder(), id);
 
+        return taskMapper.taskEntityToTask(updatedTaskEntity);
+    }
+
+    private TaskEntity buildAndSaveTaskEntity(UUID id, TaskRequest taskRequest) {
         Customer customer = null;
         if (taskRequest.customerId() != null) {
             customer = customerService.getCustomerById(taskRequest.customerId());
         }
 
-        Task updatedTask = TaskFactory.createTaskWithId(id, taskRequest, customer);
+        Task task = (id == null)
+                ? TaskFactory.createTask(taskRequest, customer)
+                : TaskFactory.createTaskWithId(id, taskRequest, customer);
 
-        TaskEntity updatedTaskEntity = taskMapper.taskToTaskEntity(updatedTask);
-        updatedTaskEntity = taskRepository.save(updatedTaskEntity);
+        TaskEntity taskEntityToSave = taskMapper.taskToTaskEntity(task);
+        TaskEntity savedTaskEntity = taskRepository.save(taskEntityToSave);
+        setCompletedAtIfCompleted(savedTaskEntity);
 
-        handleReminderUpdate(oldTaskEntity.getReminder(), updatedTaskEntity.getReminder(), id);
-
-        setCompletedAtIfCompleted(updatedTaskEntity);
-        updatedTaskEntity = taskRepository.findById(updatedTaskEntity.getId())
-                .orElseThrow(() -> new TaskNotFoundException("Failed to retrieve saved task"));
-        return taskMapper.taskEntityToTask(updatedTaskEntity);
+        return savedTaskEntity;
     }
 
     private void setCompletedAtIfCompleted(TaskEntity taskEntity) {
         if (taskEntity.getStatus() == TaskStatus.COMPLETED) {
-            taskRepository.setCompletedAtIfCompleted(taskEntity.getId(), TaskStatus.COMPLETED);
+            ZonedDateTime completedAt = taskRepository.setCompletedAtIfCompleted(taskEntity.getId(), TaskStatus.COMPLETED.name())
+                    .atZone(ZoneId.systemDefault());
+            taskEntity.setCompletedAt(completedAt);
         }
     }
 

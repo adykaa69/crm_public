@@ -45,6 +45,7 @@ public class CustomerDetailsService {
      * @return a list of {@link CustomerDetails} objects corresponding to the given customer ID
      */
     public List<CustomerDetails> getAllCustomerDetails(UUID customerId) {
+        customerService.validateCustomerExists(customerId);
         return customerDocumentRepository.findAllByCustomerId(customerId).stream()
                 .map(mapper::customerDocumentToCustomerDetails)
                 .toList();
