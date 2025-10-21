@@ -113,6 +113,7 @@ public class TaskController implements TaskControllerApi {
     }
 
     @Override
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<TaskResponse> deleteTask(@PathVariable UUID id) {

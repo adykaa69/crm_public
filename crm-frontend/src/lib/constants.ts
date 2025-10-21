@@ -23,6 +23,15 @@ export const items = [
     btnHref: "/customer/registration"
   },
   {
+    href: "/task",
+    activeIcon: "/todo_active_logo.svg",
+    inactiveIcon: "/todo_inactive_logo.svg",
+    label: "task",
+    title: "Feladatok",
+    btnName: "Feladat hozzáadása",
+    btnHref: "/task"
+  },
+  {
     href: "/about",
     activeIcon: "/about_active_logo.svg",
     inactiveIcon: "/about_inactive_logo.svg",
