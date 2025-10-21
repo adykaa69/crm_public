@@ -1,6 +1,6 @@
 import type { CustomerUpdateRequest } from "$lib/models/customer-request";
 import type { CustomerResponse } from "$lib/models/customer-response";
-import { type ErrorResponse } from "$lib/models/error-response";
+import { type ErrorResponse } from "$lib/models/error";
 import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { type Actions, error, fail, redirect } from "@sveltejs/kit";

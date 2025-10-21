@@ -1,16 +1,14 @@
 <script lang="ts">
-  import { TaskStatus, type TaskResponse, type TaskUpdateRequest } from "$lib/models/task";
-  import { Check, ChevronDown, Funnel, PenLine, Plus, X } from "@lucide/svelte";
+  import { type TaskDto } from "$lib/models/task";
   import TaskHeader from "./task-header.svelte";
   import TaskTable from "./task-table.svelte";
 
   interface Props {
-    tasks: TaskResponse[];
+    tasks: TaskDto[];
     sortBy: string;
     showFilter: boolean;
     newTaskText: string;
     showAddTask: boolean;
-    selectedTasks;
     onSave?: () => void;
     onDelete?: () => void;
   }
@@ -21,7 +19,7 @@
     showFilter,
     newTaskText,
     showAddTask,
-    selectedTasks,
+    selectedTasks = false,
     onSave = () => {},
     onDelete = () => {}
   } = $props();

@@ -4,10 +4,8 @@
   let { data } = $props();
   let sortBy = $state("Due Date");
   let showFilter = $state(false);
-  let editingTask = $state(false);
   let newTaskText = $state("");
   let showAddTask = $state(false);
-  let selectedTasks = $derived(data.tasks?.filter((task) => task.selected));
 
   async function handleUpdate() {
     await invalidateAll();
@@ -20,7 +18,6 @@
   {showFilter}
   {newTaskText}
   {showAddTask}
-  {selectedTasks}
   onSave={handleUpdate}
   onDelete={handleUpdate}
 />

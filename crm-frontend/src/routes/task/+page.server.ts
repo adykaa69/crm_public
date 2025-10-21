@@ -1,14 +1,14 @@
-import type { ErrorResponse } from "$lib/models/error-response";
-import { parseTaskResponse, type TaskResponse } from "$lib/models/task";
+import type { ErrorResponse } from "$lib/models/error";
+import { parseTaskResponse } from "$lib/models/task";
 import { getTasks } from "$lib/utils/handle-task";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async () => {
-  const response = await getTasks();
+  const response: Response = await getTasks();
 
-  const data = await response.json();
+  const responseJson = await response.json();
   if (response.status !== 200) {
-    return { errors: data.data as ErrorResponse[] };
+    return { errors: responseJson.data as ErrorResponse[] };
   }
-  return { tasks: data.data.map(parseTaskResponse) as TaskResponse[] };
+  return { tasks: responseJson.data.map(parseTaskResponse) };
 };

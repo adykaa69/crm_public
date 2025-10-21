@@ -33,6 +33,19 @@ export interface TaskResponse {
   updatedAt: Date;
 }
 
+export interface TaskDto {
+  id: string;
+  customerId?: string;
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  reminder?: Date;
+  dueDate?: Date;
+  completedAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 // export enum TaskStatus {
 //   OPEN = "Nyitott",
 //   IN_PROGRESS = "Folyamatban",
@@ -55,7 +68,7 @@ export enum TaskStatus {
   ARCHIVED = "ARCHIVED"
 }
 
-export function parseTaskResponse(raw: any) {
+export function parseTaskResponse(raw: any): TaskDto {
   return {
     id: raw.id,
     customerId: raw.customerId,
@@ -72,7 +85,7 @@ export function parseTaskResponse(raw: any) {
 
 function getDate(raw: any) {
   if (!raw) {
-    return null;
+    return;
   }
   return new Date(raw);
 }

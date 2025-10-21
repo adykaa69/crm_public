@@ -1,12 +1,11 @@
 <script lang="ts">
-  import { parseTaskResponse, TaskStatus, type TaskResponse, type TaskUpdateRequest } from "$lib/models/task";
+  import { TaskStatus, type TaskDto } from "$lib/models/task";
   import { Check, PenLine, Trash, X } from "@lucide/svelte";
   import TableCell from "./elements/table-cell.svelte";
-  import type { httpDelete } from "$lib/common/api";
   import { deleteTask } from "$lib/utils/handle-task";
 
   interface Props {
-    task: TaskResponse;
+    task: TaskDto;
     isSelected?: boolean;
     onSave?: () => void;
     onDelete?: () => void;
@@ -15,28 +14,13 @@
   const taskStatuses: string[] = Object.values(TaskStatus);
   let { task, isSelected = false, onSave, onDelete }: Props = $props();
   let isEditing = $state(false);
-  let taskCache: TaskResponse | TaskUpdateRequest = $state(task);
+  let taskCache: TaskDto = $state(task);
   let isCompleted: boolean = $state(task.status === TaskStatus.COMPLETED);
 
   function toggleTaskSelect(id: string) {}
 
-  // FIXME
-  function emptyTaskResponse() {
-    return {
-      id: "",
-      customerId: "",
-      title: "",
-      description: "",
-      status: TaskStatus.OPEN,
-      reminder: new Date(),
-      dueDate: new Date(),
-      completedAt: new Date(),
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-  }
-
-  async function saveEdit(task: TaskResponse | TaskUpdateRequest) {
+  // FIXME move to server side
+  async function saveEdit(task: TaskDto) {
     const res = await fetch(`/task/rows`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -53,11 +37,6 @@
     return task;
   }
 
-  function logTask(task: TaskResponse | TaskUpdateRequest) {
-    console.log(
-      `Task: ${task.title} reminder: ${task.reminder} dueDate: ${task.dueDate} completedAt: ${task.completedAt}`
-    );
-  }
   function cacheTask() {
     taskCache = task;
   }

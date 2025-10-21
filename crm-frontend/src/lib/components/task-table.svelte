@@ -1,16 +1,11 @@
 <script lang="ts">
-  import { TaskStatus, type TaskResponse, type TaskUpdateRequest } from "$lib/models/task";
-  import { Check, ChevronDown, PenLine, Trash, X } from "@lucide/svelte";
+  import { TaskStatus, type TaskDto } from "$lib/models/task";
+  import { Check, PenLine, X } from "@lucide/svelte";
   import TaskRow from "./task-row.svelte";
-  import Parent from "./playground/parent.svelte";
-  import Calendar from "./playground/calendar.svelte";
-  import Child from "./playground/child.svelte";
-  import GrandChild from "./playground/grand-child.svelte";
-  import { invalidateAll } from "$app/navigation";
   import AddTask from "./elements/add-task.svelte";
 
   interface Props {
-    tasks: TaskResponse[];
+    tasks: TaskDto[];
     onSave: () => void;
     onDelete: () => void;
   }
@@ -19,7 +14,6 @@
   let selectAll: boolean = false;
   let editingTask: string | undefined | null;
   let taskEnable = $state(false);
-  let showStatuses: boolean = false;
 
   function toggleSelectAll() {}
   function toggleTaskComplete(taskId: string) {}
@@ -30,7 +24,8 @@
     editingTask = taskId;
   }
 
-  async function saveEdit(updatedRow: TaskUpdateRequest | TaskResponse) {
+  // FIXME move to server side
+  async function saveEdit(updatedRow: TaskDto) {
     const res = await fetch(`/task/rows`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
@@ -49,11 +44,7 @@
     editingTask = null;
   }
 
-  function deleteTask(taskId: string) {
-    tasks = tasks.filter((t: TaskResponse) => t.id !== taskId);
-  }
-
-  function getStatusIcon(task: TaskResponse) {
+  function getStatusIcon(task: TaskDto) {
     if (task.status === TaskStatus.COMPLETED) {
       return { component: Check, class: "w-4 h-4 text-white", bgClass: "bg-green-500" };
     } else if (task.status === TaskStatus.OPEN) {

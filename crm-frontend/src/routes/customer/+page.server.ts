@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import type { CustomerResponse } from "$lib/models/customer-response";
-import type { ErrorResponse } from "$lib/models/error-response";
+import type { ErrorResponse } from "$lib/models/error";
 import { getCustomers } from "$lib/utils/handle-customer";
 
 export const load: PageServerLoad = async () => {

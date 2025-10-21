@@ -3,7 +3,7 @@ import { fail, redirect } from "@sveltejs/kit";
 import type { Actions } from "./$types";
 import { register } from "$lib/utils/handle-customer";
 import type { PlatformApiResponse } from "$lib/models/platform-api-response";
-import type { ErrorResponse } from "$lib/models/error-response";
+import type { ErrorResponse } from "$lib/models/error";
 import { nestData } from "$lib/utils/form-data-parser";
 
 export const actions = {
