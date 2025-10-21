@@ -183,6 +183,7 @@ class CustomerControllerTest {
             when(customerServiceFacade.registerCustomer(any())).thenReturn(customer);
             when(customerMapper.customerToCustomerResponse(customer)).thenReturn(customerResponse);
 
+            // When / Then
             mockMvc.perform(post("/api/v1/customers")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(customerRequest))
@@ -405,7 +406,7 @@ class CustomerControllerTest {
         }
 
         @Test
-        void shouldReturnStatusNoContentWhenCustomerIsSuccessfullyDeleted() throws Exception {
+        void shouldReturnStatusOkWhenCustomerIsSuccessfullyDeleted() throws Exception {
             // Given
             Customer deletedCustomer = createCustomer(customerId, "Harry", "Potter");
 

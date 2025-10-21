@@ -13,9 +13,9 @@ public record TaskRequest(
     @NotBlank(message = "Title is required")
     String title,
     String description,
-    @NotPast(message = "Reminder date must not be in the past")
+    @NotPast(message = "Reminder date must be in the future")
     ZonedDateTime reminder,
-    @NotPast(message = "Due date must not be in the past")
+    @NotPast(message = "Due date must be in the future")
     ZonedDateTime dueDate,
     @ValidEnum(
             message = "Invalid task status",
