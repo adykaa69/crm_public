@@ -2,73 +2,40 @@
   import { type TaskDto } from "$lib/models/task";
   import TaskHeader from "./task-header.svelte";
   import TaskTable from "./task-table.svelte";
+  import AddTask from "./elements/add-task.svelte";
 
   interface Props {
     tasks: TaskDto[];
     sortBy: string;
     showFilter: boolean;
-    newTaskText: string;
-    showAddTask: boolean;
     onSave?: () => void;
     onDelete?: () => void;
   }
 
-  let {
-    tasks,
-    sortBy,
-    showFilter,
-    newTaskText,
-    showAddTask,
-    selectedTasks = false,
-    onSave = () => {},
-    onDelete = () => {}
-  } = $props();
+  let { tasks, sortBy, showFilter, selectedTasks = false, onSave = () => {}, onDelete = () => {} } = $props();
+
+  let taskAddingEnable = $state(false);
 
   // Sort options
   const sortOptions = ["Due Date", "Task Name", "Status", "Created Date"];
-
-  async function addNewTask() {}
 </script>
 
 <div class="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
   <div class="rounded-lg bg-white shadow-sm lg:rounded-xl">
     <!-- Header -->
-    <TaskHeader {sortBy} {newTaskText} {showAddTask} {selectedTasks} totalTasks={tasks.length} />
-
-    <!-- Add New Task Form -->
-    {#if showAddTask}
-      <div class="border-b border-gray-200 bg-blue-50 p-4 sm:p-6">
-        <div class="flex flex-col gap-3 sm:flex-row">
-          <input
-            bind:value={newTaskText}
-            placeholder="Enter new task..."
-            class="flex-1 rounded-lg border border-gray-300 px-3 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            onkeydown={(e) => e.key === "Enter" && addNewTask()}
-          />
-          <div class="flex gap-2">
-            <button
-              onclick={addNewTask}
-              class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
-            >
-              Add Task
-            </button>
-            <button
-              onclick={() => {
-                showAddTask = false;
-                newTaskText = "";
-              }}
-              class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    {/if}
+    <TaskHeader {sortBy} {selectedTasks} totalTasks={tasks.length} bind:taskAddingEnable />
 
     <TaskTable {tasks} {onSave} {onDelete} />
   </div>
 </div>
+
+{#if taskAddingEnable}
+  <div class="fixed inset-0 z-10 flex items-center justify-center bg-gray-300/40">
+    <div class="min-w-[350px] rounded-lg bg-white p-3 shadow-lg">
+      <AddTask bind:enable={taskAddingEnable} />
+    </div>
+  </div>
+{/if}
 
 <!-- Click outside to close dropdown -->
 {#if showFilter}

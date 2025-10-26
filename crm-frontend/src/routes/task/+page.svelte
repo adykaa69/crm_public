@@ -12,12 +12,4 @@
   }
 </script>
 
-<Task
-  tasks={data.tasks}
-  {sortBy}
-  {showFilter}
-  {newTaskText}
-  {showAddTask}
-  onSave={handleUpdate}
-  onDelete={handleUpdate}
-/>
+<Task tasks={data.tasks} {sortBy} {showFilter} onSave={handleUpdate} onDelete={handleUpdate} />

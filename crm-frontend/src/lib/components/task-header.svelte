@@ -1,11 +1,15 @@
 <script lang="ts">
-  import { Check, ChevronDown, Funnel, PenLine, Plus, X } from "@lucide/svelte";
-  export let sortBy: string;
-  export let selectedTasks;
-  let showFilter: boolean;
-  export let newTaskText: string;
-  export let showAddTask: boolean;
-  export let totalTasks: number;
+  import { ChevronDown, Funnel, Plus } from "@lucide/svelte";
+
+  interface Props {
+    sortBy: string;
+    selectedTasks: boolean;
+    showFilter?: boolean;
+    totalTasks: number;
+    taskAddingEnable: boolean;
+  }
+
+  let { sortBy, selectedTasks, showFilter = false, totalTasks, taskAddingEnable = $bindable() } = $props();
 </script>
 
 <div
@@ -64,11 +68,21 @@
 
     <!-- Add Task Button -->
     <button
-      class="flex items-center gap-2 rounded-lg bg-blue-600 px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700"
-      onclick={() => (showAddTask = !showAddTask)}
+      class="add-task-btn flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700"
+      onclick={() => (taskAddingEnable = true)}
     >
       <Plus class="h-4 w-4" />
       <span class="hidden sm:inline">Add Task</span>
     </button>
   </div>
 </div>
+
+<style>
+  .add-task-btn {
+    background-color: #514ef390;
+  }
+
+  .add-task-btn:hover {
+    background-color: #514ef3;
+  }
+</style>

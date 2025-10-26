@@ -19,7 +19,7 @@
 
   function toggleTaskSelect(id: string) {}
 
-  // FIXME move to server side
+  // FIXME move to server side +page.server.ts
   async function saveEdit(task: TaskDto) {
     const res = await fetch(`/task/rows`, {
       method: "PUT",

@@ -2,7 +2,6 @@
   import { TaskStatus, type TaskDto } from "$lib/models/task";
   import { Check, PenLine, X } from "@lucide/svelte";
   import TaskRow from "./task-row.svelte";
-  import AddTask from "./elements/add-task.svelte";
 
   interface Props {
     tasks: TaskDto[];
@@ -13,7 +12,6 @@
   let { tasks, onSave, onDelete } = $props();
   let selectAll: boolean = false;
   let editingTask: string | undefined | null;
-  let taskEnable = $state(false);
 
   function toggleSelectAll() {}
   function toggleTaskComplete(taskId: string) {}
@@ -138,9 +136,7 @@
       </div>
 
       <!-- Desktop Layout -->
-      <!-- <div class="hidden items-center gap-4 sm:grid sm:grid-cols-30"> -->
       <TaskRow {task} {onSave} {onDelete}></TaskRow>
-      <!-- </div> -->
     </div>
   {/each}
 </div>
@@ -154,12 +150,3 @@
     Load More
   </button>
 </div>
-
-// FIXME need to create addTask button function
-{#if taskEnable}
-  <div class="fixed inset-0 z-10 flex items-center justify-center bg-gray-300/40">
-    <div class="min-w-[350px] rounded-lg bg-white p-3 shadow-lg">
-      <AddTask bind:taskEnable />
-    </div>
-  </div>
-{/if}

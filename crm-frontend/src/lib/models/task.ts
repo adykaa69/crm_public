@@ -1,7 +1,6 @@
 export interface TaskRequest {
-  customerId: string | null;
   title: string;
-  description: string;
+  description?: string;
   status: TaskStatus;
   reminder?: Date;
   dueDate?: Date;
@@ -42,8 +41,8 @@ export interface TaskDto {
   reminder?: Date;
   dueDate?: Date;
   completedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 // export enum TaskStatus {
@@ -68,7 +67,7 @@ export enum TaskStatus {
   ARCHIVED = "ARCHIVED"
 }
 
-export function parseTaskResponse(raw: any): TaskDto {
+export function parseTaskResponseToTaskDto(raw: any): TaskDto {
   return {
     id: raw.id,
     customerId: raw.customerId,
@@ -80,6 +79,16 @@ export function parseTaskResponse(raw: any): TaskDto {
     completedAt: getDate(raw.completedAt),
     createdAt: new Date(raw.createdAt),
     updatedAt: new Date(raw.updatedAt)
+  };
+}
+
+export function parseTaskDtoToTaskRequest(taskDto: TaskDto): TaskRequest {
+  return {
+    title: taskDto.title,
+    description: taskDto.description,
+    status: taskDto.status,
+    reminder: taskDto.reminder,
+    dueDate: taskDto.dueDate
   };
 }
 
