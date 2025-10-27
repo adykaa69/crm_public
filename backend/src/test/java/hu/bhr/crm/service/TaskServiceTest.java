@@ -628,6 +628,32 @@ class TaskServiceTest {
             when(taskRepository.save(any(TaskEntity.class))).
                     thenReturn(newTaskEntity);
         }
+
+        @Test
+        void shouldDoNothingWhenReminderDateRemainsNull() {
+            // Given
+            oldTaskEntity.setReminder(null);
+            newTaskEntity.setReminder(null);
+
+            mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
+
+            request = new TaskRequest(
+                    null,
+                    "title",
+                    "description",
+                    null,
+                    null,
+                    "ON_HOLD"
+            );
+
+            // Then
+            underTest.updateTask(taskId, request);
+
+            // When
+            verify(emailSchedulerService, never()).scheduleEmail(any(), any());
+            verify(emailSchedulerService, never()).deleteEmailSchedule(any());
+            verify(emailSchedulerService, never()).updateEmailScheduleTime(any(), any());
+        }
     }
 
     @Nested

@@ -158,10 +158,10 @@ public class TaskService {
     }
 
     private void handleReminderUpdate(ZonedDateTime oldReminder, ZonedDateTime newReminder, UUID taskId) {
-        if (oldReminder == null) {
+        if (oldReminder == null && newReminder != null) {
             emailSchedulerService.scheduleEmail(taskId, newReminder);
 
-        } else if (newReminder == null) {
+        } else if (oldReminder != null && newReminder == null) {
             emailSchedulerService.deleteEmailSchedule(taskId);
 
         } else if (!Objects.equals(oldReminder, newReminder)) {
