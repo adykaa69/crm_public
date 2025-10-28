@@ -10,12 +10,11 @@
     onSave?: () => void;
     onDelete?: () => void;
   }
-  const taskPath: string = "/api/v1/customers/task";
   const taskStatuses: string[] = Object.values(TaskStatus);
   let { task, isSelected = false, onSave, onDelete }: Props = $props();
   let isEditing = $state(false);
-  let taskCache: TaskDto = $state(task);
-  let isCompleted: boolean = $state(task.status === TaskStatus.COMPLETED);
+  let taskCache: TaskDto = $derived(task);
+  let isCompleted: boolean = $derived(task.status === TaskStatus.COMPLETED);
 
   function toggleTaskSelect(id: string) {}
 

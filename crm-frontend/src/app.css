@@ -1,1 +1,5 @@
 @import 'tailwindcss';
+
+@theme {
+  --color-submit-btn: #514ef3;
+}

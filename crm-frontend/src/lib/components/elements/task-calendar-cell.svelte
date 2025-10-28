@@ -9,7 +9,7 @@
 
   let { isEditing = false, isCompleted = false, date = $bindable() }: Props = $props();
 
-  let dateTimeToString: string | null = $state(toString(date));
+  let dateTimeToString: string | null = $derived(toString(date));
 
   function toString(date: Date | undefined) {
     if (!date) {

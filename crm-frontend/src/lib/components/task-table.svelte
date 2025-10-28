@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { TaskStatus, type TaskDto } from "$lib/models/task";
-  import { Check, PenLine, X } from "@lucide/svelte";
+  import { type TaskDto } from "$lib/models/task";
   import TaskRow from "./task-row.svelte";
+  import { sortObjects } from "$lib/utils/sorter";
 
   interface Props {
     tasks: TaskDto[];
@@ -9,132 +9,95 @@
     onDelete: () => void;
   }
 
-  let { tasks, onSave, onDelete } = $props();
-  let selectAll: boolean = false;
-  let editingTask: string | undefined | null;
+  let { tasks, onSave, onDelete }: Props = $props();
 
-  function toggleSelectAll() {}
-  function toggleTaskComplete(taskId: string) {}
+  let sortField: keyof TaskDto | null = $state(null);
+  let sortAsc: boolean = $state(true);
 
-  function toggleTaskSelect(taskId: string) {}
+  let sortedTasks: TaskDto[] = $derived(sortField ? sortObjects(tasks, sortField, sortAsc) : tasks);
 
-  function startEditing(taskId: string) {
-    editingTask = taskId;
-  }
-
-  // FIXME move to server side
-  async function saveEdit(updatedRow: TaskDto) {
-    const res = await fetch(`/task/rows`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedRow)
-    });
-    const json = await res.json();
-    if (json.error) {
-      console.log("error");
-      return "hiba";
-    }
-    editingTask = null;
-    return json.task;
-  }
-
-  function cancelEdit() {
-    editingTask = null;
-  }
-
-  function getStatusIcon(task: TaskDto) {
-    if (task.status === TaskStatus.COMPLETED) {
-      return { component: Check, class: "w-4 h-4 text-white", bgClass: "bg-green-500" };
-    } else if (task.status === TaskStatus.OPEN) {
-      return { component: X, class: "w-4 h-4 text-white", bgClass: "bg-red-500" };
+  function toggleSort(field: keyof TaskDto) {
+    if (sortField === field) {
+      sortAsc = !sortAsc;
     } else {
-      return { component: null, class: "", bgClass: "bg-gray-300" };
+      sortField = field;
+      sortAsc = true;
     }
   }
 
   function loadMore() {}
 </script>
 
-<!-- Table Header -->
 <div class="hidden gap-4 border-b border-gray-200 bg-gray-50 p-4 sm:grid sm:grid-cols-30 sm:p-6">
   <div class="col-span-1 flex items-center">
-    <input
-      type="checkbox"
-      checked={selectAll}
-      onchange={toggleSelectAll}
-      class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-    />
+    <input type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
   </div>
-  <div class="col-span-4 text-sm font-medium text-gray-700">Státusz</div>
-  <div class="col-span-7 text-sm font-medium text-gray-700">Cím</div>
-  <div class="col-span-7 text-sm font-medium text-gray-700">Leírás</div>
-  <div class="col-span-3 text-sm font-medium text-gray-700">Emlékeztető</div>
-  <div class="col-span-3 text-sm font-medium text-gray-700">Határidő</div>
-  <div class="col-span-3 text-sm font-medium text-gray-700">Elvégezve</div>
+  <button
+    class="col-span-4 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("status")}
+  >
+    Státusz
+    {#if sortField === "status"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
+
+  <button
+    class="col-span-7 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("title")}
+  >
+    Cím
+    {#if sortField === "title"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
+
+  <button
+    class="col-span-7 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("description")}
+  >
+    Leírás
+    {#if sortField === "description"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
+
+  <button
+    class="col-span-3 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("reminder")}
+  >
+    Emlékeztető
+    {#if sortField === "reminder"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
+
+  <button
+    class="col-span-3 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("dueDate")}
+  >
+    Határidő
+    {#if sortField === "dueDate"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
+
+  <button
+    class="col-span-3 flex cursor-pointer items-center gap-1 text-sm font-medium text-gray-700 hover:text-blue-600"
+    onclick={() => toggleSort("completedAt")}
+  >
+    Elvégezve
+    {#if sortField === "completedAt"}
+      <span class="text-xs">{sortAsc ? "↑" : "↓"}</span>
+    {/if}
+  </button>
   <div class="col-span-1 text-right text-sm font-medium text-gray-700"></div>
   <div class="col-span-1 text-right text-sm font-medium text-gray-700"></div>
 </div>
 
-<!-- Task List -->
 <div class="divide-y divide-gray-200">
-  {#each tasks as task (task.id)}
+  {#each sortedTasks as task}
     <div class="p-4 transition-colors hover:bg-gray-50 sm:p-6">
-      <!-- Mobile Layout -->
-      <div class="space-y-3 sm:hidden">
-        <div class="flex items-start gap-3">
-          <div class="mt-1 flex flex-shrink-0 items-center gap-3">
-            <input
-              type="checkbox"
-              checked={task.selected || false}
-              onchange={() => toggleTaskSelect(task.id)}
-              class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-            />
-            <button
-              onclick={() => toggleTaskComplete(task.id)}
-              class="flex h-6 w-6 items-center justify-center rounded-full transition-colors {getStatusIcon(task)
-                .bgClass}"
-            >
-              {#if getStatusIcon(task).component}
-                {@const SvelteComponent = getStatusIcon(task).component}
-                <SvelteComponent class={getStatusIcon(task).class} />
-              {/if}
-            </button>
-          </div>
-
-          <div class="min-w-0 flex-1">
-            <div class="mb-1 text-sm text-gray-500">
-              {#if task.dueDate}
-                {task.dueDate.toLocaleDateString()}
-              {/if}
-            </div>
-            {#if editingTask === task.id}
-              <div class="flex gap-2">
-                <input
-                  value={task.title}
-                  class="flex-1 rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  onkeydown={(e) => {
-                    if (e.key === "Enter") saveEdit(task.id, e.target.value);
-                    if (e.key === "Escape") cancelEdit();
-                  }}
-                  onblur={(e) => saveEdit(task.id, e.target.value)}
-                />
-              </div>
-            {:else}
-              <div class="text-sm text-gray-900 {task.completedAt ? 'text-gray-500 line-through' : ''}">
-                {task.title}
-              </div>
-            {/if}
-          </div>
-
-          <button
-            onclick={() => startEditing(task.id)}
-            class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-gray-600"
-          >
-            <PenLine class="h-4 w-4" />
-          </button>
-        </div>
-      </div>
-
       <!-- Desktop Layout -->
       <TaskRow {task} {onSave} {onDelete}></TaskRow>
     </div>

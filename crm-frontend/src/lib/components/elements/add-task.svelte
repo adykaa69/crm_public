@@ -10,7 +10,6 @@
   const taskStatuses: string[] = Object.values(TaskStatus);
   let reminder: Date | undefined = $state();
   let dueDate: Date | undefined = $state();
-  let completedAt: Date | undefined = $state();
 
   function disableAddingTask(): void {
     enable = false;
@@ -67,11 +66,3 @@
     </div>
   </div>
 </form>
-
-<style>
-  @import "tailwindcss";
-
-  @theme {
-    --color-submit-btn: #514ef3;
-  }
-</style>
