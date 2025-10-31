@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type TaskDto } from "$lib/models/task";
+  import { TaskStatus, type TaskDto } from "$lib/models/task";
   import TaskRow from "./task-row.svelte";
   import { sortObjects } from "$lib/utils/sorter";
 
@@ -23,6 +23,10 @@
       sortField = field;
       sortAsc = true;
     }
+  }
+
+  function taskFilterByStatus(taskStatus: TaskStatus[]) {
+    return tasks.filter((t) => taskStatus.includes(t.status));
   }
 
   function loadMore() {}

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { type TaskDto } from "$lib/models/task";
+  import { TaskStatus, type TaskDto } from "$lib/models/task";
   import TaskHeader from "./task-header.svelte";
   import TaskTable from "./task-table.svelte";
   import AddTask from "./elements/add-task.svelte";
@@ -12,7 +12,9 @@
     onDelete?: () => void;
   }
 
-  let { tasks, sortBy, showFilter, selectedTasks = false, onSave = () => {}, onDelete = () => {} } = $props();
+  let { tasks, showFilter, onSave = () => {}, onDelete = () => {} } = $props();
+  let selectedStatuses: TaskStatus[] = $state([]);
+  let filteredTasks: TaskDto[] = $derived(tasks.filter((t: TaskDto) => selectedStatuses.includes(t.status)));
 
   let taskAddingEnable = $state(false);
 
@@ -23,9 +25,12 @@
 <div class="min-h-screen bg-gray-50 p-4 sm:p-6 lg:p-8">
   <div class="rounded-lg bg-white shadow-sm lg:rounded-xl">
     <!-- Header -->
-    <TaskHeader {sortBy} {selectedTasks} totalTasks={tasks.length} bind:taskAddingEnable />
-
-    <TaskTable {tasks} {onSave} {onDelete} />
+    <div class="fix z-10">
+      <TaskHeader totalTasks={tasks.length} bind:taskAddingEnable bind:selectedStatuses />
+    </div>
+    <div class="fix z-11">
+      <TaskTable tasks={filteredTasks} {onSave} {onDelete} />
+    </div>
   </div>
 </div>
 
