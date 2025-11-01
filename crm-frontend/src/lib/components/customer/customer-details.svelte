@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { CustomerDetailsResponse } from "$lib/models/customer-details";
   import type { CustomerResponse } from "$lib/models/customer-response";
-  import CustomerDetailsAi from "./customer-details-ai.svelte";
   import CustomerForm from "./customer-form.svelte";
   import CustomerNote from "./customer-note.svelte";
 

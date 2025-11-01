@@ -1,5 +1,5 @@
 <script lang="ts">
-  import SveltyPicker, { formatDate, parseDate } from "svelty-picker";
+  import SveltyPicker from "svelty-picker";
 
   interface Props {
     isEditing?: boolean;
@@ -36,6 +36,7 @@
     mode="datetime"
     autocommit={true}
     onChange={updateDateTime}
+    inputClasses="w-33 pl-1"
   ></SveltyPicker>
 {:else}
   <span class="text-sm text-gray-900 {isCompleted ? 'text-gray-500 line-through' : ''}">{dateTimeToString}</span>

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CustomerForm from "$lib/components/customer-form.svelte";
   import type { CustomerRegistrationRequest } from "$lib/models/customer-request.js";
   import { ActionParameters } from "$lib/constants";
+  import CustomerForm from "$lib/components/customer/customer-form.svelte";
 
   let { form } = $props();
   let customer: CustomerRegistrationRequest = {

@@ -6,7 +6,7 @@
     selectedValues: string[];
   }
 
-  let { filterParams, selectedValues = $bindable([...filterParams]) } = $props();
+  let { filterParams, selectedValues = $bindable([...filterParams]) }: Props = $props();
 
   let enable: boolean = $state(false);
   let container: HTMLDivElement, button: HTMLButtonElement;

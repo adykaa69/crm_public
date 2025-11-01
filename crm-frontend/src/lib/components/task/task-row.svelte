@@ -1,28 +1,24 @@
 <script lang="ts">
   import { TaskStatus, type TaskDto } from "$lib/models/task";
   import { Check, PenLine, Trash, X } from "@lucide/svelte";
-  import TableCell from "./elements/table-cell.svelte";
-  import { deleteTask } from "$lib/utils/handle-task";
+  import TableCell from "../elements/table-cell.svelte";
 
   interface Props {
     task: TaskDto;
     isSelected?: boolean;
     onSave?: () => void;
     onDelete?: () => void;
+    onCancel?: () => void;
   }
   const taskStatuses: string[] = Object.values(TaskStatus);
-  let { task, isSelected = false, onSave, onDelete }: Props = $props();
+  let { task, onSave, onDelete, onCancel }: Props = $props();
   let isEditing = $state(false);
   let taskCache: TaskDto = $derived(task);
   let isCompleted: boolean = $derived(task.status === TaskStatus.COMPLETED);
 
-  function toggleTaskSelect(id: string) {}
-
-  // FIXME move to server side +page.server.ts
   async function saveEdit(task: TaskDto) {
-    const res = await fetch(`/task/rows`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch(`/task?/taskupdate`, {
+      method: "POST",
       body: JSON.stringify(task)
     });
     const json = await res.json();
@@ -31,9 +27,8 @@
       return "hiba";
     }
     isEditing = false;
-    task = json.task;
     onSave?.();
-    return task;
+    return json.task;
   }
 
   function cacheTask() {
@@ -42,12 +37,20 @@
   function cancelEdit() {
     taskCache = task;
     isEditing = false;
+    onCancel?.();
   }
 
   async function removeTask() {
     if (confirm(`Biztosan törölni szeretnéd ${task.title} feladatot?`)) {
-      await deleteTask(task.id);
-      alert(`${task.title} was deleted`);
+      const res = await fetch(`/task?/taskdelete`, {
+        method: "POST",
+        body: JSON.stringify(task)
+      });
+      if (res.ok) alert(`${task.title} was deleted`);
+      else {
+        let json = await res.json();
+        alert(`Error occured during deleting the task: ${json.errorMessage}`);
+      }
       onDelete?.();
     }
   }
@@ -57,29 +60,19 @@
     taskCache.status = TaskStatus[selectedStatus as keyof typeof TaskStatus];
   }
 
-  function onkeydown(e: KeyboardEvent) {
+  async function onkeydown(e: KeyboardEvent) {
     if (e.key === "Enter") {
       task = taskCache;
-      saveEdit(task).then((jsonTask) => {
-        jsonTask;
-      });
+      await saveEdit(task);
     }
     if (e.key === "Escape") cancelEdit();
   }
 </script>
 
 <div role="button" class="hidden items-center gap-4 sm:grid sm:grid-cols-30" {onkeydown} tabindex="0">
-  <div class="col-span-1 flex items-center">
-    <input
-      type="checkbox"
-      checked={isSelected}
-      onchange={() => toggleTaskSelect(task.id)}
-      class="col-span-1 flex h-4 w-4 items-center rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-    />
-  </div>
   <div class="col-span-4">
     {#if isEditing}
-      <select value={taskCache.status} {onkeydown} onchange={handleStatusChange}>
+      <select value={taskCache.status} onchange={handleStatusChange}>
         {#each taskStatuses as taskStatus}
           <option value={taskStatus}>{taskStatus}</option>
         {/each}
@@ -122,9 +115,10 @@
     />
   </div>
   {#if isEditing}
-    <div class="col-span-1 flex justify-end">
+    <div class="col-span-1 flex justify-end gap-3">
       <button
-        onclick={() => {
+        onclick={(e) => {
+          e.preventDefault();
           saveEdit(taskCache);
           isEditing = false;
         }}
@@ -132,14 +126,12 @@
       >
         <Check class="h-4 w-4" />
       </button>
-    </div>
-    <div class="col-span-1 flex justify-end">
       <button onclick={cancelEdit} class="p-1 text-gray-400 transition-colors hover:text-gray-600">
         <X class="h-4 w-4" />
       </button>
     </div>
   {:else}
-    <div class="col-span-1 flex justify-end">
+    <div class="col-span-1 flex justify-end gap-3">
       <button
         onclick={() => {
           cacheTask();
@@ -149,8 +141,6 @@
       >
         <PenLine class="h-4 w-4" />
       </button>
-    </div>
-    <div class="col-span-1 flex justify-end">
       <button onclick={() => removeTask()} class="p-1 text-gray-400 transition-colors hover:text-gray-600">
         <Trash class="h-4 w-4" />
       </button>

@@ -1,6 +1,5 @@
 import { httpDelete, httpGet, httpPost, httpPut } from "$lib/common/api";
 import type { CustomerDetailsRequest } from "$lib/models/customer-details";
-import type { CustomerRegistrationRequest, CustomerUpdateRequest } from "$lib/models/customer-request";
 
 const basePath: string = "/api/v1/customers";
 const detailsPath: string = "/details";

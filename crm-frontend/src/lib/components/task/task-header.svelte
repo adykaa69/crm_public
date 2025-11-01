@@ -1,7 +1,7 @@
 <script lang="ts">
   import { TaskStatus } from "$lib/models/task";
-  import { Plus } from "@lucide/svelte";
-  import Filter from "./elements/filter.svelte";
+  import Filter from "../elements/filter.svelte";
+  import Button from "../elements/button.svelte";
 
   interface Props {
     totalTasks: number;
@@ -37,23 +37,6 @@
     <div class="z-10">
       <Filter filterParams={taskStatuses} bind:selectedValues />
     </div>
-
-    <button
-      class="add-task-btn flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-white transition-colors hover:bg-blue-700"
-      onclick={() => (taskAddingEnable = true)}
-    >
-      <Plus class="h-4 w-4" />
-      <span class="hidden sm:inline">Add Task</span>
-    </button>
+    <Button btnName="Feladat hozzáadása" onclick={() => (taskAddingEnable = true)} plusSign={true} />
   </div>
 </div>
-
-<style>
-  .add-task-btn {
-    background-color: #514ef390;
-  }
-
-  .add-task-btn:hover {
-    background-color: #514ef3;
-  }
-</style>

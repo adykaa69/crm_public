@@ -1,6 +1,6 @@
 <script lang="ts">
   import { TaskStatus } from "$lib/models/task";
-  import TaskCalendarCell from "./task-calendar-cell.svelte";
+  import TaskCalendarCell from "../elements/task-calendar-cell.svelte";
 
   interface Props {
     enable: boolean;
@@ -37,12 +37,12 @@
     <div>
       <label for="title" class="text-lg font-bold">Cím</label>
       <br />
-      <input type="text" id="title" name="title" class="rounded-sm border-1" />
+      <input type="text" id="title" name="title" class="rounded-sm border" />
     </div>
     <div>
       <label for="description" class="w-55 text-lg font-bold">Leírás</label>
       <br />
-      <textarea id="description" name="description" class="h-32 w-55 resize-y overflow-auto rounded-sm border-1 p-2"
+      <textarea id="description" name="description" class="h-32 w-55 resize-y overflow-auto rounded-sm border p-2"
       ></textarea>
       <!-- <input type="text" id="description" name="description" class="rounded-sm border-1" /> -->
     </div>
@@ -59,7 +59,7 @@
       <input type="hidden" name="dueDate" value={formatDateForBackend(dueDate)} />
     </div>
     <div class="row">
-      <button class="rounded bg-gray-200 px-4 py-2 hover:bg-gray-300" onclick={disableAddingTask}>Mégse</button>
+      <button class="bg-cancel-btn/80 hover:bg-cancel-btn rounded px-4 py-2" onclick={disableAddingTask}>Mégse</button>
       <button class="bg-submit-btn/80 hover:bg-submit-btn m-2 rounded p-3 px-4 py-2 text-white" type="submit"
         >Mentés</button
       >

@@ -3,7 +3,7 @@
   import Sidebar from "$lib/components/sidebar.svelte";
   import "../app.css";
 
-  let { children, data } = $props();
+  let { children } = $props();
 </script>
 
 <NavigationBar />

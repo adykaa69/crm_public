@@ -20,7 +20,7 @@ export function httpDelete(path: string, header?: any) {
 }
 
 async function req(path: string, method = "GET", header?: any, data?: any) {
-  const res = fetch(baseApiUrl + path, {
+  return fetch(baseApiUrl + path, {
     method,
     headers: {
       "Content-Type": "application/json",
@@ -28,5 +28,4 @@ async function req(path: string, method = "GET", header?: any, data?: any) {
     },
     body: data && JSON.stringify(data)
   });
-  return res;
 }

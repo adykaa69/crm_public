@@ -6,7 +6,7 @@ import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { nestData } from "$lib/utils/form-data-parser";
-import { getAllCustomerDetails, getCustomerDetails } from "$lib/utils/handle-customer-details";
+import { getAllCustomerDetails } from "$lib/utils/handle-customer-details";
 import type { CustomerDetailsResponse } from "$lib/models/customer-details";
 
 export const load: PageServerLoad = async ({ params }) => {
@@ -16,7 +16,6 @@ export const load: PageServerLoad = async ({ params }) => {
   const customerJson = await customerResponse.json();
   const customerDetailsJson = await customerDetailsResponse.json();
   if (customerResponse.status !== 200) {
-    const errorResponse = customerJson as PlatformApiResponse<ErrorResponse>;
     return customerJson as PlatformApiResponse<ErrorResponse>;
   } else if (customerDetailsResponse.status !== 200) {
     return customerDetailsJson as PlatformApiResponse<ErrorResponse>;

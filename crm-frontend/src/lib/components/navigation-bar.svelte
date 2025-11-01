@@ -1,7 +1,8 @@
 <script lang="ts">
   import { page } from "$app/state";
   import { getBtnHrefByHref, getBtnNameByHref, getTitleByHref } from "$lib/utils/handle-constants";
-  import Logo from "./logo.svelte";
+  import ButtonHref from "./elements/button-href.svelte";
+  import Logo from "./elements/logo.svelte";
 
   let title: string = $derived(getTitleByHref(page.url.pathname));
   let btnName: string | undefined = $derived(getBtnNameByHref(page.url.pathname));
@@ -19,10 +20,7 @@
   </div>
   <div class="header-right">
     {#if btnName}
-      <a class="add-btn" href={btnHref} aria-label="Add new customer">
-        {btnName}
-        <img class="add-logo" src="/plus_logo.svg" alt="add" />
-      </a>
+      <ButtonHref {btnName} href={btnHref} plusSign={true} />
       <button class="icon-btn" aria-label="Search">
         <img src="/magnifier_logo.svg" alt="Search" />
       </button>
@@ -70,20 +68,13 @@
     padding: 0 1rem;
   }
 
-  .add-btn {
-    background: #514ef3;
+  /* .add-btn {
     color: #fff;
     border: none;
     border-radius: 50px;
     width: fit-content;
     height: 1.7rem;
-    font-size: 0.8rem;
-    padding: 1rem 0.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+  } */
 
   .add-logo {
     margin: 0.3rem;

@@ -8,15 +8,13 @@ export interface TaskRequest {
 
 export interface TaskUpdateRequest {
   id: string;
-  customerId: string | null;
+  customerId?: string;
   title: string;
-  description: string;
+  description?: string;
   status: TaskStatus;
   reminder?: Date;
   dueDate?: Date;
   completedAt?: Date;
-  createdAt: Date;
-  updatedAt: Date;
 }
 
 export interface TaskResponse {
@@ -61,7 +59,6 @@ export enum TaskStatus {
   IN_PROGRESS = "IN_PROGRESS",
   ON_HOLD = "ON_HOLD",
   BLOCKED = "BLOCKED",
-  PENDING = "PENDING",
   COMPLETED = "COMPLETED",
   CANCELLED = "CANCELLED",
   ARCHIVED = "ARCHIVED"
@@ -84,6 +81,17 @@ export function parseTaskResponseToTaskDto(raw: any): TaskDto {
 
 export function parseTaskDtoToTaskRequest(taskDto: TaskDto): TaskRequest {
   return {
+    title: taskDto.title,
+    description: taskDto.description,
+    status: taskDto.status,
+    reminder: taskDto.reminder,
+    dueDate: taskDto.dueDate
+  };
+}
+
+export function toTaskUpdateRequest(taskDto: TaskDto): TaskUpdateRequest {
+  return {
+    id: taskDto.id,
     title: taskDto.title,
     description: taskDto.description,
     status: taskDto.status,

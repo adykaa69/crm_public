@@ -2,4 +2,6 @@
 
 @theme {
   --color-submit-btn: #514ef3;
+  --color-selected-item: #514ef3;
+  --color-cancel-btn: #d1d5dc;
 }
