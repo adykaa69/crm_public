@@ -84,6 +84,23 @@ export interface ResidenceDto {
   updatedAt?: Date;
 }
 
+const taskDto: ResidenceDto = {
+  residenceId: undefined,
+  zipCode: undefined,
+  streetAddress: undefined,
+  addressLine2: undefined,
+  city: undefined,
+  country: undefined,
+  createdAt: undefined,
+  updatedAt: undefined
+};
+
+const taskDtoKeys = Object.keys(taskDto) as Array<keyof ResidenceDto>;
+
+export function isKeyOfTask(key: string): key is keyof CustomerDto {
+  return taskDtoKeys.includes(key as keyof ResidenceDto);
+}
+
 export function parseCustomerResponseToCustomerDto(raw: any): CustomerDto {
   return {
     id: raw.id,

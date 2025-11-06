@@ -28,10 +28,11 @@
 </div>
 
 {#if customerAddingEnable}
-  <div class="fixed inset-0 z-10 flex items-center justify-center bg-gray-300/40">
-    <div class="min-w-[350px] rounded-lg bg-white p-3 shadow-lg">
-      <!-- FIXME registration is task registration-->
-      <CustomerRegistration bind:enable={customerAddingEnable} />
+  <div class="bg-background flex min-h-screen items-center justify-center p-4">
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div class="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-lg">
+        <CustomerRegistration bind:enable={customerAddingEnable} />
+      </div>
     </div>
   </div>
 {/if}
