@@ -1,6 +1,7 @@
-package hu.bhr.backend.customer.dto;
+package hu.bhr.backend.step_definition.dto;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public record PlatformResponse<T>(
     @JsonProperty("status") String status,

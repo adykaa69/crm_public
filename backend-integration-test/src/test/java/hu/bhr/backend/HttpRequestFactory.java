@@ -11,7 +11,6 @@ public class HttpRequestFactory {
         return HttpRequest
                 .newBuilder()
                 .uri(new URI(path))
-//                .headers("Authorization", "Bearer " + token)
                 .DELETE()
                 .build();
     }
@@ -20,7 +19,6 @@ public class HttpRequestFactory {
         return HttpRequest
                 .newBuilder()
                 .uri(new URI(path))
-//                .headers("Authorization", "Bearer " + token)
                 .GET()
                 .build();
     }
@@ -29,8 +27,17 @@ public class HttpRequestFactory {
         return HttpRequest
                 .newBuilder()
                 .uri(new URI(path))
-//                .headers("Content-Type", "application/json", "Authorization", "Bearer " + token)
+                .headers("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofByteArray(body.getBytes(StandardCharsets.UTF_8)))
+                .build();
+    }
+
+    public static HttpRequest createPut(String path, String body) throws URISyntaxException {
+        return HttpRequest
+                .newBuilder()
+                .uri(new URI(path))
+                .headers("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofByteArray(body.getBytes(StandardCharsets.UTF_8)))
                 .build();
     }
 

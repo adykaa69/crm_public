@@ -1,4 +1,4 @@
-package hu.bhr.backend.customer.dto;
+package hu.bhr.backend.step_definition.dto;
 
 public record CustomerRequest(
         String firstName,
@@ -6,5 +6,6 @@ public record CustomerRequest(
         String nickname,
         String email,
         String phoneNumber,
-        String relationship
+        String relationship,
+        ResidenceRequest residenceRequest
 ) {}

@@ -28,6 +28,8 @@ dependencies {
     testImplementation("io.cucumber:cucumber-junit-platform-engine:$cucumberVersion")
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    testImplementation("com.fasterxml.jackson.core:jackson-databind")
 
     // Spring boot JPA dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")

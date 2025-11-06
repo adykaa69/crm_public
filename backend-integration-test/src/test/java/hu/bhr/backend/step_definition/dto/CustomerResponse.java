@@ -1,6 +1,7 @@
-package hu.bhr.backend.customer.dto;
+package hu.bhr.backend.step_definition.dto;
 
-import io.cucumber.core.internal.com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 
 public record CustomerResponse(
     @JsonProperty("id") String id,
@@ -11,5 +12,6 @@ public record CustomerResponse(
     @JsonProperty("phoneNumber") String phoneNumber,
     @JsonProperty("relationship") String relationship,
     @JsonProperty("createdAt") String createdAt,
-    @JsonProperty("updatedAt") String updatedAt
+    @JsonProperty("updatedAt") String updatedAt,
+    @JsonProperty("residence") ResidenceResponse residence
 ) {}
