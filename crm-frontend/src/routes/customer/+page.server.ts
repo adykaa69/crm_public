@@ -1,14 +1,14 @@
 import type { PageServerLoad } from "./$types";
-import type { CustomerResponse } from "$lib/models/customer-response";
 import type { ErrorResponse } from "$lib/models/error";
 import { getCustomers } from "$lib/utils/handle-customer";
+import { parseCustomerResponseToCustomerDto } from "$lib/models/customer";
 
 export const load: PageServerLoad = async () => {
-  const response = await getCustomers();
+  const response: Response = await getCustomers();
 
-  const data = await response.json();
+  const responseJson = await response.json();
   if (response.status !== 200) {
-    return { errors: data.data as ErrorResponse[] };
+    return { errors: responseJson.data as ErrorResponse[] };
   }
-  return { customers: data.data as CustomerResponse[] };
+  return { customers: responseJson.data.map(parseCustomerResponseToCustomerDto) };
 };

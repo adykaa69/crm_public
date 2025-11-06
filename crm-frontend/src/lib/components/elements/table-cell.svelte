@@ -12,7 +12,7 @@
     text?: string;
     isEditing?: boolean;
     onkeydown?: (event: KeyboardEvent) => void;
-    isCompleted: boolean;
+    isCompleted?: boolean;
     date?: Date;
     onSave?: () => void;
     onCancel?: () => void;
@@ -22,7 +22,7 @@
     cellType = "text",
     text = $bindable(""),
     isEditing = false,
-    isCompleted,
+    isCompleted = false,
     date = $bindable(),
     onSave,
     onCancel
