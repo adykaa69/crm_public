@@ -1,12 +1,10 @@
-package hu.bhr.backend.api;
+package hu.bhr.crm.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import hu.bhr.backend.Constants;
-import hu.bhr.backend.HttpRequestFactory;
-import hu.bhr.backend.step_definition.dto.CustomerRequest;
-import hu.bhr.backend.step_definition.dto.PlatformResponse;
+import hu.bhr.crm.Constants;
+import hu.bhr.crm.HttpRequestFactory;
+import hu.bhr.crm.step_definition.dto.CustomerRequest;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -49,10 +47,5 @@ public class CustomerApiClient {
         HttpRequest httpRequest = HttpRequestFactory.createPut(
                 Constants.SERVICE_URL + String.format(CUSTOMER_BY_ID_PATH, id), body);
         return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-    }
-
-    public <T> PlatformResponse<T> parseResponse(HttpResponse<String> response, TypeReference<PlatformResponse<T>> type)
-            throws Exception {
-        return objectMapper.readValue(response.body(), type);
     }
 }

@@ -18,7 +18,7 @@ java {
 }
 
 tasks.jar{
-    enabled = false
+    enabled = true
 }
 
 repositories {

@@ -1,6 +1,6 @@
-package hu.bhr.backend.assertions;
+package hu.bhr.crm.assertions;
 
-import hu.bhr.backend.step_definition.dto.PlatformResponse;
+import hu.bhr.crm.step_definition.dto.PlatformResponse;
 import org.assertj.core.api.Assertions;
 
 import java.util.List;

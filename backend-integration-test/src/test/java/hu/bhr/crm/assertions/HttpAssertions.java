@@ -1,4 +1,4 @@
-package hu.bhr.backend.assertions;
+package hu.bhr.crm.assertions;
 
 import org.assertj.core.api.Assertions;
 

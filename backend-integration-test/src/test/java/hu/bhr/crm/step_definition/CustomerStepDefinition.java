@@ -1,31 +1,37 @@
-package hu.bhr.backend.step_definition;
+package hu.bhr.crm.step_definition;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import hu.bhr.backend.api.CustomerApiClient;
-import hu.bhr.backend.assertions.CustomerAssertions;
-import hu.bhr.backend.assertions.HttpAssertions;
-import hu.bhr.backend.assertions.PlatformAssertions;
-import hu.bhr.backend.context.CustomerContext;
-import hu.bhr.backend.step_definition.dto.CustomerRequest;
-import hu.bhr.backend.step_definition.dto.CustomerResponse;
-import hu.bhr.backend.step_definition.dto.PlatformResponse;
-import hu.bhr.backend.step_definition.dto.ResidenceRequest;
+import hu.bhr.crm.api.ApiResponseParser;
+import hu.bhr.crm.api.CustomerApiClient;
+import hu.bhr.crm.assertions.CustomerAssertions;
+import hu.bhr.crm.assertions.HttpAssertions;
+import hu.bhr.crm.context.CustomerContext;
+import hu.bhr.crm.context.GlobalTestContext;
+import hu.bhr.crm.step_definition.dto.CustomerRequest;
+import hu.bhr.crm.step_definition.dto.CustomerResponse;
+import hu.bhr.crm.step_definition.dto.PlatformResponse;
+import hu.bhr.crm.step_definition.dto.ResidenceRequest;
 import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.assertj.core.api.Assertions;
-import org.springframework.stereotype.Component;
 
 import java.net.http.HttpResponse;
 import java.util.List;
 
-@Component
 public class CustomerStepDefinition {
 
+    private final CustomerContext customerContext;
+    private final GlobalTestContext globalTestContext;
     private final CustomerApiClient apiClient = new CustomerApiClient();
-    private final CustomerContext context = new CustomerContext();
+
+    public CustomerStepDefinition(CustomerContext context,
+                                  GlobalTestContext globalTestContext) {
+        this.customerContext = context;
+        this.globalTestContext = globalTestContext;
+    }
 
     @Given("a new customer is created")
     public void aNewCustomerIsCreated() throws Exception {
@@ -41,19 +47,19 @@ public class CustomerStepDefinition {
 
     @When("the customer is retrieved by ID")
     public void theCustomerIsRetrievedByID() throws Exception {
-        context.setLastResponse(apiClient.getCustomerById(context.getCreatedCustomerId()));
+        customerContext.setLastResponse(apiClient.getCustomerById(customerContext.getCreatedCustomerId()));
     }
 
     @When("all customers are retrieved")
     public void allCustomersAreRetrieved() throws Exception {
-        context.setLastResponse(apiClient.getAllCustomers());
+        customerContext.setLastResponse(apiClient.getAllCustomers());
     }
 
     @Then("the response should contain the customer's details")
     public void theResponseShouldContainTheCustomerDetails() throws Exception {
         PlatformResponse<CustomerResponse> resultResponse =
-                apiClient.parseResponse(context.getLastResponse(), new TypeReference<>() {});
-        CustomerResponse expectedResponse = context.getLastCustomerResponse();
+                ApiResponseParser.parseResponse(customerContext.getLastResponse(), new TypeReference<>() {});
+        CustomerResponse expectedResponse = customerContext.getLastCustomerResponse();
 
         CustomerAssertions.assertCustomersEqual(expectedResponse, resultResponse.data());
     }
@@ -61,8 +67,8 @@ public class CustomerStepDefinition {
     @Then("the response should contain all customer's details")
     public void theResponseShouldContainAllCustomersDetails() throws Exception {
         PlatformResponse<List<CustomerResponse>> resultResponse =
-                apiClient.parseResponse(context.getLastResponse(), new TypeReference<>() {});
-        List<String> expectedIds = context.getCreatedCustomerIds();
+                ApiResponseParser.parseResponse(customerContext.getLastResponse(), new TypeReference<>() {});
+        List<String> expectedIds = globalTestContext.getCreatedCustomerIds();
 
         for (String id : expectedIds) {
             boolean found = resultResponse.data().stream()
@@ -73,26 +79,21 @@ public class CustomerStepDefinition {
         }
     }
 
-    @And("the status code should be {int}")
-    public void theStatusCodeShouldBe(int expectedStatus) {
-        HttpAssertions.assertStatusCode(context.getLastResponse(), expectedStatus);
-    }
-
     @Given("the customer database is empty")
-    public void theCustomerDatabaseIsEmpty() throws Exception {
-        Assertions.assertThat(context.getCreatedCustomerIds()).isEmpty();
+    public void theCustomerDatabaseIsEmpty() {
+        Assertions.assertThat(globalTestContext.getCreatedCustomerIds()).isEmpty();
     }
 
     @When("the created customer is deleted")
     public void theCreatedCustomerIsDeleted() throws Exception {
-        HttpResponse<String> response = apiClient.deleteCustomer(context.getCreatedCustomerId());
-        context.setLastResponse(response);
-        context.getCreatedCustomerIds().remove(context.getCreatedCustomerId());
+        HttpResponse<String> response = apiClient.deleteCustomer(customerContext.getCreatedCustomerId());
+        customerContext.setLastResponse(response);
+        globalTestContext.getCreatedCustomerIds().remove(customerContext.getCreatedCustomerId());
     }
 
     @And("the created customer should no longer exist in the database")
     public void theCreatedCustomerShouldNoLongerExistInTheDatabase() throws Exception {
-        HttpResponse<String> response = apiClient.getCustomerById(context.getCreatedCustomerId());
+        HttpResponse<String> response = apiClient.getCustomerById(customerContext.getCreatedCustomerId());
         HttpAssertions.assertStatusCode(response, 404);
     }
 
@@ -114,13 +115,13 @@ public class CustomerStepDefinition {
                 )
         );
 
-        HttpResponse<String> response = apiClient.updateCustomer(context.getCreatedCustomerId(), updatedRequest);
-        context.setLastResponse(response);
+        HttpResponse<String> response = apiClient.updateCustomer(customerContext.getCreatedCustomerId(), updatedRequest);
+        customerContext.setLastResponse(response);
 
-        if (context.getLastResponse().statusCode() == 200) {
+        if (customerContext.getLastResponse().statusCode() == 200) {
             PlatformResponse<CustomerResponse> resultResponse =
-                    apiClient.parseResponse(context.getLastResponse(), new TypeReference<>() {});
-            context.setLastCustomerResponse(resultResponse.data());
+                    ApiResponseParser.parseResponse(customerContext.getLastResponse(), new TypeReference<>() {});
+            customerContext.setLastCustomerResponse(resultResponse.data());
         }
     }
 
@@ -131,15 +132,7 @@ public class CustomerStepDefinition {
 
     @When("the customer with ID {string} is requested")
     public void theCustomerWithNonExistentIdIsRequested(String id) throws Exception {
-        context.setLastResponse(apiClient.getCustomerById(id));
-    }
-
-    @Then("the response should contain the error message: {string}")
-    public void theResponseShouldContainTheErrorMessage(String expectedErrorMessage) throws Exception {
-        PlatformResponse<?> resultResponse =
-                apiClient.parseResponse(context.getLastResponse(), new TypeReference<>() {});
-
-        PlatformAssertions.assertContainsErrorMessage(resultResponse, expectedErrorMessage);
+        customerContext.setLastResponse(apiClient.getCustomerById(id));
     }
 
     @When("a new customer is created with invalid email")
@@ -153,10 +146,10 @@ public class CustomerStepDefinition {
                 "customer_relationship",
                 null
         );
-        context.setLastResponse(apiClient.createCustomer(customerRequest));
+        customerContext.setLastResponse(apiClient.createCustomer(customerRequest));
     }
 
-    private CustomerRequest buildCustomerRequest(int customerNumber) throws Exception {
+    private CustomerRequest buildCustomerRequest(int customerNumber) {
         return new CustomerRequest(
                 "customer_firstName_" + customerNumber,
                 "customer_lastName_" + customerNumber,
@@ -181,24 +174,24 @@ public class CustomerStepDefinition {
     private void createCustomer(int customerNumber) throws Exception {
         CustomerRequest request = buildCustomerRequest(customerNumber);
         HttpResponse<String> response = apiClient.createCustomer(request);
-        context.setLastResponse(response);
+        customerContext.setLastResponse(response);
 
         if (response.statusCode() == 201) {
             PlatformResponse<CustomerResponse> parsed =
-                    apiClient.parseResponse(response, new TypeReference<>() {});
-            context.setCreatedCustomerId(parsed.data().id());
-            context.addCreatedCustomerId(parsed.data().id());
-            context.setLastCustomerResponse(parsed.data());
+                    ApiResponseParser.parseResponse(response, new TypeReference<>() {});
+            customerContext.setCreatedCustomerId(parsed.data().id());
+            globalTestContext.addCreatedCustomerId(parsed.data().id());
+            customerContext.setLastCustomerResponse(parsed.data());
         }
     }
 
     @After
     public void cleanUpAfterScenario() throws Exception {
-        if (!context.getCreatedCustomerIds().isEmpty()) {
-            for (String id: context.getCreatedCustomerIds()) {
+        if (!globalTestContext.getCreatedCustomerIds().isEmpty()) {
+            for (String id: globalTestContext.getCreatedCustomerIds()) {
                 apiClient.deleteCustomer(id);
             }
-            context.clear();
+            globalTestContext.clear();
         }
     }
 }

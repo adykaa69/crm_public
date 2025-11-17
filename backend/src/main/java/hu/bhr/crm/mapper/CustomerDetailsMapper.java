@@ -7,6 +7,9 @@ import hu.bhr.crm.repository.mongo.document.CustomerDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Mapper(componentModel = "spring")
@@ -22,4 +25,12 @@ public interface CustomerDetailsMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     CustomerDetails customerDetailsRequestToCustomerDetails(UUID id, CustomerDetailsRequest customerDetailsRequest);
+
+    default ZonedDateTime instantToZonedDateTime(Instant instant) {
+        return instant == null ? null : ZonedDateTime.ofInstant(instant, ZoneId.systemDefault());
+    }
+
+    default Instant zonedDateTimeToInstant(ZonedDateTime zonedDateTime) {
+        return zonedDateTime == null ? null : zonedDateTime.toInstant();
+    }
 }

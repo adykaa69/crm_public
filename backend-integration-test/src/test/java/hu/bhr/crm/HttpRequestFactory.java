@@ -1,4 +1,4 @@
-package hu.bhr.backend;
+package hu.bhr.crm;
 
 import java.net.URI;
 import java.net.URISyntaxException;

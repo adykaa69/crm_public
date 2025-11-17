@@ -1,4 +1,4 @@
-package hu.bhr.backend.step_definition.dto;
+package hu.bhr.crm.step_definition.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

@@ -1,13 +1,13 @@
-package hu.bhr.backend.assertions;
+package hu.bhr.crm.assertions;
 
-import hu.bhr.backend.step_definition.dto.CustomerResponse;
+import hu.bhr.crm.step_definition.dto.CustomerResponse;
 import org.assertj.core.api.Assertions;
 
 public class CustomerAssertions {
 
     public static void assertCustomersEqual(CustomerResponse expectedResponse, CustomerResponse actualResponse) {
         Assertions.assertThat(actualResponse)
-                .usingRecursiveAssertion()
+                .usingRecursiveComparison()
                 .ignoringFields("createdAt", "updatedAt")
                 .isEqualTo(expectedResponse);
     }
