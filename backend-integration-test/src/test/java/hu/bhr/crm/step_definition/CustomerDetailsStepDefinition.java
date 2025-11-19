@@ -12,6 +12,7 @@ import hu.bhr.crm.step_definition.dto.CustomerDetailsResponse;
 import hu.bhr.crm.step_definition.dto.CustomerRequest;
 import hu.bhr.crm.step_definition.dto.CustomerResponse;
 import hu.bhr.crm.step_definition.dto.PlatformResponse;
+import io.cucumber.java.After;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -203,4 +204,13 @@ public class CustomerDetailsStepDefinition {
         }
     }
 
+    @After
+    public void cleanUpAfterScenario() throws Exception {
+        if (!customerDetailsContext.getCreatedCustomerDetailsIds().isEmpty()) {
+            for (String id : customerDetailsContext.getCreatedCustomerDetailsIds()) {
+                customerDetailsApiClient.deleteCustomerDetails(id);
+            }
+            globalTestContext.clear();
+        }
+    }
 }

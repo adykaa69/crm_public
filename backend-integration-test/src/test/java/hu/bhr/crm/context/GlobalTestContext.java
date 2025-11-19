@@ -11,8 +11,9 @@ public class GlobalTestContext {
     private final List<String> createdCustomerIds = new ArrayList<>();
 
     public GlobalTestContext(CustomerContext customerContext,
-                             CustomerDetailsContext customerDetailsContext) {
-        this.contexts = List.of(customerDetailsContext, customerContext);
+                             CustomerDetailsContext customerDetailsContext,
+                             TaskContext taskContext) {
+        this.contexts = List.of(customerDetailsContext, customerContext, taskContext);
     }
 
     public HttpResponse<String> getLastResponse() {
