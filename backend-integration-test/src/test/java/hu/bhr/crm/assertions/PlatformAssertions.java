@@ -20,17 +20,10 @@ public class PlatformAssertions {
         Object data = platformResponse.data();
 
         if (data instanceof Map<?, ?> mapData) {
-            if (mapData.containsKey("errors") && mapData.get("errors") instanceof List<?> errorsList) {
-                // ValidationErrorResponse
-                return errorsList.stream()
-                        .filter(e -> e instanceof Map<?, ?>)
-                        .map(e -> (Map<?, ?>) e)
-                        .anyMatch(e -> expectedErrorMessage.equals(e.get("errorMessage")));
-            }
-
-            if (mapData.containsKey("errorMessage")) {
-                // ErrorResponse
-                return expectedErrorMessage.equals(mapData.get("errorMessage"));
+            if (mapData.containsKey("messages") && mapData.get("messages") instanceof List<?> messages) {
+                return messages.stream()
+                        .filter(m -> m instanceof String)
+                        .anyMatch(m -> m.equals(expectedErrorMessage));
             }
         }
 
