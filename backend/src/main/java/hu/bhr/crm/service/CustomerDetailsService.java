@@ -11,6 +11,15 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service class for managing additional, potentially unstructured Customer Details.
+ * <p>
+ * This service manages the lifecycle of supplementary customer information. It acts as a
+ * coordinator between the core Customer entity management and the secondary details' storage.
+ * It ensures referential integrity by validating the existence of the primary Customer entity
+ * before allowing creation or modification of associated detail records.
+ * </p>
+ */
 @Service
 public class CustomerDetailsService {
 
@@ -25,11 +34,14 @@ public class CustomerDetailsService {
     }
 
     /**
-     * Gets customer details by their unique ID.
+     * Retrieves a specific customer detail document by its unique identifier.
+     * <p>
+     * Note: The ID refers to the specific detail record, not the Customer's primary ID.
+     * </p>
      *
-     * @param id the unique ID of the requested customer details
-     * @return a {@link CustomerDetails} object corresponding to the given ID
-     * @throws CustomerDetailsNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
+     * @param id the unique UUID of the customer detail document
+     * @return the {@link CustomerDetails} domain object
+     * @throws CustomerDetailsNotFoundException if the document with the given ID does not exist
      */
     public CustomerDetails getCustomerDetailsById(UUID id) {
         CustomerDocument customerDocument = customerDocumentRepository.findById(id)
@@ -39,10 +51,15 @@ public class CustomerDetailsService {
     }
 
     /**
-     * Gets all customer details for a specific customer by their unique ID.
+     * Retrieves all detail records associated with a specific customer.
+     * <p>
+     * Before querying the details storage, this method validates that the referenced
+     * customer actually exists in the primary database system to ensure data consistency.
+     * </p>
      *
-     * @param customerId the unique ID of the customer whose details are requested
-     * @return a list of {@link CustomerDetails} objects corresponding to the given customer ID
+     * @param customerId the unique UUID of the customer whose details are requested
+     * @return a {@link List} of {@link CustomerDetails} objects belonging to the customer
+     * @throws CustomerNotFoundException if the provided customerId does not exist in the primary repository
      */
     public List<CustomerDetails> getAllCustomerDetails(UUID customerId) {
         customerService.validateCustomerExists(customerId);
@@ -52,12 +69,16 @@ public class CustomerDetailsService {
     }
 
     /**
-     * Creates new customer details and stores them in the database.
+     * Persists new customer details.
+     * <p>
+     * Performs a pre-validation check against the primary customer repository to ensure the
+     * referenced customer exists. This prevents the creation of detail records
+     * that point to non-existent customers.
+     * </p>
      *
-     * @param customerDetails the built CustomerDetails containing the new customer details
-     * @return the created {@link CustomerDetails} object
-     * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
-     * @throws hu.bhr.crm.exception.MissingFieldException if field "note" is missing
+     * @param customerDetails the domain object containing the note and the associated customer ID
+     * @return the saved {@link CustomerDetails} object with the generated ID
+     * @throws CustomerNotFoundException if the referenced customer does not exist in the system
      */
     public CustomerDetails saveCustomerDetails(CustomerDetails customerDetails) {
         customerService.validateCustomerExists(customerDetails.customerId());
@@ -69,11 +90,11 @@ public class CustomerDetailsService {
     }
 
     /**
-     * Deletes customer details by their unique ID.
+     * Deletes a specific customer detail record by its unique ID.
      *
-     * @param id the unique ID of the customer details to be deleted
-     * @return the deleted {@link CustomerDetails} object
-     * @throws CustomerDetailsNotFoundException if the customer details with the given ID do not exist (returns HTTP 404 Not Found)
+     * @param id the unique UUID of the detail record to delete
+     * @return the {@link CustomerDetails} object that was deleted (for confirmation purposes)
+     * @throws CustomerDetailsNotFoundException if the record to delete cannot be found
      */
     public CustomerDetails deleteCustomerDetailsById(UUID id) {
         CustomerDocument customerDocument = customerDocumentRepository.findById(id)
@@ -85,13 +106,18 @@ public class CustomerDetailsService {
     }
 
     /**
-     * Updates existing customer details.
+     * Updates an existing customer detail record.
+     * <p>
+     * This method performs a dual validation:
+     * <ul>
+     * <li>Checks if the detail record itself exists.</li>
+     * <li>Checks if the referenced customer still exists in the primary system.</li>
+     * </ul>
      *
-     * @param customerDetails the updated CustomerDetails object
+     * @param customerDetails the domain object containing the updated information
      * @return the updated {@link CustomerDetails} object
-     * @throws CustomerDetailsNotFoundException if the customer details with the given ID do not exist (returns HTTP 404 Not Found)
-     * @throws CustomerNotFoundException if the customer with the given ID does not exist (returns HTTP 404 Not Found)
-     * @throws hu.bhr.crm.exception.MissingFieldException if field "note" is missing
+     * @throws CustomerDetailsNotFoundException if the record to update does not exist
+     * @throws CustomerNotFoundException if the associated customer does not exist
      */
     public CustomerDetails updateCustomerDetails(CustomerDetails customerDetails) {
         // Check if the customer details exist
@@ -107,6 +133,15 @@ public class CustomerDetailsService {
         return mapper.customerDocumentToCustomerDetails(updatedDocument);
     }
 
+    /**
+     * Deletes all detail records related to a specific customer.
+     * <p>
+     * This is a cleanup operation typically triggered when a Customer is deleted from the
+     * primary system, ensuring no related orphan data remains in the secondary storage.
+     * </p>
+     *
+     * @param customerId the unique UUID of the customer whose details should be deleted
+     */
     public void deleteCustomerDetailsByCustomerId(UUID customerId) {
         // Delete all documents related a customer
         customerDocumentRepository.deleteAllByCustomerId(customerId);

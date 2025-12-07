@@ -64,9 +64,9 @@ public class EmailService {
         javaMailSender.send(message);
     }
 
-        private MimeMessage createEmail(Task task,
-                                          Customer customer,
-                                          List<CustomerDetails> customerDetailsList) throws MessagingException {
+    private MimeMessage createEmail(Task task,
+                                    Customer customer,
+                                    List<CustomerDetails> customerDetailsList) throws MessagingException {
 
         EmailContent emailContent = EmailFactory.createEmailContent(task, customer, customerDetailsList);
         String htmlContent = EmailContentHtmlBuilder.build(emailContent);

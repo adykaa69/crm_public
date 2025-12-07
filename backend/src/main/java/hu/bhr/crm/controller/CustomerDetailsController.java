@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST Controller for managing supplementary Customer Details.
+ * <p>
+ * This controller provides endpoints for CRUD operations on Customer Details.
+ * It handles HTTP request mapping, input validation, and transforms domain models
+ * into API responses.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerDetailsController implements CustomerDetailsControllerApi {
@@ -31,11 +39,11 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     }
 
     /**
-     * Gets customer details by their unique ID.
-     * Responds with 200 OK if the customer details are found.
+     * Retrieves a specific customer detail document by its unique ID.
      *
-     * @param id the unique ID of the requested customer details
-     * @return a {@link PlatformResponse} containing a {@link CustomerDetailsResponse}
+     * @param id the unique UUID of the detail document to retrieve
+     * @return a {@link PlatformResponse} containing the details (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerDetailsNotFoundException if the document is not found (HTTP 404 Not Found)
      */
     @Override
     @GetMapping("/details/{id}")
@@ -50,11 +58,11 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     }
 
     /**
-     * Gets all customer details for a specific customer by their unique ID.
-     * Responds with 200 OK if the customer details are found.
+     * Retrieves all detail documents associated with a specific customer.
      *
-     * @param customerId the unique ID of the customer whose details are requested
-     * @return a {@link PlatformResponse} containing a list of {@link CustomerDetailsResponse}
+     * @param customerId the unique UUID of the customer (parent entity)
+     * @return a {@link PlatformResponse} containing a {@link List} of details (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customerId does not exist (HTTP 404 Not Found)
      */
     @Override
     @GetMapping("/{customerId}/details")
@@ -71,11 +79,16 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     }
 
     /**
-     * Creates new customer details and stores it in the database.
-     * Responds with 201 Created if the customer is successfully created.
+     * Creates a new detail document for a specific customer.
+     * <p>
+     * Validates the request body and ensures the customer exists.
+     * If validation fails, returns HTTP 400 Bad Request.
+     * </p>
      *
-     * @param request the data transfer object containing the new customer details
-     * @return a {@link PlatformResponse} containing the created {@link CustomerDetailsResponse}
+     * @param customerId the UUID of the customer to attach the details to
+     * @param request the DTO containing the detail content (e.g., note)
+     * @return a {@link PlatformResponse} with the created document (HTTP 201 Created)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customer does not exist (HTTP 404 Not Found)
      */
     @Override
     @PostMapping("/{customerId}/details")
@@ -93,11 +106,11 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     }
 
     /**
-     * Deletes customer details by their unique ID.
-     * Responds with 200 OK if the customer details are successfully deleted.
+     * Permanently deletes a specific detail document.
      *
-     * @param id the unique ID of the customer details to be deleted
-     * @return a {@link PlatformResponse} containing the deleted {@link CustomerDetailsResponse}
+     * @param id the unique UUID of the detail document to delete
+     * @return a {@link PlatformResponse} containing the deleted document data (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerDetailsNotFoundException if the document does not exist (HTTP 404 Not Found)
      */
     @Override
     @DeleteMapping("/details/{id}")
@@ -112,12 +125,17 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
     }
 
     /**
-     * Updates customer details by their unique ID.
-     * Responds with 200 OK if the customer details are successfully updated.
+     * Updates an existing detail document.
+     * <p>
+     * Validates the request body. If validation fails, returns HTTP 400 Bad Request.
+     * Checks both the existence of the detail document and the associated customer.
+     * </p>
      *
-     * @param id the unique ID of the customer details to be updated
-     * @param customerDetailsRequest the data transfer object containing the updated customer details
-     * @return a {@link PlatformResponse} containing the updated {@link CustomerDetailsResponse}
+     * @param id the unique UUID of the detail document to update
+     * @param customerDetailsRequest the DTO containing the updated content
+     * @return a {@link PlatformResponse} with the updated document (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerDetailsNotFoundException if the document is not found (HTTP 404 Not Found)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the associated customer is missing (HTTP 404 Not Found)
      */
     @Override
     @PutMapping("/details/{id}")

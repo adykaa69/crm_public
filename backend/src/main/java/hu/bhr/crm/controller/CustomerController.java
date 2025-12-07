@@ -17,6 +17,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * REST Controller for managing Customer resources.
+ * <p>
+ * This controller provides endpoints for CRUD operations on Customers.
+ * It handles HTTP request mapping, input validation, and transforms domain models
+ * into API responses.
+ * </p>
+ */
 @RestController
 @RequestMapping("/api/v1/customers")
 public class CustomerController implements CustomerControllerApi {
@@ -31,11 +39,11 @@ public class CustomerController implements CustomerControllerApi {
     }
 
     /**
-     * Gets one customer by their unique ID.
-     * Responds with 200 OK if the customer is found.
+     * Retrieves a specific customer by their unique identifier.
      *
-     * @param id the unique ID of the requested customer
-     * @return a {@link PlatformResponse} containing a {@link CustomerResponse}
+     * @param id the UUID of the customer to retrieve
+     * @return a {@link PlatformResponse} containing the {@link CustomerResponse} DTO (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customer does not exist (HTTP 404 Not Found)
      */
     @Override
     @GetMapping("/{id}")
@@ -50,10 +58,9 @@ public class CustomerController implements CustomerControllerApi {
     }
 
     /**
-     * Gets all customers.
-     * Responds with 200 OK if all customers are found.
+     * Retrieves a list of all registered customers.
      *
-     * @return a {@link PlatformResponse} containing a list of {@link CustomerResponse}
+     * @return a {@link PlatformResponse} containing a {@link List} of {@link CustomerResponse} DTOs (HTTP 200 OK)
      */
     @Override
     @GetMapping
@@ -71,11 +78,14 @@ public class CustomerController implements CustomerControllerApi {
     }
 
     /**
-     * Creates a new customer and stores it in the database.
-     * Responds with 201 Created if the customer is successfully created.
+     * Creates and registers a new customer in the system.
+     * <p>
+     * Validates the request body for required fields and valid email format.
+     * If validation fails, the system returns an HTTP 400 Bad Request.
+     * </p>
      *
-     * @param customerRequest the data transfer object containing the new customer details
-     * @return a {@link PlatformResponse} containing the created {@link CustomerResponse}
+     * @param customerRequest the DTO containing new customer details
+     * @return a {@link PlatformResponse} containing the created customer data (HTTP 201 Created)
      */
     @Override
     @PostMapping
@@ -90,11 +100,11 @@ public class CustomerController implements CustomerControllerApi {
     }
 
     /**
-     * Deletes one customer from the database by their unique ID.
-     * Responds with 200 OK if the customer is successfully deleted.
+     * Permanently deletes a customer by their unique identifier.
      *
-     * @param id the unique ID of the requested customer
-     * @return a {@link PlatformResponse} containing the deleted {@link CustomerResponse}
+     * @param id the UUID of the customer to delete
+     * @return a {@link PlatformResponse} containing the details of the deleted customer (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customer does not exist (HTTP 404 Not Found)
      */
     @Override
     @CrossOrigin(origins = "http://localhost:5173")
@@ -110,12 +120,16 @@ public class CustomerController implements CustomerControllerApi {
     }
 
     /**
-     * Updates a customer in the database by their unique ID.
-     * Responds with 200 OK if the customer is successfully updated.
+     * Updates an existing customer's details.
+     * <p>
+     * Validates the request body. If validation fails, returns HTTP 400.
+     * If the customer does not exist, returns HTTP 404.
+     * </p>
      *
-     * @param id the unique ID of the requested customer
-     * @param customerRequest the data transfer object containing the updated customer details
-     * @return a {@link PlatformResponse} containing the updated {@link CustomerResponse}
+     * @param id the UUID of the customer to update
+     * @param customerRequest the DTO containing updated customer details
+     * @return a {@link PlatformResponse} containing the updated customer data (HTTP 200 OK)
+     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customer does not exist (HTTP 404 Not Found)
      */
     @Override
     @PutMapping("/{id}")
