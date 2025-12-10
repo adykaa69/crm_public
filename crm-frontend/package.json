@@ -46,6 +46,7 @@
 	"dependencies": {
 		"@lucide/svelte": "^0.546.0",
 		"@types/cookie": "^1.0.0",
+		"cookie": "^0.7.2",
 		"svelty-picker": "^6.1.5"
 	}
 }
