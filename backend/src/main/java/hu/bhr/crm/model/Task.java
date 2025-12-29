@@ -1,6 +1,6 @@
 package hu.bhr.crm.model;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 public record Task(
@@ -8,12 +8,12 @@ public record Task(
         Customer customer,
         String title,
         String description,
-        ZonedDateTime reminder,
-        ZonedDateTime dueDate,
+        Instant reminder,
+        Instant dueDate,
         TaskStatus status,
-        ZonedDateTime createdAt,
-        ZonedDateTime completedAt,
-        ZonedDateTime updatedAt
+        Instant createdAt,
+        Instant completedAt,
+        Instant updatedAt
 ) {
     public static TaskBuilder builder() {
         return new TaskBuilder();
@@ -24,12 +24,12 @@ public record Task(
         private Customer customer;
         private String title;
         private String description;
-        private ZonedDateTime reminder;
-        private ZonedDateTime dueDate;
+        private Instant reminder;
+        private Instant dueDate;
         private TaskStatus status;
-        private ZonedDateTime createdAt;
-        private ZonedDateTime completedAt;
-        private ZonedDateTime updatedAt;
+        private Instant createdAt;
+        private Instant completedAt;
+        private Instant updatedAt;
 
         public TaskBuilder id(UUID id) {
             this.id = id;
@@ -51,12 +51,12 @@ public record Task(
             return this;
         }
 
-        public TaskBuilder reminder(ZonedDateTime reminder) {
+        public TaskBuilder reminder(Instant reminder) {
             this.reminder = reminder;
             return this;
         }
 
-        public TaskBuilder dueDate(ZonedDateTime dueDate) {
+        public TaskBuilder dueDate(Instant dueDate) {
             this.dueDate = dueDate;
             return this;
         }
@@ -66,17 +66,17 @@ public record Task(
             return this;
         }
 
-        public TaskBuilder createdAt(ZonedDateTime createdAt) {
+        public TaskBuilder createdAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public TaskBuilder completedAt(ZonedDateTime completedAt) {
+        public TaskBuilder completedAt(Instant completedAt) {
             this.completedAt = completedAt;
             return this;
         }
 
-        public TaskBuilder updatedAt(ZonedDateTime updatedAt) {
+        public TaskBuilder updatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }

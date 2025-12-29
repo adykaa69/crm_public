@@ -8,7 +8,7 @@ import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.springframework.stereotype.Service;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 /**
@@ -40,7 +40,7 @@ public class EmailSchedulerService {
      * @param reminderDate the exact date and time when the email should be sent
      * @throws EmailScheduleException if the underlying Quartz scheduler fails to schedule the job
      */
-    public void scheduleEmail(UUID taskId, ZonedDateTime reminderDate) {
+    public void scheduleEmail(UUID taskId, Instant reminderDate) {
         try {
             var jobDetail = EmailJobDetailFactory.createEmailJobDetail(taskId);
             var trigger = EmailTriggerFactory.createTrigger(taskId, reminderDate);
@@ -94,7 +94,7 @@ public class EmailSchedulerService {
      * @param reminderDate the new date and time for the reminder
      * @throws EmailScheduleException if the Quartz scheduler fails to reschedule the job
      */
-    public void updateEmailScheduleTime(UUID taskId, ZonedDateTime reminderDate) {
+    public void updateEmailScheduleTime(UUID taskId, Instant reminderDate) {
         try {
             TriggerKey triggerKey = TriggerKey.triggerKey(
                     EmailSchedulerConstants.EMAIL_TRIGGER_KEY_PREFIX + taskId,

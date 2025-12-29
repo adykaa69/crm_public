@@ -10,14 +10,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "residence")
 public class ResidenceEntity {
 
-    public ResidenceEntity(UUID id, String zipCode, String streetAddress, String addressLine2, String city, String country, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
+    public ResidenceEntity(UUID id, String zipCode, String streetAddress, String addressLine2, String city, String country, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.zipCode = zipCode;
         this.streetAddress = streetAddress;
@@ -50,13 +50,13 @@ public class ResidenceEntity {
     @Column(name = "country")
     private String country;
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp(source = SourceType.VM)
     @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    private Instant createdAt;
 
-    @UpdateTimestamp(source = SourceType.DB)
+    @UpdateTimestamp(source = SourceType.VM)
     @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    private Instant updatedAt;
 
     @OneToOne
     @JoinColumn(name = "customer_id", nullable = false, unique = true)
@@ -118,19 +118,19 @@ public class ResidenceEntity {
         this.country = country;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public ZonedDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 

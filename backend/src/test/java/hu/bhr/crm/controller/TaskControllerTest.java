@@ -18,6 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -396,13 +397,21 @@ class TaskControllerTest {
                 ? task.customer().id()
                 : null;
 
+        ZonedDateTime reminder = task.reminder() != null
+                ? task.reminder().atZone(ZoneId.systemDefault())
+                : null;
+
+        ZonedDateTime dueDate = task.dueDate() != null
+                ? task.dueDate().atZone(ZoneId.systemDefault())
+                : null;
+
         return new TaskResponse(
                 task.id(),
                 customerId,
                 task.title(),
                 task.description(),
-                task.reminder(),
-                task.dueDate(),
+                reminder,
+                dueDate,
                 task.status(),
                 null,
                 null,

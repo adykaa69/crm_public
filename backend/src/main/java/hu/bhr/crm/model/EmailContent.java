@@ -1,11 +1,11 @@
 package hu.bhr.crm.model;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.List;
 
 public record EmailContent(
         String taskTitle,
-        ZonedDateTime dueDate,
+        Instant dueDate,
         String taskDescription,
 
         String customerFirstName,
@@ -22,7 +22,7 @@ public record EmailContent(
 
     public static class EmailContentBuilder {
         private String taskTitle;
-        private ZonedDateTime dueDate;
+        private Instant dueDate;
         private String taskDescription;
 
         private String customerFirstName;
@@ -38,7 +38,7 @@ public record EmailContent(
             return this;
         }
 
-        public EmailContentBuilder dueDate(ZonedDateTime dueDate) {
+        public EmailContentBuilder dueDate(Instant dueDate) {
             this.dueDate = dueDate;
             return this;
         }

@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", uses = ResidenceMapper.class)
+@Mapper(componentModel = "spring", uses = {ResidenceMapper.class, DateTimeMapper.class})
 public interface CustomerMapper {
 
     Customer customerEntityToCustomer(CustomerEntity customerEntity);

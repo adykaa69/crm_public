@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -282,12 +283,14 @@ class TaskServiceTest {
         @Test
         void shouldScheduleTaskWhenReminderProvided() {
             // Given
-            ZonedDateTime reminder = ZonedDateTime.now().plusDays(1);
+            ZonedDateTime reminderZdt = ZonedDateTime.now().plusDays(1);
+            Instant reminderInstant = reminderZdt.toInstant();
+
             TaskRequest request = new TaskRequest(
                     null,
                     "title",
                     "description",
-                    reminder,
+                    reminderZdt,
                     null,
                     "ON_HOLD"
             );
@@ -307,7 +310,7 @@ class TaskServiceTest {
             // Then
             assertEquals(savedEntity.getId(), result.id());
             verify(customerService, never()).getCustomerById(any());
-            verify(emailSchedulerService).scheduleEmail(savedEntity.getId(), reminder);
+            verify(emailSchedulerService).scheduleEmail(savedEntity.getId(), reminderInstant);
         }
 
         @Test
@@ -326,13 +329,14 @@ class TaskServiceTest {
             savedEntity.setId(UUID.randomUUID());
             savedEntity.setStatus(TaskStatus.fromString(request.status()));
 
+            savedEntity.setCompletedAt(null);
+
             mockSaveTaskEntity(savedEntity);
             when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(
                     Task.builder()
                             .id(savedEntity.getId())
                             .status(savedEntity.getStatus())
                             .build());
-            when(taskRepository.setCompletedAtIfCompleted(any(), any())).thenReturn(Instant.now());
 
             // When
             Task result = underTest.saveTask(request);
@@ -340,7 +344,7 @@ class TaskServiceTest {
             // Then
             assertEquals(savedEntity.getId(), result.id());
             assertEquals(TaskStatus.COMPLETED, result.status());
-            verify(taskRepository).setCompletedAtIfCompleted(savedEntity.getId(), TaskStatus.COMPLETED.name());
+            assertNotNull(savedEntity.getCompletedAt(), "Service should generate timestamp for new COMPLETED tasks");
         }
 
         private void mockSaveTaskEntity(TaskEntity savedEntity) {
@@ -456,8 +460,6 @@ class TaskServiceTest {
                             .id(taskId)
                             .status(updatedTaskEntity.getStatus())
                             .build());
-            when(taskRepository.setCompletedAtIfCompleted(any(), any()))
-                    .thenReturn(Instant.now());
 
             // When
             Task result = underTest.updateTask(taskId, request);
@@ -465,7 +467,66 @@ class TaskServiceTest {
             // Then
             assertEquals(taskId, result.id());
             assertEquals(TaskStatus.COMPLETED, result.status());
-            verify(taskRepository).setCompletedAtIfCompleted(taskId, TaskStatus.COMPLETED.name());
+            assertNotNull(updatedTaskEntity.getCompletedAt());
+        }
+
+        @Test
+        void shouldPreserveOriginalCompletedAtWhenTaskStatusRemainsCompleted() {
+            // Given
+            Instant originalTime = Instant.now().minusSeconds(3600);
+            oldTaskEntity.setStatus(TaskStatus.COMPLETED);
+            oldTaskEntity.setCompletedAt(originalTime);
+
+            request = new TaskRequest(
+                    null,
+                    "new desc",
+                    "desc",
+                    null,
+                    null,
+                    "COMPLETED"
+            );
+
+            updatedTaskEntity.setStatus(TaskStatus.COMPLETED);
+            updatedTaskEntity.setCompletedAt(null); // Mapper creates new entity, initially null
+
+            mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
+            when(taskMapper.taskEntityToTask(updatedTaskEntity)).thenReturn(
+                    Task.builder().id(taskId).status(TaskStatus.COMPLETED).build());
+
+            // When
+            underTest.updateTask(taskId, request);
+
+            // Then
+            assertEquals(originalTime, updatedTaskEntity.getCompletedAt(), "Should preserve original timestamp (Idempotency)");
+        }
+
+        @Test
+        void shouldClearCompletedAtWhenTaskIsReopened() {
+            // Given
+            oldTaskEntity.setStatus(TaskStatus.COMPLETED);
+            oldTaskEntity.setCompletedAt(Instant.now());
+
+            request = new TaskRequest(
+                    null,
+                    "title",
+                    "desc",
+                    null,
+                    null,
+                    "IN_PROGRESS"
+            );
+
+            updatedTaskEntity.setStatus(TaskStatus.IN_PROGRESS);
+            updatedTaskEntity.setCompletedAt(oldTaskEntity.getCompletedAt());
+
+            mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
+            when(taskMapper.taskEntityToTask(updatedTaskEntity)).thenReturn(
+                    Task.builder().id(taskId).status(TaskStatus.IN_PROGRESS).build());
+
+            // When
+            underTest.updateTask(taskId, request);
+
+            // Then
+            assertNull(updatedTaskEntity.getCompletedAt(), "Timestamp should be null when task is reopened");
         }
 
         @Test
@@ -515,8 +576,11 @@ class TaskServiceTest {
         @Test
         void shouldScheduleEmailWhenReminderUpdateIsAdded() {
             // Given
+            ZonedDateTime newReminderZdt = ZonedDateTime.now();
+            Instant newReminderInstant = newReminderZdt.toInstant();
+
             oldTaskEntity.setReminder(null);
-            newTaskEntity.setReminder(ZonedDateTime.now());
+            newTaskEntity.setReminder(newReminderInstant);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
@@ -524,7 +588,7 @@ class TaskServiceTest {
                     null,
                     "title",
                     "description",
-                    newTaskEntity.getReminder(),
+                    newReminderZdt,
                     null,
                     "ON_HOLD"
             );
@@ -541,7 +605,7 @@ class TaskServiceTest {
         @Test
         void shouldDeleteEmailScheduleWhenReminderUpdateIsDeleted() {
             // Given
-            oldTaskEntity.setReminder(ZonedDateTime.now());
+            oldTaskEntity.setReminder(Instant.now());
             newTaskEntity.setReminder(null);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
@@ -550,7 +614,7 @@ class TaskServiceTest {
                     null,
                     "title",
                     "description",
-                    newTaskEntity.getReminder(),
+                    null,
                     null,
                     "ON_HOLD"
             );
@@ -567,9 +631,13 @@ class TaskServiceTest {
         @Test
         void shouldUpdateEmailScheduleWhenReminderDateIsUpdated() {
             // Given
+            Instant oldReminderInstant = Instant.now();
+            ZonedDateTime newReminderZdt = ZonedDateTime.now().plusSeconds(3600);
+            Instant newReminderInstant = newReminderZdt.toInstant();
 
-            oldTaskEntity.setReminder(ZonedDateTime.now());
-            newTaskEntity.setReminder(ZonedDateTime.now().plusSeconds(3600));
+
+            oldTaskEntity.setReminder(oldReminderInstant);
+            newTaskEntity.setReminder(newReminderInstant);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
@@ -577,7 +645,7 @@ class TaskServiceTest {
                     null,
                     "title",
                     "description",
-                    newTaskEntity.getReminder(),
+                    newReminderZdt,
                     null,
                     "ON_HOLD"
             );
@@ -594,9 +662,11 @@ class TaskServiceTest {
         @Test
         void shouldDoNothingWhenReminderDateRemainsTheSame() {
             // Given
-            ZonedDateTime reminder = ZonedDateTime.now();
-            oldTaskEntity.setReminder(reminder);
-            newTaskEntity.setReminder(reminder);
+            ZonedDateTime reminderZdt = ZonedDateTime.now();
+            Instant reminderInstant = reminderZdt.toInstant();
+
+            oldTaskEntity.setReminder(reminderInstant);
+            newTaskEntity.setReminder(reminderInstant);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
@@ -604,7 +674,7 @@ class TaskServiceTest {
                     null,
                     "title",
                     "description",
-                    reminder,
+                    reminderZdt,
                     null,
                     "ON_HOLD"
             );

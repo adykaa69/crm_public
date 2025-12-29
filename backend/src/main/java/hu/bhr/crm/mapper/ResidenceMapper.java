@@ -7,7 +7,7 @@ import hu.bhr.crm.repository.entity.ResidenceEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = DateTimeMapper.class)
 public interface ResidenceMapper {
 
 

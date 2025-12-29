@@ -4,17 +4,17 @@ import org.quartz.SimpleScheduleBuilder;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
 
 public class EmailTriggerFactory {
 
-    public static Trigger createTrigger(UUID taskId, ZonedDateTime reminderDate) {
+    public static Trigger createTrigger(UUID taskId, Instant reminderDate) {
         return TriggerBuilder.newTrigger()
                 .withIdentity(EmailSchedulerConstants.EMAIL_TRIGGER_KEY_PREFIX + taskId,
                                     EmailSchedulerConstants.EMAIL_TRIGGER_GROUP)
-                .startAt(Date.from(reminderDate.toInstant()))
+                .startAt(Date.from(reminderDate))
                 .withSchedule(SimpleScheduleBuilder.simpleSchedule()
                     .withMisfireHandlingInstructionFireNow())
                 .build();

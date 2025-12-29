@@ -1,6 +1,6 @@
 package hu.bhr.crm.model;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 public record Residence(
@@ -10,8 +10,8 @@ public record Residence(
         String addressLine2,
         String city,
         String country,
-        ZonedDateTime createdAt,
-        ZonedDateTime updatedAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
 
     public Residence withId(UUID id) {
@@ -29,8 +29,8 @@ public record Residence(
         private String addressLine2;
         private String city;
         private String country;
-        private ZonedDateTime createdAt;
-        private ZonedDateTime updatedAt;
+        private Instant createdAt;
+        private Instant updatedAt;
 
         public ResidenceBuilder id(UUID id) {
             this.id = id;
@@ -62,12 +62,12 @@ public record Residence(
             return this;
         }
 
-        public ResidenceBuilder createdAt(ZonedDateTime createdAt) {
+        public ResidenceBuilder createdAt(Instant createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public ResidenceBuilder updatedAt(ZonedDateTime updatedAt) {
+        public ResidenceBuilder updatedAt(Instant updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }

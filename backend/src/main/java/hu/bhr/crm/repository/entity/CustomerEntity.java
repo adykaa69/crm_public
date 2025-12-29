@@ -10,14 +10,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "customer")
 public class CustomerEntity {
 
-    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, ResidenceEntity residence, ZonedDateTime createdAt, ZonedDateTime updatedAt) {
+    public CustomerEntity(UUID id, String firstName, String lastName, String nickname, String email, String phoneNumber, String relationship, ResidenceEntity residence, Instant createdAt, Instant updatedAt) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -58,13 +58,13 @@ public class CustomerEntity {
     @OneToOne(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private ResidenceEntity residence;
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp(source = SourceType.VM)
     @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    private Instant createdAt;
 
-    @UpdateTimestamp(source = SourceType.DB)
+    @UpdateTimestamp(source = SourceType.VM)
     @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    private Instant updatedAt;
 
     public UUID getId() {
         return id;
@@ -133,19 +133,19 @@ public class CustomerEntity {
         }
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public ZonedDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 

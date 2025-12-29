@@ -15,14 +15,14 @@ import org.hibernate.annotations.SourceType;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.dialect.PostgreSQLEnumJdbcType;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name = "task")
 public class TaskEntity {
 
-    public TaskEntity(UUID id, String title, String description, ZonedDateTime reminder, ZonedDateTime dueDate, TaskStatus status, ZonedDateTime createdAt, ZonedDateTime completedAt, ZonedDateTime updatedAt) {
+    public TaskEntity(UUID id, String title, String description, Instant reminder, Instant dueDate, TaskStatus status, Instant createdAt, Instant completedAt, Instant updatedAt) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -48,26 +48,26 @@ public class TaskEntity {
     private String description;
 
     @Column(name = "reminder")
-    private ZonedDateTime reminder;
+    private Instant reminder;
 
     @Column(name = "due_date")
-    private ZonedDateTime dueDate;
+    private Instant dueDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     @JdbcType(PostgreSQLEnumJdbcType.class)
     private TaskStatus status;
 
-    @CreationTimestamp(source = SourceType.DB)
+    @CreationTimestamp(source = SourceType.VM)
     @Column(name = "created_at", updatable = false)
-    private ZonedDateTime createdAt;
+    private Instant createdAt;
 
     @Column(name = "completed_at")
-    private ZonedDateTime completedAt;
+    private Instant completedAt;
 
-    @UpdateTimestamp(source = SourceType.DB)
+    @UpdateTimestamp(source = SourceType.VM)
     @Column(name = "updated_at")
-    private ZonedDateTime updatedAt;
+    private Instant updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
@@ -105,19 +105,19 @@ public class TaskEntity {
         this.description = description;
     }
 
-    public ZonedDateTime getReminder() {
+    public Instant getReminder() {
         return reminder;
     }
 
-    public void setReminder(ZonedDateTime reminder) {
+    public void setReminder(Instant reminder) {
         this.reminder = reminder;
     }
 
-    public ZonedDateTime getDueDate() {
+    public Instant getDueDate() {
         return dueDate;
     }
 
-    public void setDueDate(ZonedDateTime dueDate) {
+    public void setDueDate(Instant dueDate) {
         this.dueDate = dueDate;
     }
 
@@ -129,27 +129,27 @@ public class TaskEntity {
         this.status = status;
     }
 
-    public ZonedDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(ZonedDateTime createdAt) {
+    public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
     }
 
-    public ZonedDateTime getCompletedAt() {
+    public Instant getCompletedAt() {
         return completedAt;
     }
 
-    public void setCompletedAt(ZonedDateTime completedAt) {
+    public void setCompletedAt(Instant completedAt) {
         this.completedAt = completedAt;
     }
 
-    public ZonedDateTime getUpdatedAt() {
+    public Instant getUpdatedAt() {
         return updatedAt;
     }
 
-    public void setUpdatedAt(ZonedDateTime updatedAt) {
+    public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
     }
 

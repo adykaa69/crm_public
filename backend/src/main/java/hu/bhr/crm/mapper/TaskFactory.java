@@ -6,6 +6,8 @@ import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import org.apache.commons.lang3.StringUtils;
 
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 public class TaskFactory {
@@ -22,8 +24,8 @@ public class TaskFactory {
                 .customer(customer)
                 .title(taskRequest.title())
                 .description(taskRequest.description())
-                .reminder(taskRequest.reminder())
-                .dueDate(taskRequest.dueDate())
+                .reminder(toInstant(taskRequest.reminder()))
+                .dueDate(toInstant(taskRequest.dueDate()))
                 .status(StringUtils.isBlank(taskRequest.status())
                         ? TaskStatus.OPEN
                         : convertStatus(taskRequest.status()))
@@ -36,8 +38,8 @@ public class TaskFactory {
                 .customer(customer)
                 .title(taskRequest.title())
                 .description(taskRequest.description())
-                .reminder(taskRequest.reminder())
-                .dueDate(taskRequest.dueDate())
+                .reminder(toInstant(taskRequest.reminder()))
+                .dueDate(toInstant(taskRequest.dueDate()))
                 .status(StringUtils.isBlank(taskRequest.status())
                         ? TaskStatus.OPEN
                         : convertStatus(taskRequest.status()))
@@ -46,5 +48,9 @@ public class TaskFactory {
 
     private static TaskStatus convertStatus(String status) {
         return TaskStatus.fromString(status);
+    }
+
+    private static Instant toInstant(ZonedDateTime zonedDateTime) {
+        return zonedDateTime != null ? zonedDateTime.toInstant() : null;
     }
 }

@@ -52,11 +52,9 @@ databaseChangeLog:
                 - column:
                     name: created_at
                     type: timestamp
-                    defaultValueDate: ${now}
                 - column:
                     name: updated_at
                     type: timestamp
-                    defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
 
         - createTable:
             tableName: residence
@@ -92,11 +90,9 @@ databaseChangeLog:
               - column:
                   name: created_at
                   type: timestamp
-                  defaultValueDate: ${now}
               - column:
                   name: updated_at
                   type: timestamp
-                  defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
 
         - createTable:
             tableName: task
@@ -133,11 +129,9 @@ databaseChangeLog:
               - column:
                   name: created_at
                   type: timestamp
-                  defaultValueDate: ${now}
               - column:
                   name: completed_at
                   type: timestamp
               - column:
                   name: updated_at
                   type: timestamp
-                  defaultValueComputed: ${now} ON UPDATE CURRENT_TIMESTAMP
