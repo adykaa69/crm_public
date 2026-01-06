@@ -21,8 +21,7 @@ Feature: Customer API requests
   Scenario: Delete a customer by ID
     Given a new customer is created
     When the created customer is deleted
-    Then the response should contain the customer's details
-    And the status code should be 200
+    Then the status code should be 204
     And the created customer should no longer exist in the database
 
   Scenario: Update a customer by ID

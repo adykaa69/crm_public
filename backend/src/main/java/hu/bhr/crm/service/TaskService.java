@@ -116,17 +116,14 @@ public class TaskService {
      * </p>
      *
      * @param id the unique UUID of the task to delete
-     * @return the {@link Task} domain object that was deleted
      * @throws TaskNotFoundException if the task with the given ID does not exist
      */
-    public Task deleteTask(UUID id) {
+    public void deleteTask(UUID id) {
         TaskEntity taskEntity = findTaskEntity(id);
 
         emailSchedulerService.deleteEmailSchedule(id);
 
-        Task deletedTask = taskMapper.taskEntityToTask(taskEntity);
         taskRepository.deleteById(id);
-        return deletedTask;
     }
 
     /**

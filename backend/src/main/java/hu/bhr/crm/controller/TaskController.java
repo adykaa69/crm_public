@@ -62,7 +62,7 @@ public class TaskController implements TaskControllerApi {
         TaskResponse taskResponse = taskMapper.taskToTaskResponse(task);
         log.info("Task with id {} retrieved successfully", id);
 
-        return new PlatformResponse<>("success", "Task retrieved successfully", taskResponse);
+        return new PlatformResponse<>(taskResponse);
     }
 
     /**
@@ -81,7 +81,7 @@ public class TaskController implements TaskControllerApi {
                 .toList();
         log.info("Retrieved all tasks");
 
-        return new PlatformResponse<>("success", "Tasks retrieved successfully", taskResponses);
+        return new PlatformResponse<>(taskResponses);
     }
 
     /**
@@ -101,7 +101,7 @@ public class TaskController implements TaskControllerApi {
                 .toList();
         log.info("Retrieved all tasks for customer with id {}", customerId);
 
-        return new PlatformResponse<>("success", "Tasks retrieved successfully", taskResponses);
+        return new PlatformResponse<>(taskResponses);
     }
 
     /**
@@ -129,27 +129,25 @@ public class TaskController implements TaskControllerApi {
             log.info("Task with id {} created successfully for customer with id {}", savedTask.id(), savedTask.customer().id());
         }
 
-        return new PlatformResponse<>("success", "Task created successfully", taskResponse);
+        return new PlatformResponse<>(taskResponse);
     }
 
     /**
      * Permanently deletes a task by its unique identifier.
+     * <p>
+     * If the operation is successful, no content is returned.
      *
      * @param id the unique UUID of the task to delete
-     * @return a {@link PlatformResponse} containing the details of the deleted task (HTTP 200 OK)
      * @throws hu.bhr.crm.exception.TaskNotFoundException if the task does not exist (HTTP 404 Not Found)
      */
     @Override
     @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PlatformResponse<TaskResponse> deleteTask(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteTask(@PathVariable UUID id) {
         log.info("Deleting task with id: {}", id);
-        Task deletedTask = taskService.deleteTask(id);
-        TaskResponse taskResponse = taskMapper.taskToTaskResponse(deletedTask);
+        taskService.deleteTask(id);
         log.info("Task with id {} deleted successfully", id);
-
-        return new PlatformResponse<>("success", "Task deleted successfully", taskResponse);
     }
 
     /**
@@ -176,7 +174,7 @@ public class TaskController implements TaskControllerApi {
         TaskResponse taskResponse = taskMapper.taskToTaskResponse(updatedTask);
         log.info("Task with id {} updated successfully", id);
 
-        return new PlatformResponse<>("success", "Task updated successfully", taskResponse);
+        return new PlatformResponse<>(taskResponse);
     }
 
 }

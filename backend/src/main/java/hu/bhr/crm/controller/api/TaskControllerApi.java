@@ -13,6 +13,6 @@ public interface TaskControllerApi {
     PlatformResponse<List<TaskResponse>> getAllTasks();
     PlatformResponse<List<TaskResponse>> getAllTasksByCustomerId(UUID userId);
     PlatformResponse<TaskResponse> registerTask(TaskRequest taskRequest);
-    PlatformResponse<TaskResponse> deleteTask(UUID id);
+    void deleteTask(UUID id);
     PlatformResponse<TaskResponse> updateTask(UUID id, TaskRequest taskRequest);
 }

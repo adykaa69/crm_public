@@ -93,16 +93,13 @@ public class CustomerDetailsService {
      * Deletes a specific customer detail record by its unique ID.
      *
      * @param id the unique UUID of the detail record to delete
-     * @return the {@link CustomerDetails} object that was deleted (for confirmation purposes)
      * @throws CustomerDetailsNotFoundException if the record to delete cannot be found
      */
-    public CustomerDetails deleteCustomerDetailsById(UUID id) {
+    public void deleteCustomerDetailsById(UUID id) {
         CustomerDocument customerDocument = customerDocumentRepository.findById(id)
                 .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));
 
-        CustomerDetails deletedCustomerDetails = mapper.customerDocumentToCustomerDetails(customerDocument);
         customerDocumentRepository.delete(customerDocument);
-        return deletedCustomerDetails;
     }
 
     /**

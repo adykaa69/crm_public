@@ -12,7 +12,7 @@ public interface CustomerControllerApi {
     PlatformResponse<CustomerResponse> getCustomer(UUID id);
     PlatformResponse<List<CustomerResponse>> getAllCustomers();
     PlatformResponse<CustomerResponse> registerCustomer(CustomerRequest customerRequest);
-    PlatformResponse<CustomerResponse> deleteCustomer(UUID id);
+    void deleteCustomer(UUID id);
     PlatformResponse<CustomerResponse> updateCustomer(UUID id, CustomerRequest customerRequest);
 
 }

@@ -61,7 +61,7 @@ public class CustomerStepDefinition {
                 ApiResponseParser.parseResponse(customerContext.getLastResponse(), new TypeReference<>() {});
         CustomerResponse expectedResponse = customerContext.getLastCustomerResponse();
 
-        CustomerAssertions.assertCustomersEqual(expectedResponse, resultResponse.data());
+        CustomerAssertions.assertCustomersEqual(expectedResponse, resultResponse.content());
     }
 
     @Then("the response should contain all customer's details")
@@ -71,7 +71,7 @@ public class CustomerStepDefinition {
         List<String> expectedIds = globalTestContext.getCreatedCustomerIds();
 
         for (String id : expectedIds) {
-            boolean found = resultResponse.data().stream()
+            boolean found = resultResponse.content().stream()
                     .anyMatch(c -> c.id().equals(id));
             Assertions.assertThat(found)
                     .as("Customer with ID %s should be in the response", id)
@@ -88,7 +88,9 @@ public class CustomerStepDefinition {
     public void theCreatedCustomerIsDeleted() throws Exception {
         HttpResponse<String> response = apiClient.deleteCustomer(customerContext.getCreatedCustomerId());
         customerContext.setLastResponse(response);
-        globalTestContext.getCreatedCustomerIds().remove(customerContext.getCreatedCustomerId());
+        if (response.statusCode() == 204) {
+            globalTestContext.getCreatedCustomerIds().remove(customerContext.getCreatedCustomerId());
+        }
     }
 
     @And("the created customer should no longer exist in the database")
@@ -121,7 +123,7 @@ public class CustomerStepDefinition {
         if (customerContext.getLastResponse().statusCode() == 200) {
             PlatformResponse<CustomerResponse> resultResponse =
                     ApiResponseParser.parseResponse(customerContext.getLastResponse(), new TypeReference<>() {});
-            customerContext.setLastCustomerResponse(resultResponse.data());
+            customerContext.setLastCustomerResponse(resultResponse.content());
         }
     }
 
@@ -179,9 +181,9 @@ public class CustomerStepDefinition {
         if (response.statusCode() == 201) {
             PlatformResponse<CustomerResponse> parsed =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {});
-            customerContext.setCreatedCustomerId(parsed.data().id());
-            globalTestContext.addCreatedCustomerId(parsed.data().id());
-            customerContext.setLastCustomerResponse(parsed.data());
+            customerContext.setCreatedCustomerId(parsed.content().id());
+            globalTestContext.addCreatedCustomerId(parsed.content().id());
+            customerContext.setLastCustomerResponse(parsed.content());
         }
     }
 

@@ -83,17 +83,14 @@ public class CustomerService {
      * </p>
      *
      * @param id the unique UUID of the customer to delete
-     * @return the {@link Customer} object that was just deleted (for response purposes)
      * @throws CustomerNotFoundException if the customer with the given ID does not exist
      */
-    public Customer deleteCustomer(UUID id) {
-        CustomerEntity customerEntity = repository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+    public void deleteCustomer(UUID id) {
+        if (!repository.existsById(id)) {
+            throw new CustomerNotFoundException("Customer not found");
+        }
 
-        Customer deletedCustomer = customerMapper.customerEntityToCustomer(customerEntity);
         repository.deleteById(id);
-
-        return deletedCustomer;
     }
 
     /**

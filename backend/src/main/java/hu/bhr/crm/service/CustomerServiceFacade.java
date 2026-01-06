@@ -33,10 +33,10 @@ public class CustomerServiceFacade {
         return customerService.registerCustomer(customer);
     }
 
-    public Customer deleteCustomer(UUID id) {
+    public void deleteCustomer(UUID id) {
         customerDetailsService.deleteCustomerDetailsByCustomerId(id);
         taskService.detachCustomerFromTasks(id);
-        return customerService.deleteCustomer(id);
+        customerService.deleteCustomer(id);
     }
 
     public Customer updateCustomer(Customer customer) {

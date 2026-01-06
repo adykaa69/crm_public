@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ErrorResponseUtils  {
 
-    public static ErrorResponse toErrorResponse(Exception exception) {
+    public static ErrorResponse toErrorResponse(String title, Exception exception) {
         if (exception instanceof MethodArgumentNotValidException validationException) {
             List<String> messages = validationException
                     .getBindingResult()
@@ -17,10 +17,12 @@ public class ErrorResponseUtils  {
                     .map(error -> error.getDefaultMessage())
                     .toList();
 
-            return new ErrorResponse(messages, ZonedDateTime.now());
+            return new ErrorResponse("error", title, messages, ZonedDateTime.now());
         }
 
         return new ErrorResponse(
+                "error",
+                title,
                 List.of(exception.getMessage()),
                 ZonedDateTime.now()
         );

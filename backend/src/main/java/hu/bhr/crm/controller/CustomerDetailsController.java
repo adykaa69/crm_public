@@ -54,7 +54,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(customerDetails);
         log.info("Customer details with id {} retrieved successfully", id);
 
-        return new PlatformResponse<>("success", "Customer details retrieved successfully", customerDetailsResponse);
+        return new PlatformResponse<>(customerDetailsResponse);
     }
 
     /**
@@ -75,7 +75,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
                 .toList();
         log.info("All customer details for customer with id {} retrieved successfully", customerId);
 
-        return new PlatformResponse<>("success", "All customer details retrieved successfully", customerDetailsResponses);
+        return new PlatformResponse<>(customerDetailsResponses);
     }
 
     /**
@@ -102,26 +102,25 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(savedCustomerDetails);
         log.info("Customer details with id {} saved successfully for customer with id {}", savedCustomerDetails.id(), customerId);
 
-        return new PlatformResponse<>("success", "Customer details saved successfully", customerDetailsResponse);
+        return new PlatformResponse<>(customerDetailsResponse);
     }
 
     /**
      * Permanently deletes a specific detail document.
+     * <p>
+     * If the operation is successful, no content is returned.
+     * </p>
      *
      * @param id the unique UUID of the detail document to delete
-     * @return a {@link PlatformResponse} containing the deleted document data (HTTP 200 OK)
      * @throws hu.bhr.crm.exception.CustomerDetailsNotFoundException if the document does not exist (HTTP 404 Not Found)
      */
     @Override
     @DeleteMapping("/details/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PlatformResponse<CustomerDetailsResponse> deleteCustomerDetails(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCustomerDetails(@PathVariable UUID id) {
         log.info("Deleting customer details with id: {}", id);
-        CustomerDetails deletedCustomerDetails = service.deleteCustomerDetailsById(id);
-        CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(deletedCustomerDetails);
+        service.deleteCustomerDetailsById(id);
         log.info("Customer details with id {} deleted successfully", id);
-
-        return new PlatformResponse<>("success", "Customer details deleted successfully", customerDetailsResponse);
     }
 
     /**
@@ -150,6 +149,6 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
         CustomerDetailsResponse customerDetailsResponse = mapper.customerDetailsToCustomerDetailsResponse(updatedCustomerDetails);
         log.info("Customer details with id {} updated successfully", id);
 
-        return new PlatformResponse<>("success", "Customer details updated successfully", customerDetailsResponse);
+        return new PlatformResponse<>(customerDetailsResponse);
     }
 }

@@ -27,8 +27,7 @@ Feature: Task API requests
   Scenario: Delete a task by ID
     Given a new task is created
     When the created task is deleted
-    Then the response should contain the task's details
-    And the status code should be 200
+    Then the status code should be 204
     And the created task should no longer exist in the database
 
   Scenario: Update a task by ID

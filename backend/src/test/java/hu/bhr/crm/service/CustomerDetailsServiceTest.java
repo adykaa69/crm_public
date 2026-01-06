@@ -336,24 +336,13 @@ class CustomerDetailsServiceTest {
             existingDocument.setId(customerDetailsId);
             existingDocument.setCustomerId(UUID.randomUUID());
 
-            CustomerDetails expectedCustomerDetails = CustomerDetails.builder()
-                    .id(customerDetailsId)
-                    .customerId(existingDocument.getCustomerId())
-                    .note(existingDocument.getNote())
-                    .build();
-
             when(customerDocumentRepository.findById(customerDetailsId)).thenReturn(Optional.of(existingDocument));
-            when(customerDetailsMapper.customerDocumentToCustomerDetails(existingDocument))
-                    .thenReturn(expectedCustomerDetails);
 
             // When
-            CustomerDetails result = underTest.deleteCustomerDetailsById(customerDetailsId);
+            underTest.deleteCustomerDetailsById(customerDetailsId);
 
             // Then
-            assertEquals(expectedCustomerDetails, result);
-
             verify(customerDocumentRepository).findById(customerDetailsId);
-            verify(customerDetailsMapper).customerDocumentToCustomerDetails(existingDocument);
             verify(customerDocumentRepository).delete(existingDocument);
         }
 

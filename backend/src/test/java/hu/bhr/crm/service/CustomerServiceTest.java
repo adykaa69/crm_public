@@ -479,28 +479,21 @@ class CustomerServiceTest {
         @Test
         void shouldDeleteCustomerWhenCustomerExists() {
             // Given
-            Customer customer = Customer.builder()
-                    .id(customerId)
-                    .firstName("John")
-                    .build();
-
             CustomerEntity customerEntity = new CustomerEntity();
 
-            when(customerRepository.findById(customerId)).thenReturn(Optional.of(customerEntity));
-            when(customerMapper.customerEntityToCustomer(customerEntity)).thenReturn(customer);
+            when(customerRepository.existsById(customerId)).thenReturn(true);
 
             // When
-            Customer result = underTest.deleteCustomer(customerId);
+            underTest.deleteCustomer(customerId);
 
             // Then
-            assertEquals(customer, result);
             verify(customerRepository).deleteById(customerId);
         }
 
         @Test
         void shouldThrowCustomerNotFoundExceptionWhenCustomerDoesNotExist() {
             // Given
-            when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+            when(customerRepository.existsById(customerId)).thenReturn(false);
 
             // When / Then
             assertThrows(CustomerNotFoundException.class, () -> underTest.deleteCustomer(customerId));

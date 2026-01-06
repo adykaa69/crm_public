@@ -1,7 +1,6 @@
 package hu.bhr.crm.exception.handler;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
-import hu.bhr.crm.controller.dto.PlatformResponse;
 import hu.bhr.crm.exception.CustomerDetailsNotFoundException;
 import hu.bhr.crm.exception.CustomerNotFoundException;
 import hu.bhr.crm.exception.EmailScheduleException;
@@ -28,56 +27,44 @@ public class SpecificExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CustomerNotFoundException.class)
-    public PlatformResponse<ErrorResponse> handleCustomerNotFoundException(CustomerNotFoundException ex) {
+    public ErrorResponse handleCustomerNotFoundException(CustomerNotFoundException ex) {
         log.warn("Customer not found", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Error occurred during requesting customer", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during requesting customer", ex);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(CustomerDetailsNotFoundException.class)
-    public PlatformResponse<ErrorResponse> handleCustomerDetailsNotFoundException(CustomerDetailsNotFoundException ex) {
+    public ErrorResponse handleCustomerDetailsNotFoundException(CustomerDetailsNotFoundException ex) {
         log.warn("Customer details not found", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Error occurred during customer details retrieval", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during customer details retrieval", ex);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TaskNotFoundException.class)
-    public PlatformResponse<ErrorResponse> handleTaskNotFoundException(TaskNotFoundException ex) {
+    public ErrorResponse handleTaskNotFoundException(TaskNotFoundException ex) {
         log.warn("Task not found", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);;
-
-        return new PlatformResponse<>("error", "Error occurred during task retrieval", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during task retrieval", ex);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidEmailException.class)
-    public PlatformResponse<ErrorResponse> handleInvalidEmailException(InvalidEmailException ex) {
+    public ErrorResponse handleInvalidEmailException(InvalidEmailException ex) {
         log.warn("Invalid email exception", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Error occurred during customer registration", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during customer registration", ex);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MissingFieldException.class)
-    public PlatformResponse<ErrorResponse> handleMissingFieldException(MissingFieldException ex) {
+    public ErrorResponse handleMissingFieldException(MissingFieldException ex) {
         log.warn("Missing field exception", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Error occurred during customer registration", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during customer registration", ex);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(InvalidStatusException.class)
-    public PlatformResponse<ErrorResponse> handleInvalidStatusException(InvalidStatusException ex) {
+    public ErrorResponse handleInvalidStatusException(InvalidStatusException ex) {
         log.warn("Invalid status exception", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Error occurred during task processing", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Error occurred during task processing", ex);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -94,10 +81,8 @@ public class SpecificExceptionHandler {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public PlatformResponse<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex) {
         log.warn("Invalid request", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Validation error during request processing", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Validation error during request processing", ex);
     }
 }

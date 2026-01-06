@@ -21,8 +21,7 @@ Feature: CustomerDetails API requests
   Scenario: Delete a customer document by ID
     Given a new customer document is created
     When the created customer document is deleted
-    Then the response should contain the customer document's details
-    And the status code should be 200
+    Then the status code should be 204
     And the created customer document should no longer exist in the database
 
   Scenario: Update a customer document by ID

@@ -24,6 +24,8 @@ import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -35,13 +37,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(CustomerController.class)
 class CustomerControllerTest {
 
-    private static final String MESSAGE_SUCCESS_GET = "Customer retrieved successfully";
-    private static final String MESSAGE_SUCCESS_GET_ALL = "All customers retrieved successfully";
-    private static final String MESSAGE_SUCCESS_CREATE = "Customer created successfully";
-    private static final String MESSAGE_SUCCESS_UPDATE = "Customer updated successfully";
-    private static final String MESSAGE_SUCCESS_DELETE = "Customer has been deleted successfully";
-    private static final String MESSAGE_ERROR_VALIDATION = "Validation error during request processing";
-    private static final String MESSAGE_ERROR_NOT_FOUND = "Error occurred during requesting customer";
+    private static final String TITLE_ERROR_VALIDATION = "Validation error during request processing";
+    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during requesting customer";
+    private static final String MESSAGE_ERROR_CUSTOMER_NOT_FOUND = "Customer not found";
+    private static final String MESSAGE_ERROR_INVALID_EMAIL = "Invalid email format";
+    private static final String MESSAGE_ERROR_RELATIONSHIP_MISSING = "Relationship is required";
+    private static final String MESSAGE_ERROR_FIRSTNAME_NICKNAME_MISSING = "At least one of First Name or Nickname is required";
 
     @Autowired
     private MockMvc mockMvc;
@@ -80,11 +81,9 @@ class CustomerControllerTest {
             mockMvc.perform(get("/api/v1/customers/{id}", customerId)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET))
-                    .andExpect(jsonPath("$.data.id").value(customerId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("Harry"))
-                    .andExpect(jsonPath("$.data.lastName").value("Potter"));
+                    .andExpect(jsonPath("$.content.id").value(customerId.toString()))
+                    .andExpect(jsonPath("$.content.firstName").value("Harry"))
+                    .andExpect(jsonPath("$.content.lastName").value("Potter"));
         }
 
         @Test
@@ -98,7 +97,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_CUSTOMER_NOT_FOUND));
         }
     }
 
@@ -125,14 +125,12 @@ class CustomerControllerTest {
             mockMvc.perform(get("/api/v1/customers")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data[0].id").value(customerId1.toString()))
-                    .andExpect(jsonPath("$.data[0].firstName").value("Harry"))
-                    .andExpect(jsonPath("$.data[0].lastName").value("Potter"))
-                    .andExpect(jsonPath("$.data[1].id").value(customerId2.toString()))
-                    .andExpect(jsonPath("$.data[1].firstName").value("Tom"))
-                    .andExpect(jsonPath("$.data[1].lastName").value("Riddle"));
+                    .andExpect(jsonPath("$.content[0].id").value(customerId1.toString()))
+                    .andExpect(jsonPath("$.content[0].firstName").value("Harry"))
+                    .andExpect(jsonPath("$.content[0].lastName").value("Potter"))
+                    .andExpect(jsonPath("$.content[1].id").value(customerId2.toString()))
+                    .andExpect(jsonPath("$.content[1].firstName").value("Tom"))
+                    .andExpect(jsonPath("$.content[1].lastName").value("Riddle"));
         }
 
         @Test
@@ -144,9 +142,8 @@ class CustomerControllerTest {
             mockMvc.perform(get("/api/v1/customers")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content").isEmpty());
         }
     }
 
@@ -189,16 +186,14 @@ class CustomerControllerTest {
                             .content(objectMapper.writeValueAsString(customerRequest))
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_CREATE))
-                    .andExpect(jsonPath("$.data.id").value(customerId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("Harry"))
-                    .andExpect(jsonPath("$.data.lastName").value("Potter"))
-                    .andExpect(jsonPath("$.data.email").value("harry.potter@gryffindor.com"))
-                    .andExpect(jsonPath("$.data.relationship").value("gryffindor"))
-                    .andExpect(jsonPath("$.data.residence.id").value(residenceId.toString()))
-                    .andExpect(jsonPath("$.data.residence.city").value("Hogwarts"))
-                    .andExpect(jsonPath("$.data.residence.country").value("Scotland"));
+                    .andExpect(jsonPath("$.content.id").value(customerId.toString()))
+                    .andExpect(jsonPath("$.content.firstName").value("Harry"))
+                    .andExpect(jsonPath("$.content.lastName").value("Potter"))
+                    .andExpect(jsonPath("$.content.email").value("harry.potter@gryffindor.com"))
+                    .andExpect(jsonPath("$.content.relationship").value("gryffindor"))
+                    .andExpect(jsonPath("$.content.residence.id").value(residenceId.toString()))
+                    .andExpect(jsonPath("$.content.residence.city").value("Hogwarts"))
+                    .andExpect(jsonPath("$.content.residence.country").value("Scotland"));
         }
 
         @Test
@@ -216,7 +211,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_FIRSTNAME_NICKNAME_MISSING));
         }
 
         @Test
@@ -234,7 +230,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_INVALID_EMAIL));
         }
 
         @Test
@@ -252,7 +249,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_RELATIONSHIP_MISSING));
         }
     }
 
@@ -305,16 +303,14 @@ class CustomerControllerTest {
                             .content(objectMapper.writeValueAsString(updateRequest))
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_UPDATE))
-                    .andExpect(jsonPath("$.data.id").value(customerId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("Harry"))
-                    .andExpect(jsonPath("$.data.lastName").value("Potter"))
-                    .andExpect(jsonPath("$.data.email").value("harry.potter@hogwarts.com"))
-                    .andExpect(jsonPath("$.data.relationship").value("gryffindor"))
-                    .andExpect(jsonPath("$.data.residence.id").value(residenceId.toString()))
-                    .andExpect(jsonPath("$.data.residence.city").value("Hogwarts"))
-                    .andExpect(jsonPath("$.data.residence.country").value("Scotland"));
+                    .andExpect(jsonPath("$.content.id").value(customerId.toString()))
+                    .andExpect(jsonPath("$.content.firstName").value("Harry"))
+                    .andExpect(jsonPath("$.content.lastName").value("Potter"))
+                    .andExpect(jsonPath("$.content.email").value("harry.potter@hogwarts.com"))
+                    .andExpect(jsonPath("$.content.relationship").value("gryffindor"))
+                    .andExpect(jsonPath("$.content.residence.id").value(residenceId.toString()))
+                    .andExpect(jsonPath("$.content.residence.city").value("Hogwarts"))
+                    .andExpect(jsonPath("$.content.residence.country").value("Scotland"));
         }
 
         @Test
@@ -337,7 +333,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_CUSTOMER_NOT_FOUND));
         }
 
         @Test
@@ -355,7 +352,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_FIRSTNAME_NICKNAME_MISSING));
         }
 
         @Test
@@ -373,7 +371,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_INVALID_EMAIL));
         }
 
         @Test
@@ -391,7 +390,8 @@ class CustomerControllerTest {
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_RELATIONSHIP_MISSING));
         }
     }
 
@@ -406,39 +406,29 @@ class CustomerControllerTest {
         }
 
         @Test
-        void shouldReturnStatusOkWhenCustomerIsSuccessfullyDeleted() throws Exception {
+        void shouldReturnStatusNoContentWhenCustomerIsSuccessfullyDeleted() throws Exception {
             // Given
-            Customer deletedCustomer = createCustomer(customerId, "Harry", "Potter");
-
-            CustomerResponse customerResponse = createCustomerResponse(deletedCustomer);
-
-            when(customerServiceFacade.deleteCustomer(customerId)).thenReturn(deletedCustomer);
-            when(customerMapper.customerToCustomerResponse(any(Customer.class)))
-                    .thenReturn(customerResponse);
+            doNothing().when(customerServiceFacade).deleteCustomer(customerId);
 
             // When / Then
             mockMvc.perform(delete("/api/v1/customers/{id}", customerId)
                             .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_DELETE))
-                    .andExpect(jsonPath("$.data.id").value(customerId.toString()))
-                    .andExpect(jsonPath("$.data.firstName").value("Harry"))
-                    .andExpect(jsonPath("$.data.lastName").value("Potter"));
+                    .andExpect(status().isNoContent());
         }
 
         @Test
         void shouldThrowCustomerNotFoundExceptionAndReturnStatusNotFoundWhenCustomerDoesNotExist() throws Exception {
             // Given
-            when(customerServiceFacade.deleteCustomer(customerId))
-                    .thenThrow(new CustomerNotFoundException("Customer not found"));
+            doThrow(new CustomerNotFoundException("Customer not found"))
+                    .when(customerServiceFacade).deleteCustomer(customerId);
 
             // When / Then
             mockMvc.perform(delete("/api/v1/customers/{id}", customerId)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_CUSTOMER_NOT_FOUND));
         }
     }
 

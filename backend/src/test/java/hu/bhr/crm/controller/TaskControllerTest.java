@@ -26,6 +26,8 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,13 +39,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(TaskController.class)
 class TaskControllerTest {
 
-    private static final String MESSAGE_SUCCESS_GET = "Task retrieved successfully";
-    private static final String MESSAGE_SUCCESS_GET_ALL = "Tasks retrieved successfully";
-    private static final String MESSAGE_SUCCESS_CREATE = "Task created successfully";
-    private static final String MESSAGE_SUCCESS_UPDATE = "Task updated successfully";
-    private static final String MESSAGE_SUCCESS_DELETE = "Task deleted successfully";
-    private static final String MESSAGE_ERROR_VALIDATION = "Validation error during request processing";
-    private static final String MESSAGE_ERROR_NOT_FOUND = "Error occurred during task retrieval";
+    private static final String TITLE_ERROR_VALIDATION = "Validation error during request processing";
+    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during task retrieval";
+    private static final String MESSAGE_ERROR_TASK_NOT_FOUND = "Task not found";
 
     @Autowired
     private MockMvc mockMvc;
@@ -81,10 +79,8 @@ class TaskControllerTest {
             // When / Then
             mockMvc.perform(get("/api/v1/tasks/{id}", taskId))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET))
-                    .andExpect(jsonPath("$.data.id").value(taskId.toString()))
-                    .andExpect(jsonPath("$.data.title").value("Test Task"));
+                    .andExpect(jsonPath("$.content.id").value(taskId.toString()))
+                    .andExpect(jsonPath("$.content.title").value("Test Task"));
         }
 
         @Test
@@ -97,7 +93,8 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks/{id}", taskId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_TASK_NOT_FOUND));
         }
     }
 
@@ -121,11 +118,9 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data", hasSize(2)))
-                    .andExpect(jsonPath("$.data[0].title").value("Task 1"))
-                    .andExpect(jsonPath("$.data[1].title").value("Task 2"));
+                    .andExpect(jsonPath("$.content", hasSize(2)))
+                    .andExpect(jsonPath("$.content[0].title").value("Task 1"))
+                    .andExpect(jsonPath("$.content[1].title").value("Task 2"));
         }
 
         @Test
@@ -137,10 +132,8 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks")
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content").isEmpty());
         }
     }
 
@@ -166,11 +159,9 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks/{customerId}/tasks", customerId)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data", hasSize(2)))
-                    .andExpect(jsonPath("$.data[0].title").value("Task 1"))
-                    .andExpect(jsonPath("$.data[1].title").value("Task 2"));
+                    .andExpect(jsonPath("$.content", hasSize(2)))
+                    .andExpect(jsonPath("$.content[0].title").value("Task 1"))
+                    .andExpect(jsonPath("$.content[1].title").value("Task 2"));
         }
 
         @Test
@@ -182,10 +173,8 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks/{customerId}/tasks", customerId)
                             .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content").isEmpty());
         }
 
         @Test
@@ -198,10 +187,8 @@ class TaskControllerTest {
             mockMvc.perform(get("/api/v1/tasks/{customerId}/tasks", nonExistentCustomerId)
                         .accept(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_GET_ALL))
-                    .andExpect(jsonPath("$.data").isArray())
-                    .andExpect(jsonPath("$.data").isEmpty());
+                    .andExpect(jsonPath("$.content").isArray())
+                    .andExpect(jsonPath("$.content").isEmpty());
         }
     }
 
@@ -233,10 +220,8 @@ class TaskControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(taskRequest)))
                     .andExpect(status().isCreated())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_CREATE))
-                    .andExpect(jsonPath("$.data.id").value(taskId.toString()))
-                    .andExpect(jsonPath("$.data.title").value("New Task"));
+                    .andExpect(jsonPath("$.content.id").value(taskId.toString()))
+                    .andExpect(jsonPath("$.content.title").value("New Task"));
         }
 
         @ParameterizedTest
@@ -247,7 +232,7 @@ class TaskControllerTest {
                             .content(objectMapper.writeValueAsString(invalidTaskRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION));
         }
 
         private static Stream<TaskRequest> invalidTaskRequests() {
@@ -288,10 +273,8 @@ class TaskControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(taskRequest)))
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_UPDATE))
-                    .andExpect(jsonPath("$.data.id").value(taskId.toString()))
-                    .andExpect(jsonPath("$.data.title").value("Updated Task"));
+                    .andExpect(jsonPath("$.content.id").value(taskId.toString()))
+                    .andExpect(jsonPath("$.content.title").value("Updated Task"));
         }
 
         @Test
@@ -313,7 +296,8 @@ class TaskControllerTest {
                             .content(objectMapper.writeValueAsString(taskRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_TASK_NOT_FOUND));
         }
 
         @ParameterizedTest
@@ -324,7 +308,7 @@ class TaskControllerTest {
                             .content(objectMapper.writeValueAsString(invalidTaskRequest)))
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_VALIDATION));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_VALIDATION));
         }
 
         private static Stream<TaskRequest> invalidTaskRequests() {
@@ -343,36 +327,27 @@ class TaskControllerTest {
         }
 
         @Test
-        void shouldReturnStatusOkWhenTaskIsSuccessfullyDeleted() throws Exception {
+        void shouldReturnStatusNoContentWhenTaskIsSuccessfullyDeleted() throws Exception {
             // Given
-            Task deletedTask = createTask(taskId, "Deleted Task");
-            TaskResponse taskResponse = createTaskResponse(deletedTask);
-
-            when(taskService.deleteTask(taskId))
-                    .thenReturn(deletedTask);
-            when(taskMapper.taskToTaskResponse(any(Task.class)))
-                    .thenReturn(taskResponse);
+            doNothing().when(taskService).deleteTask(taskId);
 
             // When / Then
             mockMvc.perform(delete("/api/v1/tasks/{id}", taskId))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.status").value("success"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_SUCCESS_DELETE))
-                    .andExpect(jsonPath("$.data.id").value(taskId.toString()))
-                    .andExpect(jsonPath("$.data.title").value("Deleted Task"));
+                    .andExpect(status().isNoContent());
         }
 
         @Test
         void shouldThrowTaskNotFoundExceptionAndReturnStatusNotFoundWhenTaskDoesNotExist() throws Exception {
             // Given
-            when(taskService.deleteTask(taskId))
-                    .thenThrow(new TaskNotFoundException("Task not found"));
+            doThrow(new TaskNotFoundException("Task not found"))
+                    .when(taskService).deleteTask(taskId);
 
             // When / Then
             mockMvc.perform(delete("/api/v1/tasks/{id}", taskId))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.message").value(MESSAGE_ERROR_NOT_FOUND));
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
+                    .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_TASK_NOT_FOUND));
         }
     }
 

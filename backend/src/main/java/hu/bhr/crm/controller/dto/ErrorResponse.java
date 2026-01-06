@@ -4,6 +4,8 @@ import java.time.ZonedDateTime;
 import java.util.List;
 
 public record ErrorResponse(
-        List<String> messages,
+        String status,
+        String title,
+        List<String> errorMessages,
         ZonedDateTime timestamp
 ) {}

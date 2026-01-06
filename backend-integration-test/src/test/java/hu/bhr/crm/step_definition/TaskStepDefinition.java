@@ -70,7 +70,9 @@ public class TaskStepDefinition {
     public void theCreatedTaskIsDeleted() throws Exception {
         HttpResponse<String> response = taskApiClient.deleteTask(taskContext.getCreatedTaskId());
         taskContext.setLastResponse(response);
-        taskContext.getCreatedTaskIds().remove(taskContext.getCreatedTaskId());
+        if (response.statusCode() == 204) {
+            taskContext.getCreatedTaskIds().remove(taskContext.getCreatedTaskId());
+        }
     }
 
     @Then("the task database is empty")
@@ -98,7 +100,7 @@ public class TaskStepDefinition {
             PlatformResponse<TaskResponse> resultResponse =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {
                     });
-            taskContext.setLastTaskResponse(resultResponse.data());
+            taskContext.setLastTaskResponse(resultResponse.content());
         }
     }
 
@@ -119,7 +121,7 @@ public class TaskStepDefinition {
                 });
         TaskResponse expectedResponse = taskContext.getLastTaskResponse();
 
-        Assertions.assertThat(resultResponse.data())
+        Assertions.assertThat(resultResponse.content())
                 .usingRecursiveComparison()
                 .ignoringFields("createdAt", "updatedAt", "completedAt", "reminder", "dueDate")
                 .isEqualTo(expectedResponse);
@@ -133,7 +135,7 @@ public class TaskStepDefinition {
         List<String> expectedIds = taskContext.getCreatedTaskIds();
 
         for (String id : expectedIds) {
-            boolean found = resultResponse.data().stream()
+            boolean found = resultResponse.content().stream()
                     .anyMatch(t -> t.id().equals(id));
             Assertions.assertThat(found)
                     .as("Task with ID %s should be in the response", id)
@@ -171,11 +173,11 @@ public class TaskStepDefinition {
             PlatformResponse<TaskResponse> parsed =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {
                     });
-            String taskId = parsed.data().id();
+            String taskId = parsed.content().id();
 
             taskContext.setCreatedTaskId(taskId);
             taskContext.addCreatedTaskId(taskId);
-            taskContext.setLastTaskResponse(parsed.data());
+            taskContext.setLastTaskResponse(parsed.content());
         }
     }
 
@@ -205,7 +207,7 @@ public class TaskStepDefinition {
             PlatformResponse<CustomerResponse> parsed =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {
                     });
-            String customerId = parsed.data().id();
+            String customerId = parsed.content().id();
 
             taskContext.setCustomerId(customerId);
             globalTestContext.addCreatedCustomerId(customerId);

@@ -742,13 +742,12 @@ class TaskServiceTest {
         @Test
         void shouldDeleteTaskWhenTaskExists() {
             // Given
-            mockBuildTaskById(taskId);
+            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
             // When
-            Task result = underTest.deleteTask(taskId);
+            underTest.deleteTask(taskId);
 
             // Then
-            assertEquals(taskId,result.id());
             verify(taskRepository).deleteById(taskId);
             verify(emailSchedulerService).deleteEmailSchedule(taskId);
         }
@@ -767,7 +766,7 @@ class TaskServiceTest {
         @Test
         void shouldDeleteScheduleBeforeTaskEntity() {
             // Given
-            mockBuildTaskById(taskId);
+            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
 
             // When
             underTest.deleteTask(taskId);
@@ -776,16 +775,7 @@ class TaskServiceTest {
             InOrder inOrder = inOrder(taskRepository, taskMapper, emailSchedulerService);
             inOrder.verify(taskRepository).findById(taskId);
             inOrder.verify(emailSchedulerService).deleteEmailSchedule(taskId);
-            inOrder.verify(taskMapper).taskEntityToTask(taskEntity);
             inOrder.verify(taskRepository).deleteById(taskId);
-        }
-
-        private void mockBuildTaskById(UUID taskId) {
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
-            when(taskMapper.taskEntityToTask(taskEntity))
-                    .thenReturn(Task.builder()
-                            .id(taskId)
-                            .build());
         }
     }
 

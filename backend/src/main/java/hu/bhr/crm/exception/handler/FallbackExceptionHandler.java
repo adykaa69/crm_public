@@ -1,7 +1,6 @@
 package hu.bhr.crm.exception.handler;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
-import hu.bhr.crm.controller.dto.PlatformResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
@@ -19,10 +18,8 @@ public class FallbackExceptionHandler {
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
-    public PlatformResponse<ErrorResponse> handleGeneralException(Exception ex) {
+    public ErrorResponse handleGeneralException(Exception ex) {
         log.error("Unexpected error occurred", ex);
-        ErrorResponse errorResponse = ErrorResponseUtils.toErrorResponse(ex);
-
-        return new PlatformResponse<>("error", "Unexpected error during request processing", errorResponse);
+        return ErrorResponseUtils.toErrorResponse("Unexpected error during request processing", ex);
     }
 }

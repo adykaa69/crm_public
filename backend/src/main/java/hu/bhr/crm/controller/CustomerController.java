@@ -54,7 +54,7 @@ public class CustomerController implements CustomerControllerApi {
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(customer);
         log.info("Customer with id {} retrieved successfully", id);
 
-        return new PlatformResponse<>("success", "Customer retrieved successfully", customerResponse);
+        return new PlatformResponse<>(customerResponse);
     }
 
     /**
@@ -74,7 +74,7 @@ public class CustomerController implements CustomerControllerApi {
                 .toList();
         log.info("All customers retrieved successfully");
 
-        return new PlatformResponse<>("success", "All customers retrieved successfully", customerResponses);
+        return new PlatformResponse<>(customerResponses);
     }
 
     /**
@@ -96,27 +96,26 @@ public class CustomerController implements CustomerControllerApi {
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(createdCustomer);
         log.info("Customer created successfully with id: {}", createdCustomer.id());
 
-        return new PlatformResponse<>("success", "Customer created successfully", customerResponse);
+        return new PlatformResponse<>(customerResponse);
     }
 
     /**
      * Permanently deletes a customer by their unique identifier.
+     * <p>
+     * If the operation is successful, no content is returned.
+     * </p>
      *
      * @param id the UUID of the customer to delete
-     * @return a {@link PlatformResponse} containing the details of the deleted customer (HTTP 200 OK)
      * @throws hu.bhr.crm.exception.CustomerNotFoundException if the customer does not exist (HTTP 404 Not Found)
      */
     @Override
     @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public PlatformResponse<CustomerResponse> deleteCustomer(@PathVariable UUID id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCustomer(@PathVariable UUID id) {
         log.info("Deleting customer with id: {}", id);
-        Customer deletedCustomer = customerServiceFacade.deleteCustomer(id);
-        CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(deletedCustomer);
+        customerServiceFacade.deleteCustomer(id);
         log.info("Customer deleted successfully with id: {}", id);
-
-        return new PlatformResponse<>("success", "Customer has been deleted successfully", customerResponse);
     }
 
     /**
@@ -144,7 +143,7 @@ public class CustomerController implements CustomerControllerApi {
         CustomerResponse customerResponse = customerMapper.customerToCustomerResponse(updatedCustomer);
         log.info("Customer updated successfully with id: {}", id);
 
-        return new PlatformResponse<>("success", "Customer updated successfully", customerResponse);
+        return new PlatformResponse<>(customerResponse);
     }
 }
 
