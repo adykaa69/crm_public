@@ -2,7 +2,6 @@
   import { type TaskDto } from "$lib/models/task";
   import TaskRow from "./task-row.svelte";
   import { sortObjects } from "$lib/utils/sorter";
-  import { render } from "svelte/server";
 
   interface Props {
     tasks: TaskDto[];

@@ -1,35 +1,38 @@
 import type { CustomerUpdateRequest } from "$lib/models/customer-request";
-import type { CustomerResponse } from "$lib/models/customer-response";
 import { type ErrorResponse } from "$lib/models/error";
 import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
 import { type Actions, error, fail, redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import { nestData } from "$lib/utils/form-data-parser";
+import {
+  parseCustomerDetailsResponseToCustomerDetailsDto,
+  parseCustomerResponseToCustomerDto
+} from "$lib/models/customer";
 import { getAllCustomerDetails } from "$lib/utils/handle-customer-details";
-import type { CustomerDetailsResponse } from "$lib/models/customer-details";
 
 export const load: PageServerLoad = async ({ params }) => {
-  const customerResponse = await getCustomer(params.id);
-  const customerDetailsResponse = await getAllCustomerDetails(params.id);
+  const customerResponse: Response = await getCustomer(params.id);
+  const customerDetailsResponse: Response = await getAllCustomerDetails(params.id);
 
   const customerJson = await customerResponse.json();
   const customerDetailsJson = await customerDetailsResponse.json();
+
   if (customerResponse.status !== 200) {
-    return customerJson as PlatformApiResponse<ErrorResponse>;
-  } else if (customerDetailsResponse.status !== 200) {
-    return customerDetailsJson as PlatformApiResponse<ErrorResponse>;
+    return { errors: customerJson.data as ErrorResponse[] };
   }
-  const customerData = customerJson as PlatformApiResponse<CustomerResponse>;
-  const customerDetailsData = customerDetailsJson as PlatformApiResponse<CustomerDetailsResponse[]>;
+
+  if (customerDetailsResponse.status !== 200) {
+    return { errors: customerDetailsJson.data as ErrorResponse[] };
+  }
   return {
-    customer: customerData.data,
-    customerDetails: customerDetailsData.data
+    customer: parseCustomerResponseToCustomerDto(customerJson.content),
+    customerDetails: customerDetailsJson.content.map(parseCustomerDetailsResponseToCustomerDetailsDto)
   };
 };
 
 export const actions = {
-  update: async ({ request, params }) => {
+  customerupdate: async ({ request, params }) => {
     const formData = Object.fromEntries(await request.formData());
     const updateRequest = nestData<CustomerUpdateRequest>(formData);
     updateRequest.customerId = typeof params.id === "string" ? params.id : "";
@@ -51,7 +54,7 @@ export const actions = {
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await getErrorResponse(response);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         updateRequest
       });
     }

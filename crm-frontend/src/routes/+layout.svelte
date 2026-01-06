@@ -7,7 +7,7 @@
 </script>
 
 <NavigationBar />
-<div style="display: flex; min-height: calc(100vh - 45px);">
+<div class="flex min-h-[calc(100vh - 45px)]">
   <Sidebar />
   <main>
     {@render children()}

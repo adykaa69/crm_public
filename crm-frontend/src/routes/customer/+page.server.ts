@@ -15,7 +15,7 @@ export const load: PageServerLoad = async () => {
   if (response.status !== 200) {
     return { errors: responseJson.data as ErrorResponse[] };
   }
-  return { customers: responseJson.data.map(parseCustomerResponseToCustomerDto) };
+  return { customers: responseJson.content.map(parseCustomerResponseToCustomerDto) };
 };
 
 export const actions = {

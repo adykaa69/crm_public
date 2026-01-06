@@ -84,6 +84,14 @@ export interface ResidenceDto {
   updatedAt?: Date;
 }
 
+export interface CustomerDetailsDto {
+  id?: string;
+  customerId?: string;
+  note?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 const taskDto: ResidenceDto = {
   residenceId: undefined,
   zipCode: undefined,
@@ -111,6 +119,16 @@ export function parseCustomerResponseToCustomerDto(raw: any): CustomerDto {
     phoneNumber: raw.phoneNumber,
     relationship: raw.relationship,
     residence: parseResidenceResponseToResidenceDto(raw.residence),
+    createdAt: new Date(raw.createdAt),
+    updatedAt: new Date(raw.updatedAt)
+  };
+}
+
+export function parseCustomerDetailsResponseToCustomerDetailsDto(raw: any): CustomerDetailsDto {
+  return {
+    id: raw.id,
+    customerId: raw.customerId,
+    note: raw.note,
     createdAt: new Date(raw.createdAt),
     updatedAt: new Date(raw.updatedAt)
   };

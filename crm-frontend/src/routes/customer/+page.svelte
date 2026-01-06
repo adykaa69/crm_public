@@ -1,5 +1,4 @@
 <script lang="ts">
-  import CustomerPage from "$lib/components/customer/customer-page.svelte";
   import Customer from "$lib/components/customer/customer.svelte";
   import { invalidateAll } from "$app/navigation";
 
@@ -10,5 +9,4 @@
   }
 </script>
 
-<CustomerPage {data} />
 <Customer customers={data.customers} onSave={handleUpdate} onDelete={handleUpdate} onCancel={handleUpdate} />

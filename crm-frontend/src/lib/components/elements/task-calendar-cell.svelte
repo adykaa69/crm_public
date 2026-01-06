@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { dateCustomFormatting } from "$lib/utils/formatter";
   import SveltyPicker from "svelty-picker";
 
   interface Props {
@@ -22,10 +23,6 @@
     if (dateTimeToString) date = new Date(dateTimeToString);
   }
 
-  function dateCustomFormatting(date: Date): string {
-    const padStart = (value: number): string => value.toString().padStart(2, "0");
-    return `${date.getFullYear()}-${padStart(date.getMonth() + 1)}-${padStart(date.getDate())} ${padStart(date.getHours())}:${padStart(date.getMinutes())}`;
-  }
 </script>
 
 {#if isEditing}

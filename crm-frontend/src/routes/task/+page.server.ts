@@ -21,7 +21,7 @@ export const load: PageServerLoad = async () => {
   if (response.status !== 200) {
     return { errors: responseJson.data as ErrorResponse[] };
   }
-  return { tasks: responseJson.data.map(parseTaskResponseToTaskDto) };
+  return { tasks: responseJson.content.map(parseTaskResponseToTaskDto) };
 };
 
 export const actions = {
@@ -33,9 +33,9 @@ export const actions = {
       throw redirect(302, "/task");
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      console.log("Error response:", errorResponse.content?.errorMessage);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         taskRequest
       });
     }
@@ -47,28 +47,28 @@ export const actions = {
     if (response.ok) {
       const updatedTask: PlatformApiResponse<TaskResponse> = await response.json();
       return {
-        task: parseTaskResponseToTaskDto(updatedTask.data)
+        task: parseTaskResponseToTaskDto(updatedTask.content)
       };
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      console.log("Error response:", errorResponse.content?.errorMessage);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         taskRequest
       });
     }
   },
   taskdelete: async ({ request }) => {
-    // const taskDto: TaskDto = parseToTaskDto(await request.formData());
+    // const taskDto: TaskDto = parseToTaskDto(await request.formcontent());
     const taskDto: TaskDto = await request.json();
     const response = await deleteTask(taskDto.id);
     if (response.ok) {
       throw redirect(302, "/task");
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await response.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      console.log("Error response:", errorResponse.content?.errorMessage);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         taskDto
       });
     }

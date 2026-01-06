@@ -68,19 +68,6 @@
     padding: 0 1rem;
   }
 
-  /* .add-btn {
-    color: #fff;
-    border: none;
-    border-radius: 50px;
-    width: fit-content;
-    height: 1.7rem;
-  } */
-
-  .add-logo {
-    margin: 0.3rem;
-    width: 0.5rem;
-  }
-
   .icon-btn {
     background: none;
     border: none;
