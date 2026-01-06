@@ -47,8 +47,8 @@ public class EmailService {
 
         Customer customer = null;
         List<CustomerDetails> customerDetailsList = List.of();
-        if (task.customer() != null) {
-            customer = customerService.getCustomerById(task.customer().id());
+        if (task.customerId() != null) {
+            customer = customerService.getCustomerById(task.customerId());
             customerDetailsList = customerDetailsService.getAllCustomerDetails(customer.id());
         }
 

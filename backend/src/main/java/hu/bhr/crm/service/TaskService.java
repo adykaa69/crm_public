@@ -1,10 +1,7 @@
 package hu.bhr.crm.service;
 
-import hu.bhr.crm.controller.dto.TaskRequest;
 import hu.bhr.crm.exception.TaskNotFoundException;
-import hu.bhr.crm.mapper.TaskFactory;
 import hu.bhr.crm.mapper.TaskMapper;
-import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
@@ -88,22 +85,23 @@ public class TaskService {
      * </ul>
      * </p>
      *
-     * @param taskRequest the DTO containing the details for the new task
+     * @param task the domain object containing new customer details
      * @return the persisted {@link Task} domain object with its generated ID
      * @throws hu.bhr.crm.exception.CustomerNotFoundException if the referenced customer ID does not exist
      * @throws hu.bhr.crm.exception.EmailScheduleException if scheduling the email reminder fails
      */
-    public Task saveTask(TaskRequest taskRequest) {
-        Customer customer = resolveCustomer(taskRequest.customerId());
+    public Task saveTask(Task task) {
+        if (task.customerId() != null) {
+            customerService.validateCustomerExists(task.customerId());
+        }
 
-        Task task = TaskFactory.createTask(taskRequest, customer);
         TaskEntity taskEntity = taskMapper.taskToTaskEntity(task);
 
         Instant completedAt = determineCompletedAt(null, taskEntity.getStatus());
         taskEntity.setCompletedAt(completedAt);
 
         TaskEntity savedTaskEntity = taskRepository.save(taskEntity);
-        scheduleEmailIfReminderExists(savedTaskEntity, taskRequest);
+        scheduleEmailIfReminderExists(savedTaskEntity, task);
 
         return taskMapper.taskEntityToTask(savedTaskEntity);
     }
@@ -119,7 +117,9 @@ public class TaskService {
      * @throws TaskNotFoundException if the task with the given ID does not exist
      */
     public void deleteTask(UUID id) {
-        TaskEntity taskEntity = findTaskEntity(id);
+        if (!taskRepository.existsById(id)) {
+            throw new TaskNotFoundException("Task not found");
+        }
 
         emailSchedulerService.deleteEmailSchedule(id);
 
@@ -136,25 +136,27 @@ public class TaskService {
      * </ul>
      * </p>
      *
-     * @param id the unique UUID of the task to update
-     * @param taskRequest the DTO containing the updated fields
+     * @param task the domain object containing updated fields (ID must be present)
      * @return the updated {@link Task} domain object
      * @throws TaskNotFoundException if the task with the given ID does not exist
      * @throws hu.bhr.crm.exception.CustomerNotFoundException if the referenced customer ID in the update does not exist
      */
-    public Task updateTask(UUID id, TaskRequest taskRequest) {
-        TaskEntity oldTaskEntity = findTaskEntity(id);
+    public Task updateTask(Task task) {
+        TaskEntity oldTaskEntity = taskRepository.findById(task.id())
+                .orElseThrow(() -> new TaskNotFoundException("Task not found")
+        );
 
-        Customer customer = resolveCustomer(taskRequest.customerId());
+        if (task.customerId() != null) {
+            customerService.validateCustomerExists(task.customerId());
+        }
 
-        Task task = TaskFactory.createTaskWithId(id, taskRequest, customer);
         TaskEntity newTaskEntity = taskMapper.taskToTaskEntity(task);
 
         Instant completedAt = determineCompletedAt(oldTaskEntity, newTaskEntity.getStatus());
         newTaskEntity.setCompletedAt(completedAt);
 
         TaskEntity updatedTaskEntity = taskRepository.save(newTaskEntity);
-        handleReminderUpdate(oldTaskEntity.getReminder(), updatedTaskEntity.getReminder(), id);
+        handleReminderUpdate(oldTaskEntity.getReminder(), updatedTaskEntity.getReminder(), task.id());
 
         return taskMapper.taskEntityToTask(updatedTaskEntity);
     }
@@ -190,24 +192,6 @@ public class TaskService {
     }
 
     /**
-     * Resolves the Customer entity based on the provided ID.
-     * <p>
-     * Retrieves the full Customer object from the customer service.
-     * If the ID is null, it returns null.
-     * </p>
-     *
-     * @param customerId the UUID of the customer to resolve
-     * @return the {@link Customer} domain object, or null if customerId is null
-     * @throws hu.bhr.crm.exception.CustomerNotFoundException if the ID is provided but the customer does not exist
-     */
-    private Customer resolveCustomer(UUID customerId) {
-        if (customerId == null) {
-            return null;
-        }
-        return customerService.getCustomerById(customerId);
-    }
-
-    /**
      * Detaches a customer from all their associated tasks.
      * <p>
      * This method is typically called when a customer is deleted. It effectively "orphans" the tasks
@@ -220,7 +204,7 @@ public class TaskService {
     public void detachCustomerFromTasks(UUID customerId) {
         List<TaskEntity> relatedTasks = taskRepository.findAllByCustomerId(customerId);
         for (TaskEntity task : relatedTasks) {
-            task.setCustomer(null);
+            task.setCustomerId(null);
             String originalDescription = task.getDescription();
             String note = "The related customer has been deleted.";
             task.setDescription((originalDescription == null || originalDescription.isBlank())
@@ -232,28 +216,16 @@ public class TaskService {
     }
 
     /**
-     * Helper method to find a task entity by ID or throw an exception if not found.
-     *
-     * @param taskId the UUID of the task
-     * @return the found {@link TaskEntity}
-     * @throws TaskNotFoundException if the task does not exist
-     */
-    private TaskEntity findTaskEntity(UUID taskId) {
-        return taskRepository.findById(taskId)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
-    }
-
-    /**
-     * Schedules an email reminder if the task request contains a reminder date.
+     * Schedules an email reminder if the task domain contains a reminder date.
      *
      * @param taskEntity the persisted task entity (needed for the ID)
-     * @param taskRequest the request object containing the potential reminder date
+     * @param task the domain object containing the potential reminder date
      */
-    private void scheduleEmailIfReminderExists(TaskEntity taskEntity, TaskRequest taskRequest) {
-        if (taskRequest.reminder() != null) {
+    private void scheduleEmailIfReminderExists(TaskEntity taskEntity, Task task) {
+        if (task.reminder() != null) {
             emailSchedulerService.scheduleEmail(
                     taskEntity.getId(),
-                    taskRequest.reminder().toInstant()
+                    task.reminder()
             );
         }
     }

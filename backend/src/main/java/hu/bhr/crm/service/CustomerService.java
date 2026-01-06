@@ -86,10 +86,7 @@ public class CustomerService {
      * @throws CustomerNotFoundException if the customer with the given ID does not exist
      */
     public void deleteCustomer(UUID id) {
-        if (!repository.existsById(id)) {
-            throw new CustomerNotFoundException("Customer not found");
-        }
-
+        validateCustomerExists(id);
         repository.deleteById(id);
     }
 

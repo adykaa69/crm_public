@@ -199,6 +199,7 @@ class TaskControllerTest {
         void shouldCreateTaskAndReturnStatusCreatedWhenRequestIsValid() throws Exception {
             // Given
             final UUID taskId = UUID.randomUUID();
+            final UUID customerId = UUID.randomUUID();
 
             TaskRequest taskRequest = new TaskRequest(
                     null, "New Task", null,
@@ -210,7 +211,7 @@ class TaskControllerTest {
             Task task = createTask(taskId, taskRequest.title());
             TaskResponse taskResponse = createTaskResponse(task);
 
-            when(taskService.saveTask(any(TaskRequest.class)))
+            when(taskService.saveTask(any(Task.class)))
                     .thenReturn(task);
             when(taskMapper.taskToTaskResponse(task))
                     .thenReturn(taskResponse);
@@ -263,7 +264,7 @@ class TaskControllerTest {
             Task updatedTask = createTask(taskId, taskRequest.title());
             TaskResponse taskResponse = createTaskResponse(updatedTask);
 
-            when(taskService.updateTask(any(UUID.class), any(TaskRequest.class)))
+            when(taskService.updateTask(any(Task.class)))
                     .thenReturn(updatedTask);
             when(taskMapper.taskToTaskResponse(updatedTask))
                     .thenReturn(taskResponse);
@@ -287,7 +288,7 @@ class TaskControllerTest {
                     "IN_PROGRESS"
             );
 
-            when(taskService.updateTask(any(UUID.class), any(TaskRequest.class)))
+            when(taskService.updateTask(any(Task.class)))
                     .thenThrow(new TaskNotFoundException("Task not found"));
 
             // When / Then
@@ -368,10 +369,6 @@ class TaskControllerTest {
     }
 
     private TaskResponse createTaskResponse(Task task) {
-        UUID customerId = task.customer() != null
-                ? task.customer().id()
-                : null;
-
         ZonedDateTime reminder = task.reminder() != null
                 ? task.reminder().atZone(ZoneId.systemDefault())
                 : null;
@@ -382,7 +379,7 @@ class TaskControllerTest {
 
         return new TaskResponse(
                 task.id(),
-                customerId,
+                task.customerId(),
                 task.title(),
                 task.description(),
                 reminder,

@@ -6,8 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
@@ -41,6 +39,9 @@ public class TaskEntity {
     @Column(name = "id", nullable = false, updatable = false)
     private UUID id;
 
+    @Column(name = "customer_id")
+    private UUID customerId;
+
     @Column(name = "title", nullable = false)
     private String title;
 
@@ -69,16 +70,12 @@ public class TaskEntity {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
-
-    public CustomerEntity getCustomer() {
-        return customer;
+    public UUID getCustomerId() {
+        return customerId;
     }
 
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
+    public void setCustomerId(UUID customerId) {
+        this.customerId = customerId;
     }
 
     public UUID getId() {
@@ -165,7 +162,7 @@ public class TaskEntity {
                 ", createdAt=" + createdAt + '\'' +
                 ", completedAt=" + completedAt + '\'' +
                 ", updatedAt=" + updatedAt + '\'' +
-                ", customer=" + customer + '\'' +
+                ", customerId=" + customerId + '\'' +
                 '}';
     }
 }

@@ -457,7 +457,7 @@ class CustomerServiceTest {
 
             // Then
             assertNotNull(result.residence());
-            assertNotNull(result.residence().id()); // generált ID
+            assertNotNull(result.residence().id());
             assertNull(result.residence().city());
             assertNull(result.residence().zipCode());
             assertNull(result.residence().streetAddress());
@@ -479,8 +479,6 @@ class CustomerServiceTest {
         @Test
         void shouldDeleteCustomerWhenCustomerExists() {
             // Given
-            CustomerEntity customerEntity = new CustomerEntity();
-
             when(customerRepository.existsById(customerId)).thenReturn(true);
 
             // When

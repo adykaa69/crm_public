@@ -1,13 +1,10 @@
 package hu.bhr.crm.service;
 
-import hu.bhr.crm.controller.dto.TaskRequest;
 import hu.bhr.crm.exception.TaskNotFoundException;
 import hu.bhr.crm.mapper.TaskMapper;
-import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
-import hu.bhr.crm.repository.entity.CustomerEntity;
 import hu.bhr.crm.repository.entity.TaskEntity;
 import hu.bhr.crm.scheduler.EmailSchedulerService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -209,37 +207,28 @@ class TaskServiceTest {
         @Test
         void shouldSaveTaskWithoutCustomerAndWithoutReminderSchedule() {
             // Given
-            TaskRequest request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
-            );
+            Task task = Task.builder()
+                    .id(UUID.randomUUID())
+                    .title("title")
+                    .description("description")
+                    .build();
 
             TaskEntity savedEntity = new TaskEntity();
-            savedEntity.setId(UUID.randomUUID());
-            savedEntity.setTitle(request.title());
-            savedEntity.setDescription(request.description());
+            savedEntity.setId(task.id());
+            savedEntity.setTitle(task.title());
+            savedEntity.setDescription(task.description());
 
             mockSaveTaskEntity(savedEntity);
-            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(
-                    Task.builder()
-                            .id(savedEntity.getId())
-                            .title(savedEntity.getTitle())
-                            .description(savedEntity.getDescription())
-                            .build()
-            );
+            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(task);
 
             // When
-            Task result = underTest.saveTask(request);
+            Task result = underTest.saveTask(task);
 
             // Then
             assertEquals(savedEntity.getId(), result.id());
             assertEquals("title", result.title());
             assertEquals("description", result.description());
-            verify(customerService, never()).getCustomerById(any());
+            verify(customerService, never()).validateCustomerExists(any());
             verify(emailSchedulerService, never()).scheduleEmail(any(), any());
         }
 
@@ -247,36 +236,29 @@ class TaskServiceTest {
         void shouldSaveTaskWithCustomer() {
             // Given
             UUID customerId = UUID.randomUUID();
-            TaskRequest request = new TaskRequest(
-                    customerId,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
-            );
-
-            Customer customer = Customer.builder().id(customerId).build();
+            Task task = Task.builder()
+                    .id(UUID.randomUUID())
+                    .customerId(customerId)
+                    .title("title")
+                    .description("description")
+                    .build();
 
             TaskEntity savedEntity = new TaskEntity();
-            savedEntity.setId(UUID.randomUUID());
+            savedEntity.setId(task.id());
+            savedEntity.setCustomerId(customerId);
 
-            when(customerService.getCustomerById(customerId)).thenReturn(customer);
+            doNothing().when(customerService).validateCustomerExists(customerId);
 
             mockSaveTaskEntity(savedEntity);
-            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(
-                    Task.builder()
-                            .id(savedEntity.getId())
-                            .customer(customer)
-                            .build());
+            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(task);
 
             // When
-            Task result = underTest.saveTask(request);
+            Task result = underTest.saveTask(task);
 
             // Then
             assertEquals(savedEntity.getId(), result.id());
-            assertEquals(customer, result.customer());
-            verify(customerService).getCustomerById(customerId);
+            assertEquals(customerId, result.customerId());
+            verify(customerService).validateCustomerExists(customerId);
             verify(emailSchedulerService, never()).scheduleEmail(any(), any());
         }
 
@@ -286,26 +268,21 @@ class TaskServiceTest {
             ZonedDateTime reminderZdt = ZonedDateTime.now().plusDays(1);
             Instant reminderInstant = reminderZdt.toInstant();
 
-            TaskRequest request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    reminderZdt,
-                    null,
-                    "ON_HOLD"
-            );
+            Task task = Task.builder()
+                    .id(UUID.randomUUID())
+                    .title("title")
+                    .description("description")
+                    .reminder(reminderInstant)
+                    .build();
 
             TaskEntity savedEntity = new TaskEntity();
-            savedEntity.setId(UUID.randomUUID());
+            savedEntity.setId(task.id());
 
             mockSaveTaskEntity(savedEntity);
-            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(
-                    Task.builder()
-                            .id(savedEntity.getId())
-                            .build());
+            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(task);
 
             // When
-            Task result = underTest.saveTask(request);
+            Task result = underTest.saveTask(task);
 
             // Then
             assertEquals(savedEntity.getId(), result.id());
@@ -316,30 +293,24 @@ class TaskServiceTest {
         @Test
         void shouldSetCompletedAtWhenStatusIsCompleted() {
             // Given
-            TaskRequest request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "COMPLETED"
-            );
+            Task task = Task.builder()
+                    .id(UUID.randomUUID())
+                    .title("title")
+                    .description("description")
+                    .status(TaskStatus.fromString("COMPLETED"))
+                    .build();
 
             TaskEntity savedEntity = new TaskEntity();
-            savedEntity.setId(UUID.randomUUID());
-            savedEntity.setStatus(TaskStatus.fromString(request.status()));
+            savedEntity.setId(task.id());
+            savedEntity.setStatus((task.status()));
 
             savedEntity.setCompletedAt(null);
 
             mockSaveTaskEntity(savedEntity);
-            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(
-                    Task.builder()
-                            .id(savedEntity.getId())
-                            .status(savedEntity.getStatus())
-                            .build());
+            when(taskMapper.taskEntityToTask(savedEntity)).thenReturn(task);
 
             // When
-            Task result = underTest.saveTask(request);
+            Task result = underTest.saveTask(task);
 
             // Then
             assertEquals(savedEntity.getId(), result.id());
@@ -359,7 +330,7 @@ class TaskServiceTest {
         private UUID taskId;
         private TaskEntity oldTaskEntity;
         private TaskEntity updatedTaskEntity;
-        private TaskRequest request;
+        private Task task;
 
         @BeforeEach
         void setUp() {
@@ -375,29 +346,24 @@ class TaskServiceTest {
         @Test
         void shouldUpdateTaskWithoutCustomer() {
             // Given
-            request = new TaskRequest(
-                    null,
-                    "updated title",
-                    "updated description",
-                    null,
-                    null,
-                    "ON_HOLD"
+            task = Task.builder()
+                    .id(taskId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build(
             );
 
             oldTaskEntity.setTitle("old title");
-            updatedTaskEntity.setTitle(request.title());
-            updatedTaskEntity.setDescription(request.description());
+            updatedTaskEntity.setTitle(task.title());
+            updatedTaskEntity.setDescription(task.description());
 
             mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
             when(taskMapper.taskEntityToTask(updatedTaskEntity))
-                    .thenReturn(Task.builder()
-                            .id(taskId)
-                            .title(updatedTaskEntity.getTitle())
-                            .description(updatedTaskEntity.getDescription())
-                            .build());
+                    .thenReturn(task);
 
             // When
-            Task result = underTest.updateTask(taskId, request);
+            Task result = underTest.updateTask(task);
 
             // Then
             assertEquals(taskId, result.id());
@@ -410,49 +376,43 @@ class TaskServiceTest {
         void shouldUpdateTaskWithCustomer() {
             // Given
             UUID customerId = UUID.randomUUID();
-            request = new TaskRequest(
-                    customerId,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
+
+            task = Task.builder()
+                    .id(taskId)
+                    .customerId(customerId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build(
             );
 
-            Customer customer = Customer.builder().id(customerId).build();
-
-            when(customerService.getCustomerById(customerId)).thenReturn(customer);
+            doNothing().when(customerService).validateCustomerExists(customerId);
 
             mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
             when(taskMapper.taskEntityToTask(updatedTaskEntity))
-                    .thenReturn(Task.builder()
-                            .id(taskId)
-                            .customer(customer)
-                            .build());
+                    .thenReturn(task);
 
             // When
-            Task result = underTest.updateTask(taskId, request);
+            Task result = underTest.updateTask(task);
 
             // Then
             assertEquals(taskId, result.id());
-            assertEquals(customer, result.customer());
-            verify(customerService).getCustomerById(customerId);
+            assertEquals(customerId, result.customerId());
+            verify(customerService).validateCustomerExists(customerId);
         }
 
         @Test
         void shouldSetCompletedAtWhenStatusIsUpdatedToCompleted() {
             // Given
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "COMPLETED"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.fromString("COMPLETED"))
+                    .build();
 
             oldTaskEntity.setStatus(TaskStatus.IN_PROGRESS);
-            updatedTaskEntity.setStatus(TaskStatus.fromString(request.status()));
+            updatedTaskEntity.setStatus(task.status());
 
             mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
             when(taskMapper.taskEntityToTask(updatedTaskEntity))
@@ -462,7 +422,7 @@ class TaskServiceTest {
                             .build());
 
             // When
-            Task result = underTest.updateTask(taskId, request);
+            Task result = underTest.updateTask(task);
 
             // Then
             assertEquals(taskId, result.id());
@@ -477,24 +437,21 @@ class TaskServiceTest {
             oldTaskEntity.setStatus(TaskStatus.COMPLETED);
             oldTaskEntity.setCompletedAt(originalTime);
 
-            request = new TaskRequest(
-                    null,
-                    "new desc",
-                    "desc",
-                    null,
-                    null,
-                    "COMPLETED"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.COMPLETED)
+                    .build();
 
             updatedTaskEntity.setStatus(TaskStatus.COMPLETED);
             updatedTaskEntity.setCompletedAt(null); // Mapper creates new entity, initially null
 
             mockUpdateTaskEntity(oldTaskEntity, updatedTaskEntity);
-            when(taskMapper.taskEntityToTask(updatedTaskEntity)).thenReturn(
-                    Task.builder().id(taskId).status(TaskStatus.COMPLETED).build());
+            when(taskMapper.taskEntityToTask(updatedTaskEntity)).thenReturn(task);
 
             // When
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // Then
             assertEquals(originalTime, updatedTaskEntity.getCompletedAt(), "Should preserve original timestamp (Idempotency)");
@@ -506,14 +463,12 @@ class TaskServiceTest {
             oldTaskEntity.setStatus(TaskStatus.COMPLETED);
             oldTaskEntity.setCompletedAt(Instant.now());
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "desc",
-                    null,
-                    null,
-                    "IN_PROGRESS"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.IN_PROGRESS)
+                    .build();
 
             updatedTaskEntity.setStatus(TaskStatus.IN_PROGRESS);
             updatedTaskEntity.setCompletedAt(oldTaskEntity.getCompletedAt());
@@ -523,7 +478,7 @@ class TaskServiceTest {
                     Task.builder().id(taskId).status(TaskStatus.IN_PROGRESS).build());
 
             // When
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // Then
             assertNull(updatedTaskEntity.getCompletedAt(), "Timestamp should be null when task is reopened");
@@ -532,19 +487,18 @@ class TaskServiceTest {
         @Test
         void shouldThrowTaskNotFoundExceptionWhenTaskDoesNotExist() {
             // Given
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
-            );
+
+            task = Task.builder()
+                    .id(taskId)
+                    .title("updated title")
+                    .description("updated description")
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
 
             // When / Then
-            assertThrows(TaskNotFoundException.class, () -> underTest.updateTask(taskId, request));
+            assertThrows(TaskNotFoundException.class, () -> underTest.updateTask(task));
         }
 
         private void mockUpdateTaskEntity(TaskEntity oldTaskEntity, TaskEntity updatedTaskEntity) {
@@ -562,7 +516,7 @@ class TaskServiceTest {
         private UUID taskId;
         private TaskEntity oldTaskEntity;
         private TaskEntity newTaskEntity;
-        private TaskRequest request;
+        private Task task;
 
         @BeforeEach
         void setUp() {
@@ -576,25 +530,23 @@ class TaskServiceTest {
         @Test
         void shouldScheduleEmailWhenReminderUpdateIsAdded() {
             // Given
-            ZonedDateTime newReminderZdt = ZonedDateTime.now();
-            Instant newReminderInstant = newReminderZdt.toInstant();
+            Instant newReminderInstant = Instant.now();
 
             oldTaskEntity.setReminder(null);
             newTaskEntity.setReminder(newReminderInstant);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    newReminderZdt,
-                    null,
-                    "ON_HOLD"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("title")
+                    .description("description")
+                    .reminder(newReminderInstant)
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             // When
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // Then
             verify(emailSchedulerService).scheduleEmail(taskId, newTaskEntity.getReminder());
@@ -610,17 +562,15 @@ class TaskServiceTest {
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("title")
+                    .description("description")
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             // When
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // Then
             verify(emailSchedulerService).deleteEmailSchedule(taskId);
@@ -632,8 +582,7 @@ class TaskServiceTest {
         void shouldUpdateEmailScheduleWhenReminderDateIsUpdated() {
             // Given
             Instant oldReminderInstant = Instant.now();
-            ZonedDateTime newReminderZdt = ZonedDateTime.now().plusSeconds(3600);
-            Instant newReminderInstant = newReminderZdt.toInstant();
+            Instant newReminderInstant = Instant.now().plusSeconds(3600);
 
 
             oldTaskEntity.setReminder(oldReminderInstant);
@@ -641,17 +590,16 @@ class TaskServiceTest {
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    newReminderZdt,
-                    null,
-                    "ON_HOLD"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("title")
+                    .description("description")
+                    .reminder(newReminderInstant)
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             // When
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // Then
             verify(emailSchedulerService).updateEmailScheduleTime(taskId, newTaskEntity.getReminder());
@@ -662,25 +610,23 @@ class TaskServiceTest {
         @Test
         void shouldDoNothingWhenReminderDateRemainsTheSame() {
             // Given
-            ZonedDateTime reminderZdt = ZonedDateTime.now();
-            Instant reminderInstant = reminderZdt.toInstant();
+            Instant reminderInstant = Instant.now();
 
             oldTaskEntity.setReminder(reminderInstant);
             newTaskEntity.setReminder(reminderInstant);
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    reminderZdt,
-                    null,
-                    "ON_HOLD"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("title")
+                    .description("description")
+                    .reminder(reminderInstant)
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             // Then
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // When
             verify(emailSchedulerService, never()).scheduleEmail(any(), any());
@@ -707,17 +653,15 @@ class TaskServiceTest {
 
             mockRepositoryUpdate(oldTaskEntity, newTaskEntity);
 
-            request = new TaskRequest(
-                    null,
-                    "title",
-                    "description",
-                    null,
-                    null,
-                    "ON_HOLD"
-            );
+            task = Task.builder()
+                    .id(taskId)
+                    .title("title")
+                    .description("description")
+                    .status(TaskStatus.fromString("ON_HOLD"))
+                    .build();
 
             // Then
-            underTest.updateTask(taskId, request);
+            underTest.updateTask(task);
 
             // When
             verify(emailSchedulerService, never()).scheduleEmail(any(), any());
@@ -730,19 +674,16 @@ class TaskServiceTest {
     class DeleteTaskTests {
 
         private UUID taskId;
-        private TaskEntity taskEntity;
 
         @BeforeEach
         void setUp() {
             taskId = UUID.randomUUID();
-            taskEntity = new TaskEntity();
-            taskEntity.setId(taskId);
         }
 
         @Test
         void shouldDeleteTaskWhenTaskExists() {
             // Given
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
+            when(taskRepository.existsById(taskId)).thenReturn(true);
 
             // When
             underTest.deleteTask(taskId);
@@ -755,7 +696,7 @@ class TaskServiceTest {
         @Test
         void shouldThrowTaskNotFoundExceptionWhenTaskDoesNotExist() {
             // Given
-            when(taskRepository.findById(taskId)).thenReturn(Optional.empty());
+            when(taskRepository.existsById(taskId)).thenReturn(false);
 
             // When / Then
             assertThrows(TaskNotFoundException.class, () -> underTest.deleteTask(taskId));
@@ -766,14 +707,14 @@ class TaskServiceTest {
         @Test
         void shouldDeleteScheduleBeforeTaskEntity() {
             // Given
-            when(taskRepository.findById(taskId)).thenReturn(Optional.of(taskEntity));
+            when(taskRepository.existsById(taskId)).thenReturn(true);
 
             // When
             underTest.deleteTask(taskId);
 
             // Then
             InOrder inOrder = inOrder(taskRepository, taskMapper, emailSchedulerService);
-            inOrder.verify(taskRepository).findById(taskId);
+            inOrder.verify(taskRepository).existsById(taskId);
             inOrder.verify(emailSchedulerService).deleteEmailSchedule(taskId);
             inOrder.verify(taskRepository).deleteById(taskId);
         }
@@ -801,7 +742,7 @@ class TaskServiceTest {
             underTest.detachCustomerFromTasks(customerId);
 
             // Then
-            assertNull(taskEntity.getCustomer());
+            assertNull(taskEntity.getCustomerId());
             assertEquals("The related customer has been deleted.", taskEntity.getDescription());
             verify(taskRepository).findAllByCustomerId(customerId);
             verify(taskRepository).saveAll(List.of(taskEntity));
@@ -819,7 +760,7 @@ class TaskServiceTest {
             underTest.detachCustomerFromTasks(customerId);
 
             // Then
-            assertNull(taskEntity.getCustomer());
+            assertNull(taskEntity.getCustomerId());
             assertEquals("Existing description. The related customer has been deleted.", taskEntity.getDescription());
             verify(taskRepository).findAllByCustomerId(customerId);
             verify(taskRepository).saveAll(List.of(taskEntity));
@@ -838,10 +779,10 @@ class TaskServiceTest {
             underTest.detachCustomerFromTasks(customerId);
 
             // Then
-            assertNull(taskEntity1.getCustomer());
+            assertNull(taskEntity1.getCustomerId());
             assertEquals("The related customer has been deleted.", taskEntity1.getDescription());
 
-            assertNull(taskEntity2.getCustomer());
+            assertNull(taskEntity2.getCustomerId());
             assertEquals("Existing description. The related customer has been deleted.", taskEntity2.getDescription());
 
             verify(taskRepository).findAllByCustomerId(customerId);
@@ -850,9 +791,7 @@ class TaskServiceTest {
 
         private TaskEntity createTaskEntityWithCustomerAndDescription(UUID customerId, String description) {
             TaskEntity taskEntity = new TaskEntity();
-            CustomerEntity customerEntity = new CustomerEntity();
-            customerEntity.setId(customerId);
-            taskEntity.setCustomer(customerEntity);
+            taskEntity.setCustomerId(customerId);
             taskEntity.setDescription(description);
             return taskEntity;
         }
