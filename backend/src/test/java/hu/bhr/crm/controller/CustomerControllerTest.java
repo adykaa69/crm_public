@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CustomerControllerTest {
 
     private static final String TITLE_ERROR_VALIDATION = "Validation error during request processing";
-    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during requesting customer";
+    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during resource retrieval";
     private static final String MESSAGE_ERROR_CUSTOMER_NOT_FOUND = "Customer not found";
     private static final String MESSAGE_ERROR_INVALID_EMAIL = "Invalid email format";
     private static final String MESSAGE_ERROR_RELATIONSHIP_MISSING = "Relationship is required";

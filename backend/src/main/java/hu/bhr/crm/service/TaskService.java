@@ -47,7 +47,7 @@ public class TaskService {
      */
     public Task getTaskById(UUID id) {
         TaskEntity taskEntity = taskRepository.findById(id)
-                .orElseThrow(() -> new TaskNotFoundException("Task not found"));
+                .orElseThrow(() -> new TaskNotFoundException(id));
         return taskMapper.taskEntityToTask(taskEntity);
     }
 
@@ -118,7 +118,7 @@ public class TaskService {
      */
     public void deleteTask(UUID id) {
         if (!taskRepository.existsById(id)) {
-            throw new TaskNotFoundException("Task not found");
+            throw new TaskNotFoundException(id);
         }
 
         emailSchedulerService.deleteEmailSchedule(id);
@@ -143,7 +143,7 @@ public class TaskService {
      */
     public Task updateTask(Task task) {
         TaskEntity oldTaskEntity = taskRepository.findById(task.id())
-                .orElseThrow(() -> new TaskNotFoundException("Task not found")
+                .orElseThrow(() -> new TaskNotFoundException(task.id())
         );
 
         if (task.customerId() != null) {

@@ -8,6 +8,6 @@ public class PlatformAssertions {
     public static void assertContainsErrorMessage(ErrorResponse errorResponse, String expectedMessage) {
         Assertions.assertThat(errorResponse.errorMessages())
                 .as("Expected error message not found: %s", expectedMessage)
-                .contains(expectedMessage);
+                .anyMatch(msg -> msg.contains(expectedMessage));
     }
 }

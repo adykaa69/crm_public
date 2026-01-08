@@ -45,7 +45,7 @@ public class CustomerDetailsService {
      */
     public CustomerDetails getCustomerDetailsById(UUID id) {
         CustomerDocument customerDocument = customerDocumentRepository.findById(id)
-                .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));
+                .orElseThrow(() -> new CustomerDetailsNotFoundException(id));
 
         return mapper.customerDocumentToCustomerDetails(customerDocument);
     }
@@ -97,7 +97,7 @@ public class CustomerDetailsService {
      */
     public void deleteCustomerDetailsById(UUID id) {
         CustomerDocument customerDocument = customerDocumentRepository.findById(id)
-                .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));
+                .orElseThrow(() -> new CustomerDetailsNotFoundException(id));
 
         customerDocumentRepository.delete(customerDocument);
     }
@@ -119,7 +119,7 @@ public class CustomerDetailsService {
     public CustomerDetails updateCustomerDetails(CustomerDetails customerDetails) {
         // Check if the customer details exist
         CustomerDocument existingDocument = customerDocumentRepository.findById(customerDetails.id())
-                .orElseThrow(() -> new CustomerDetailsNotFoundException("Customer details not found"));
+                .orElseThrow(() -> new CustomerDetailsNotFoundException(customerDetails.id()));
 
         customerService.validateCustomerExists(existingDocument.getCustomerId());
 

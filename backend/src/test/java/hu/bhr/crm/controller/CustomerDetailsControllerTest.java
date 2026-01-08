@@ -40,8 +40,7 @@ class CustomerDetailsControllerTest {
     private static final String MESSAGE_ERROR_CUSTOMER_NOT_FOUND = "Customer not found";
     private static final String MESSAGE_ERROR_NOTE_MISSING = "Note is required";
     private static final String TITLE_ERROR_VALIDATION = "Validation error during request processing";
-    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during customer details retrieval";
-    private static final String TITLE_ERROR_CUSTOMER_NOT_FOUND = "Error occurred during requesting customer";
+    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during resource retrieval";
 
     @Autowired
     private MockMvc mockMvc;
@@ -226,7 +225,7 @@ class CustomerDetailsControllerTest {
                             .content(objectMapper.writeValueAsString(customerDetailsRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_CUSTOMER_NOT_FOUND))
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
                     .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_CUSTOMER_NOT_FOUND));
         }
     }
@@ -317,7 +316,7 @@ class CustomerDetailsControllerTest {
                             .content(objectMapper.writeValueAsString(customerDetailsRequest)))
                     .andExpect(status().isNotFound())
                     .andExpect(jsonPath("$.status").value("error"))
-                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_CUSTOMER_NOT_FOUND))
+                    .andExpect(jsonPath("$.title").value(TITLE_ERROR_NOT_FOUND))
                     .andExpect(jsonPath("$.errorMessages[0]").value(MESSAGE_ERROR_CUSTOMER_NOT_FOUND));
         }
     }

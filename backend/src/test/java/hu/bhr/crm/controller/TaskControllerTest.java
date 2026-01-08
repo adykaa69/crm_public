@@ -40,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class TaskControllerTest {
 
     private static final String TITLE_ERROR_VALIDATION = "Validation error during request processing";
-    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during task retrieval";
+    private static final String TITLE_ERROR_NOT_FOUND = "Error occurred during resource retrieval";
     private static final String MESSAGE_ERROR_TASK_NOT_FOUND = "Task not found";
 
     @Autowired

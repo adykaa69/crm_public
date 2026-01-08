@@ -42,7 +42,7 @@ public class CustomerService {
      */
     public Customer getCustomerById(UUID id) {
         CustomerEntity customerEntity = repository.findById(id)
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException(id));
 
         return customerMapper.customerEntityToCustomer(customerEntity);
     }
@@ -104,7 +104,7 @@ public class CustomerService {
      */
     public Customer updateCustomer(Customer customerPayload) {
         CustomerEntity customerEntity = repository.findById(customerPayload.id())
-                .orElseThrow(() -> new CustomerNotFoundException("Customer not found"));
+                .orElseThrow(() -> new CustomerNotFoundException(customerPayload.id()));
         Customer updatedCustomer = mergeResidence(customerEntity.getResidence(), customerPayload);
         CustomerEntity savedCustomerEntity = repository.save(customerMapper.customerToCustomerEntity(updatedCustomer));
 
@@ -152,7 +152,7 @@ public class CustomerService {
      */
     public void validateCustomerExists(UUID id) {
         if (!repository.existsById(id)) {
-            throw new CustomerNotFoundException("Customer not found");
+            throw new CustomerNotFoundException(id);
         }
     }
 }
