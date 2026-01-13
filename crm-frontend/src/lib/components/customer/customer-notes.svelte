@@ -11,28 +11,6 @@
   }
 
   let { customerDetails }: Props = $props();
-  let disabled = $state(true);
-  let originalNote: CustomerDetailsDto | undefined = $state();
-
-  function allowEditing() {
-    disabled = false;
-  }
-
-  function cancelEditing() {
-    disabled = true;
-  }
-
-  function deleteNote() {
-    if (confirm("Biztosan törölni szeretnéd a megjegyzéset?")) {
-    }
-    disabled = true;
-  }
-
-  function modifyNote(note: CustomerDetailsDto) {
-    originalNote = note;
-
-    disabled = true;
-  }
 </script>
 
 <div class="m-2 mx-2 mb-16 flex-1 rounded-sm bg-white shadow-md md:m-4 md:mx-4 md:mb-0">
@@ -53,9 +31,7 @@
   <div class="m-3 md:m-4">
     <div class="mt-6 mb-2 md:mt-8">
       {#each customerDetails as detail}
-        {#if detail.updatedAt}
-          <CustomerNote {detail}/>
-        {/if}
+        <CustomerNote {detail} />
       {/each}
     </div>
   </div>
@@ -71,19 +47,6 @@
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(16, 24, 40, 0.08);
     width: 100%;
-    text-align: center;
-    border: none;
-    white-space: nowrap; /* whitespace-nowrap */
-  }
-
-  .crm-btn-delete {
-    background-color: red;
-    color: #fff;
-    border-radius: 0.5rem; /* rounded-lg */
-    padding: 0.5rem 0.5rem; /* py-2 px-2 (default) */
-    font-size: 0.75rem; /* text-xs */
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(16, 24, 40, 0.08);
     text-align: center;
     border: none;
     white-space: nowrap; /* whitespace-nowrap */

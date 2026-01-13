@@ -5,12 +5,10 @@
 
   interface Props {
     customers: CustomerDto[];
-    onSave?: () => void;
     onDelete?: () => void;
-    onCancel?: () => void;
   }
 
-  let { customers, onSave, onDelete, onCancel }: Props = $props();
+  let { customers, onDelete}: Props = $props();
 
   let sortField: keyof CustomerDto | null = $state(null);
   let sortAsc: boolean = $state(true);
@@ -56,7 +54,7 @@
   {#each sortedCustomer as customer}
     <div class="p-4 transition-colors hover:bg-gray-50 sm:p-6">
       <!-- Desktop Layout -->
-      <CustomerRow {customer} {onSave} {onDelete} {onCancel} />
+      <CustomerRow {customer} {onDelete} />
     </div>
   {/each}
 </div>

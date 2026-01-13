@@ -6,12 +6,10 @@
 
   interface Props {
     customers: CustomerDto[];
-    onSave?: () => void;
     onDelete?: () => void;
-    onCancel?: () => void;
   }
 
-  let { customers, onSave, onDelete, onCancel }: Props = $props();
+  let { customers, onDelete }: Props = $props();
 
   let customerAddingEnable = $state(false);
 </script>
@@ -22,7 +20,7 @@
       <CustomerHeader totalCustomers={customers.length} bind:customerAddingEnable />
     </div>
     <div class="fix z-11">
-      <CustomerTable {customers} {onSave} {onDelete} {onCancel} />
+      <CustomerTable {customers} {onDelete} />
     </div>
   </div>
 </div>

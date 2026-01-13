@@ -9,4 +9,4 @@
   }
 </script>
 
-<Customer customers={data.customers} onSave={handleUpdate} onDelete={handleUpdate} onCancel={handleUpdate} />
+<Customer customers={data.customers} onDelete={handleUpdate} />
