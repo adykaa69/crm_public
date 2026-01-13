@@ -1,5 +1,5 @@
 import { httpDelete, httpGet, httpPost, httpPut } from "$lib/common/api";
-import type { CustomerRegistrationRequest, CustomerUpdateRequest } from "$lib/models/customer-request";
+import type { CustomerRegistrationRequest, CustomerUpdateRequest } from "$lib/models/customer";
 
 export async function getCustomer(customerId: string) {
     return httpGet(`/api/v1/customers/${customerId}`);

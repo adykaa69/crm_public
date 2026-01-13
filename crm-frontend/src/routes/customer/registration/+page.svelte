@@ -1,7 +1,6 @@
 <script lang="ts">
-  import type { CustomerRegistrationRequest } from "$lib/models/customer-request.js";
+  import type { CustomerRegistrationRequest } from "$lib/models/customer.js";
   import { ActionParameters } from "$lib/constants";
-  import CustomerForm from "$lib/components/customer/customer-form.svelte";
 
   let { form } = $props();
   let customer: CustomerRegistrationRequest = {
@@ -14,10 +13,6 @@
   };
 </script>
 
-<CustomerForm
-  action="?/{ActionParameters.REGISTER}"
-  title="Új ügyfél regisztráció"
-  isDisabled={false}
-  {customer}
-  {form}
-/>
+<h1>Need to delete this page</h1>
+<h1>Consider deleting +page.server.ts</h1>
+

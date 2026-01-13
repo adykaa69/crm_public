@@ -1,4 +1,4 @@
-import type { CustomerRegistrationRequest } from "$lib/models/customer-request";
+import type { CustomerRegistrationRequest } from "$lib/models/customer";
 import { fail, redirect } from "@sveltejs/kit";
 import type { Actions } from "./$types";
 import { register } from "$lib/utils/handle-customer";
@@ -23,9 +23,9 @@ export const actions = {
       throw redirect(302, "/customer");
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await res.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      console.log("Error response:", errorResponse.content?.errorMessage);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         registrationRequest
       });
     }

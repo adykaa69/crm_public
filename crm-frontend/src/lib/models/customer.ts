@@ -36,6 +36,10 @@ export interface ResidenceUpdateRequest {
   country?: string;
 }
 
+export interface CustomerDetailsRequest {
+  note: string;
+}
+
 export interface CustomerResponse {
   id: string;
   firstName: string;
@@ -60,8 +64,16 @@ export interface ResidenceResponse {
   updatedAt: Date;
 }
 
+export interface CustomerDetailsResponse {
+  id: string;
+  customerId: string;
+  note: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface CustomerDto {
-  id?: string;
+  id: string;
   firstName?: string;
   lastName?: string;
   nickname?: string;
@@ -85,9 +97,9 @@ export interface ResidenceDto {
 }
 
 export interface CustomerDetailsDto {
-  id?: string;
-  customerId?: string;
-  note?: string;
+  id: string;
+  customerId: string;
+  note: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -132,6 +144,12 @@ export function parseCustomerDetailsResponseToCustomerDetailsDto(raw: any): Cust
     createdAt: new Date(raw.createdAt),
     updatedAt: new Date(raw.updatedAt)
   };
+}
+
+export function toCustomerDetailsRequest(customerDetailsDto: CustomerDetailsDto): CustomerDetailsRequest {
+  return {
+    note: customerDetailsDto.note
+  }
 }
 
 export function toCustomerRegistrationRequest(customerDto: CustomerDto): CustomerRegistrationRequest {

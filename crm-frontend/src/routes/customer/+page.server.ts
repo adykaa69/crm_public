@@ -35,9 +35,9 @@ export const actions = {
       throw redirect(302, "/customer");
     } else {
       const errorResponse: PlatformApiResponse<ErrorResponse> = await res.json();
-      console.log("Error response:", errorResponse.data?.errorMessage);
+      console.log("Error response:", errorResponse.content?.errorMessage);
       return fail(404, {
-        errorMessage: errorResponse.data?.errorMessage,
+        errorMessage: errorResponse.content?.errorMessage,
         registrationRequest
       });
     }

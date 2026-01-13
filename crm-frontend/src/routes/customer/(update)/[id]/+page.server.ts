@@ -1,4 +1,4 @@
-import type { CustomerUpdateRequest } from "$lib/models/customer-request";
+import type { CustomerDetailsRequest, CustomerUpdateRequest } from "$lib/models/customer";
 import { type ErrorResponse } from "$lib/models/error";
 import { type PlatformApiResponse } from "$lib/models/platform-api-response";
 import { getCustomer, updateCustomer } from "$lib/utils/handle-customer";
@@ -7,9 +7,11 @@ import type { PageServerLoad } from "./$types";
 import { nestData } from "$lib/utils/form-data-parser";
 import {
   parseCustomerDetailsResponseToCustomerDetailsDto,
-  parseCustomerResponseToCustomerDto
+  parseCustomerResponseToCustomerDto,
+  type CustomerDetailsDto
 } from "$lib/models/customer";
-import { getAllCustomerDetails } from "$lib/utils/handle-customer-details";
+import { getAllCustomerDetails, saveCustomerDetails } from "$lib/utils/handle-customer-details";
+import type { CustomerDetailsResponse } from "$lib/models/customer";
 
 export const load: PageServerLoad = async ({ params }) => {
   const customerResponse: Response = await getCustomer(params.id);
@@ -48,6 +50,25 @@ export const actions = {
 
     if (response.ok) {
       throw redirect(302, "/customer");
+    } else if (response.status === 500) {
+      await getErrorResponse(response);
+      throw error(500, "Az ügyfél frissítése sikertelen szerver hiba miatt.");
+    } else {
+      const errorResponse: PlatformApiResponse<ErrorResponse> = await getErrorResponse(response);
+      return fail(404, {
+        errorMessage: errorResponse.content?.errorMessage,
+        updateRequest
+      });
+    }
+  },
+  addnote: async ({ request, params }) => {
+    const formData = Object.fromEntries(await request.formData());
+    const updateRequest = nestData<CustomerDetailsRequest>(formData);
+    const customerId = typeof params.id === "string" ? params.id : "";
+    const response = await saveCustomerDetails(customerId, updateRequest);
+
+    if (response.ok) {
+      throw redirect(302, `/customer/${customerId}`);
     } else if (response.status === 500) {
       await getErrorResponse(response);
       throw error(500, "Az ügyfél frissítése sikertelen szerver hiba miatt.");

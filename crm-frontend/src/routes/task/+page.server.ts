@@ -59,7 +59,6 @@ export const actions = {
     }
   },
   taskdelete: async ({ request }) => {
-    // const taskDto: TaskDto = parseToTaskDto(await request.formcontent());
     const taskDto: TaskDto = await request.json();
     const response = await deleteTask(taskDto.id);
     if (response.ok) {

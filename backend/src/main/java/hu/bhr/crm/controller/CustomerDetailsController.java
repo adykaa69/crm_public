@@ -119,6 +119,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
      * @throws hu.bhr.crm.exception.CustomerDetailsNotFoundException if the document does not exist (HTTP 404 Not Found)
      */
     @Override
+    @CrossOrigin(origins = "http://localhost:5173")
     @DeleteMapping("/details/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCustomerDetails(@PathVariable UUID id) {
@@ -141,6 +142,7 @@ public class CustomerDetailsController implements CustomerDetailsControllerApi {
      * @throws hu.bhr.crm.exception.CustomerNotFoundException if the associated customer is missing (HTTP 404 Not Found)
      */
     @Override
+    @CrossOrigin(origins = "http://localhost:5173")
     @PutMapping("/details/{id}")
     @ResponseStatus(HttpStatus.OK)
     public PlatformResponse<CustomerDetailsResponse> updateCustomerDetails(

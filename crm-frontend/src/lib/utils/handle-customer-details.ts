@@ -1,11 +1,11 @@
 import { httpDelete, httpGet, httpPost, httpPut } from "$lib/common/api";
-import type { CustomerDetailsRequest } from "$lib/models/customer-details";
+import type { CustomerDetailsRequest } from "$lib/models/customer";
 
 const basePath: string = "/api/v1/customers";
 const detailsPath: string = "/details";
 
 export async function getCustomerDetails(customerDetailsId: string) {
-  return httpGet(`${basePath}${detailsPath}${customerDetailsId}`);
+  return httpGet(`${basePath}${detailsPath}/${customerDetailsId}`);
 }
 
 export async function getAllCustomerDetails(customerId: string) {
@@ -17,9 +17,9 @@ export async function saveCustomerDetails(customerId: string, customerDetails: C
 }
 
 export async function updateCustomerDetails(customerDetailsId: string, customerDetails: CustomerDetailsRequest) {
-  return httpPut(`${basePath}${detailsPath}${customerDetailsId}`, customerDetails);
+  return httpPut(`${basePath}${detailsPath}/${customerDetailsId}`, customerDetails);
 }
 
 export async function deleteCustomerDetails(customerDetailsId: string) {
-  return httpDelete(`${basePath}${detailsPath}${customerDetailsId}`);
+  return httpDelete(`${basePath}${detailsPath}/${customerDetailsId}`);
 }
