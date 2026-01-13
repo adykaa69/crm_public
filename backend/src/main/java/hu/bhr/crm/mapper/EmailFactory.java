@@ -4,9 +4,11 @@ import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.model.CustomerDetails;
 import hu.bhr.crm.model.EmailContent;
 import hu.bhr.crm.model.Task;
+import lombok.experimental.UtilityClass;
 
 import java.util.List;
 
+@UtilityClass
 public class EmailFactory {
 
     public static EmailContent createEmailContent(

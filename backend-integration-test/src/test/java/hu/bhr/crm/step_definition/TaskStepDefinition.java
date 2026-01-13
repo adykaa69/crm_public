@@ -17,23 +17,20 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 
 import java.net.http.HttpResponse;
 import java.time.ZonedDateTime;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class TaskStepDefinition {
 
     private final TaskContext taskContext;
     private final GlobalTestContext globalTestContext;
     private final TaskApiClient taskApiClient = new TaskApiClient();
     private final CustomerApiClient customerApiClient = new CustomerApiClient();
-
-    public TaskStepDefinition(TaskContext taskContext, GlobalTestContext globalTestContext) {
-        this.taskContext = taskContext;
-        this.globalTestContext = globalTestContext;
-    }
 
     @Given("a new task is created")
     public void aNewTaskIsCreated() throws Exception {
@@ -82,14 +79,13 @@ public class TaskStepDefinition {
 
     @When("the created task's details are updated")
     public void theCreatedTaskDetailsAreUpdated() throws Exception {
-        TaskRequest updatedRequest = new TaskRequest(
-                null,
-                "task_updatedTitle",
-                "task_updatedDescription",
-                ZonedDateTime.now().plusDays(5),
-                ZonedDateTime.now().plusDays(10),
-                "COMPLETED"
-        );
+        TaskRequest updatedRequest = TaskRequest.builder()
+                .title("task_updatedTitle")
+                .description("task_updatedDescription")
+                .reminder(ZonedDateTime.now().plusDays(5))
+                .dueDate(ZonedDateTime.now().plusDays(10))
+                .status("COMPLETED")
+                .build();
         HttpResponse<String> response = taskApiClient.updateTask(
                 taskContext.getCreatedTaskId(),
                 updatedRequest
@@ -151,14 +147,12 @@ public class TaskStepDefinition {
 
     @When("a new task is created with no title")
     public void aNewTaskIsCreatedWithNoTitle() throws Exception {
-        TaskRequest taskRequest = new TaskRequest(
-                "",
-                "",
-                "",
-                ZonedDateTime.now().plusDays(1),
-                ZonedDateTime.now().plusDays(2),
-                "OPEN"
-        );
+        TaskRequest taskRequest = TaskRequest.builder()
+                .title("")
+                .reminder(ZonedDateTime.now().plusDays(1))
+                .dueDate(ZonedDateTime.now().plusDays(2))
+                .status("OPEN")
+                .build();
         taskContext.setLastResponse(taskApiClient.createTask(taskRequest));
     }
 
@@ -182,28 +176,27 @@ public class TaskStepDefinition {
     }
 
     private TaskRequest buildTaskRequest(int taskNumber) {
-        return new TaskRequest(
-                taskContext.getCustomerId(),
-                "task_title_" + taskNumber,
-                "task_description_" + taskNumber,
-                ZonedDateTime.now().plusDays(1),
-                ZonedDateTime.now().plusDays(2),
-                "OPEN"
-        );
+        return TaskRequest.builder()
+                .customerId(taskContext.getCustomerId())
+                .title("task_title_" + taskNumber)
+                .description("task_description_" + taskNumber)
+                .reminder(ZonedDateTime.now().plusDays(1))
+                .dueDate(ZonedDateTime.now().plusDays(2))
+                .status("OPEN")
+                .build();
     }
 
     private void ensureRelatedCustomerExists() throws Exception {
         if (taskContext.getCustomerId() == null) {
-            CustomerRequest request = new CustomerRequest(
-                    "firstName",
-                    "lastName",
-                    "nickname",
-                    "email@example.com",
-                    "phoneNumber",
-                    "relationship",
-                    null
-            );
-            HttpResponse<String> response = customerApiClient.createCustomer(request);
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .firstName("firstName")
+                    .lastName("lastName")
+                    .nickname("nickname")
+                    .email("email@example.com")
+                    .phoneNumber("phoneNumber")
+                    .relationship("relationship")
+                    .build();
+            HttpResponse<String> response = customerApiClient.createCustomer(customerRequest);
             PlatformResponse<CustomerResponse> parsed =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {
                     });

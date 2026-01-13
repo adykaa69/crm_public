@@ -1,10 +1,14 @@
 package hu.bhr.crm.context;
 
 import hu.bhr.crm.step_definition.dto.TaskResponse;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
+@Setter
 public class TaskContext extends BaseContext {
 
     private String createdTaskId;
@@ -21,35 +25,7 @@ public class TaskContext extends BaseContext {
         customerId = null;
     }
 
-    public String getCreatedTaskId() {
-        return createdTaskId;
-    }
-
-    public void setCreatedTaskId(String createdTaskId) {
-        this.createdTaskId = createdTaskId;
-    }
-
-    public List<String> getCreatedTaskIds() {
-        return createdTaskIds;
-    }
-
     public void addCreatedTaskId(String createdTaskId) {
         this.createdTaskIds.add(createdTaskId);
-    }
-
-    public TaskResponse getLastTaskResponse() {
-        return lastTaskResponse;
-    }
-
-    public void setLastTaskResponse(TaskResponse lastTaskResponse) {
-        this.lastTaskResponse = lastTaskResponse;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(String customerId) {
-        this.customerId = customerId;
     }
 }

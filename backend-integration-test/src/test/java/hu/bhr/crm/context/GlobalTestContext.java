@@ -1,10 +1,13 @@
 package hu.bhr.crm.context;
 
+import lombok.Getter;
+
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class GlobalTestContext {
 
     private final List<BaseContext> contexts;
@@ -22,10 +25,6 @@ public class GlobalTestContext {
                 .filter(Objects::nonNull)
                 .findFirst()
                 .orElse(null);
-    }
-
-    public List<String> getCreatedCustomerIds() {
-        return createdCustomerIds;
     }
 
     public void addCreatedCustomerId(String customerId) {

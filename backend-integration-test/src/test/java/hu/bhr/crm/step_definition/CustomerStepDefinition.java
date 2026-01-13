@@ -16,22 +16,18 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 
 import java.net.http.HttpResponse;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class CustomerStepDefinition {
 
     private final CustomerContext customerContext;
     private final GlobalTestContext globalTestContext;
     private final CustomerApiClient apiClient = new CustomerApiClient();
-
-    public CustomerStepDefinition(CustomerContext context,
-                                  GlobalTestContext globalTestContext) {
-        this.customerContext = context;
-        this.globalTestContext = globalTestContext;
-    }
 
     @Given("a new customer is created")
     public void aNewCustomerIsCreated() throws Exception {
@@ -101,21 +97,21 @@ public class CustomerStepDefinition {
 
     @When("the created customer's details are updated")
     public void theCreatedCustomerDetailsAreUpdated() throws Exception {
-        CustomerRequest updatedRequest = new CustomerRequest(
-                "customer_updatedFirstName",
-                "customer_updatedLastName",
-                "customer_updatedNickname",
-                "customer_updated@email.com",
-                "customer_updatedPhoneNumber",
-                "customer_updatedRelationship",
-                new ResidenceRequest(
-                        "residence_updatedZipCode",
-                        "residence_UpdatedStreet",
-                        "residence_UpdatedAddress",
-                        "residence_UpdatedCity",
-                        "residence_UpdatedCountry"
-                )
-        );
+        CustomerRequest updatedRequest = CustomerRequest.builder()
+                .firstName("customer_updatedFirstName")
+                .lastName("customer_updatedLastName")
+                .nickname("customer_updatedNickname")
+                .email("customer_updated@email.com")
+                .phoneNumber("customer_updatedPhoneNumber")
+                .relationship("customer_updatedRelationship")
+                .residenceRequest(ResidenceRequest.builder()
+                        .zipCode("residence_updatedZipCode")
+                        .streetAddress("residence_UpdatedStreet")
+                        .addressLine2("residence_UpdatedAddress")
+                        .city("residence_UpdatedCity")
+                        .country("residence_UpdatedCountry")
+                        .build())
+                .build();
 
         HttpResponse<String> response = apiClient.updateCustomer(customerContext.getCreatedCustomerId(), updatedRequest);
         customerContext.setLastResponse(response);
@@ -139,38 +135,36 @@ public class CustomerStepDefinition {
 
     @When("a new customer is created with invalid email")
     public void aNewCustomerIsCreatedWithInvalidEmail() throws Exception {
-        CustomerRequest customerRequest = new CustomerRequest(
-                "customer_firstName",
-                "customer_lastName",
-                "customer_nickname",
-                "invalid_email.com",
-                "customer_phoneNumber",
-                "customer_relationship",
-                null
-        );
+        CustomerRequest customerRequest = CustomerRequest.builder()
+                .firstName("customer_firstName")
+                .lastName("customer_lastName")
+                .nickname("customer_nickname")
+                .email("invalid_email.com")
+                .phoneNumber("customer_phoneNumber")
+                .relationship("customer_relationship")
+                .build();
         customerContext.setLastResponse(apiClient.createCustomer(customerRequest));
     }
 
     private CustomerRequest buildCustomerRequest(int customerNumber) {
-        return new CustomerRequest(
-                "customer_firstName_" + customerNumber,
-                "customer_lastName_" + customerNumber,
-                "customer_nickname_" + customerNumber,
-                "customer_" + customerNumber + "_@email.com",
-                "customer_phoneNumber_" + customerNumber,
-                "customer_relationship_" + customerNumber,
-                createResidenceRequest()
-        );
+        return CustomerRequest.builder()
+                .firstName("customer_firstName_" + customerNumber)
+                .lastName("customer_lastName_" + customerNumber)
+                .nickname("customer_nickname_" + customerNumber)
+                .phoneNumber("customer_phoneNumber_" + customerNumber)
+                .relationship("customer_relationship_" + customerNumber)
+                .residenceRequest(createResidenceRequest())
+                .build();
     }
 
     private ResidenceRequest createResidenceRequest() {
-        return new ResidenceRequest(
-                "residence_zipCode",
-                "residence_street",
-                "residence_address",
-                "residence_city",
-                "residence_country"
-        );
+        return ResidenceRequest.builder()
+                .zipCode("residence_zipCode")
+                .streetAddress("residence_street")
+                .addressLine2("residence_address")
+                .city("residence_city")
+                .country("residence_country")
+                .build();
     }
 
     private void createCustomer(int customerNumber) throws Exception {

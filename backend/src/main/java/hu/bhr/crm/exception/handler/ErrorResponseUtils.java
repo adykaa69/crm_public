@@ -1,11 +1,13 @@
 package hu.bhr.crm.exception.handler;
 
 import hu.bhr.crm.controller.dto.ErrorResponse;
+import lombok.experimental.UtilityClass;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
+@UtilityClass
 public class ErrorResponseUtils  {
 
     public static ErrorResponse toErrorResponse(String title, Exception exception) {

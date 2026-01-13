@@ -2,9 +2,11 @@ package hu.bhr.crm.mapper;
 
 import hu.bhr.crm.controller.dto.ResidenceRequest;
 import hu.bhr.crm.model.Residence;
+import lombok.experimental.UtilityClass;
 
 import java.util.UUID;
 
+@UtilityClass
 public class ResidenceFactory {
 
     /**

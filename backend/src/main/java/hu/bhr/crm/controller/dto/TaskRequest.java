@@ -4,10 +4,12 @@ import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.validation.annotation.NotPast;
 import hu.bhr.crm.validation.annotation.ValidEnum;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@Builder
 public record TaskRequest(
     UUID customerId,
     @NotBlank(message = "Title is required")

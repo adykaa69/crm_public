@@ -6,6 +6,7 @@ import hu.bhr.crm.mapper.CustomerDetailsMapper;
 import hu.bhr.crm.model.CustomerDetails;
 import hu.bhr.crm.repository.mongo.CustomerDocumentRepository;
 import hu.bhr.crm.repository.mongo.document.CustomerDocument;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,17 +22,12 @@ import java.util.UUID;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class CustomerDetailsService {
 
     private final CustomerDocumentRepository customerDocumentRepository;
     private final CustomerDetailsMapper mapper;
     private final CustomerService customerService;
-
-    public CustomerDetailsService(CustomerDocumentRepository customerDocumentRepository, CustomerDetailsMapper mapper, CustomerService customerService) {
-        this.customerDocumentRepository = customerDocumentRepository;
-        this.mapper = mapper;
-        this.customerService = customerService;
-    }
 
     /**
      * Retrieves a specific customer detail document by its unique identifier.

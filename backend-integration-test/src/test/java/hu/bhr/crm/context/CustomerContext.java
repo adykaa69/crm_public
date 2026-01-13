@@ -1,7 +1,11 @@
 package hu.bhr.crm.context;
 
 import hu.bhr.crm.step_definition.dto.CustomerResponse;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class CustomerContext extends BaseContext {
 
     private String createdCustomerId;
@@ -12,21 +16,5 @@ public class CustomerContext extends BaseContext {
         createdCustomerId = null;
         lastResponse = null;
         lastCustomerResponse = null;
-    }
-
-    public String getCreatedCustomerId() {
-        return this.createdCustomerId;
-    }
-
-    public void setCreatedCustomerId(String createdCustomerId) {
-        this.createdCustomerId = createdCustomerId;
-    }
-
-    public CustomerResponse getLastCustomerResponse() {
-        return this.lastCustomerResponse;
-    }
-
-    public void setLastCustomerResponse(CustomerResponse lastCustomerResponse) {
-        this.lastCustomerResponse = lastCustomerResponse;
     }
 }

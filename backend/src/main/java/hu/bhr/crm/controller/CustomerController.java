@@ -9,10 +9,19 @@ import hu.bhr.crm.mapper.CustomerMapper;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.service.CustomerServiceFacade;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,18 +34,14 @@ import java.util.UUID;
  * into API responses.
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/customers")
+@RequiredArgsConstructor
 public class CustomerController implements CustomerControllerApi {
 
     private final CustomerServiceFacade customerServiceFacade;
     private final CustomerMapper customerMapper;
-    private static final Logger log = LoggerFactory.getLogger(CustomerController.class);
-
-    public CustomerController(CustomerServiceFacade customerServiceFacade, CustomerMapper customerMapper) {
-        this.customerServiceFacade = customerServiceFacade;
-        this.customerMapper = customerMapper;
-    }
 
     /**
      * Retrieves a specific customer by their unique identifier.

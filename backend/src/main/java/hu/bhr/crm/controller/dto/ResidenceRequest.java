@@ -1,5 +1,8 @@
 package hu.bhr.crm.controller.dto;
 
+import lombok.Builder;
+
+@Builder
 public record ResidenceRequest(
         String zipCode,
         String streetAddress,

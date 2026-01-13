@@ -177,7 +177,9 @@ class CustomerDetailsControllerTest {
             // Given
             final UUID customerDetailsId = UUID.randomUUID();
 
-            CustomerDetailsRequest customerDetailsRequest = new CustomerDetailsRequest("New Note");
+            CustomerDetailsRequest customerDetailsRequest = CustomerDetailsRequest.builder()
+                            .note("New Note")
+                            .build();
             CustomerDetails customerDetails = createCustomerDetails(customerDetailsId, customerDetailsRequest.note());
             CustomerDetailsResponse customerDetailsResponse = createCustomerDetailsResponse(customerDetails);
 
@@ -198,7 +200,9 @@ class CustomerDetailsControllerTest {
         @Test
         void shouldReturnBadRequestWhenNoteIsEmpty() throws Exception {
             // Given
-            CustomerDetailsRequest invalidCustomerDetailsRequest = new CustomerDetailsRequest("");
+            CustomerDetailsRequest invalidCustomerDetailsRequest = CustomerDetailsRequest.builder()
+                        .note("")
+                        .build();
 
             // When / Then
             mockMvc.perform(post("/api/v1/customers/{customerId}/details", customerId)
@@ -214,7 +218,9 @@ class CustomerDetailsControllerTest {
         void shouldThrowCustomerNotFoundExceptionAndReturnNotFoundWhenCustomerDoesNotExist() throws Exception {
             // Given
             UUID nonExistentCustomerId = customerId;
-            CustomerDetailsRequest customerDetailsRequest = new CustomerDetailsRequest("Note for non-existent customer");
+            CustomerDetailsRequest customerDetailsRequest = CustomerDetailsRequest.builder()
+                        .note("Note for non-existent customer")
+                        .build();
 
             when(customerDetailsService.saveCustomerDetails(any(CustomerDetails.class)))
                     .thenThrow(new CustomerNotFoundException("Customer not found"));
@@ -243,7 +249,9 @@ class CustomerDetailsControllerTest {
         @Test
         void shouldReturnUpdatedCustomerDetailsAndStatusOkWhenRequestIsValid() throws Exception {
             // Given
-            CustomerDetailsRequest customerDetailsRequest = new CustomerDetailsRequest("Updated Note");
+            CustomerDetailsRequest customerDetailsRequest = CustomerDetailsRequest.builder()
+                            .note("Updated Note")
+                            .build();
             CustomerDetails updatedCustomerDetails = createCustomerDetails(customerDetailsId, customerDetailsRequest.note());
             CustomerDetailsResponse updatedCustomerDetailsResponse = createCustomerDetailsResponse(updatedCustomerDetails);
 
@@ -266,7 +274,9 @@ class CustomerDetailsControllerTest {
         @Test
         void shouldReturnBadRequestWhenNoteIsEmpty() throws Exception {
             // Given
-            CustomerDetailsRequest invalidCustomerDetailsRequest = new CustomerDetailsRequest("");
+            CustomerDetailsRequest invalidCustomerDetailsRequest = CustomerDetailsRequest.builder()
+                        .note("")
+                        .build();
 
             // When / Then
             mockMvc.perform(put("/api/v1/customers/details/{id}", customerDetailsId)
@@ -281,7 +291,9 @@ class CustomerDetailsControllerTest {
         @Test
         void shouldThrowCustomerDetailsNotFoundExceptionAndReturnNotFoundWhenCustomerDetailsDoNotExist() throws Exception {
             // Given
-            CustomerDetailsRequest customerDetailsRequest = new CustomerDetailsRequest("Non-existent Note");
+            CustomerDetailsRequest customerDetailsRequest = CustomerDetailsRequest.builder()
+                            .note("Non-existent Note")
+                            .build();
             CustomerDetails customerDetails = createCustomerDetails(customerDetailsId, customerDetailsRequest.note());
 
             when(customerDetailsMapper.customerDetailsRequestToCustomerDetails(eq(customerDetailsId), any(CustomerDetailsRequest.class)))
@@ -302,7 +314,9 @@ class CustomerDetailsControllerTest {
         @Test
         void shouldThrowCustomerNotFoundExceptionAndReturnNotFoundWhenCustomerDoesNotExist() throws Exception {
             // Given
-            CustomerDetailsRequest customerDetailsRequest = new CustomerDetailsRequest("Note for non-existent customer");
+            CustomerDetailsRequest customerDetailsRequest = CustomerDetailsRequest.builder()
+                            .note("Note for non-existent customer")
+                            .build();
             CustomerDetails customerDetails = createCustomerDetails(customerDetailsId, customerDetailsRequest.note());
 
             when(customerDetailsMapper.customerDetailsRequestToCustomerDetails(eq(customerDetailsId), any(CustomerDetailsRequest.class)))

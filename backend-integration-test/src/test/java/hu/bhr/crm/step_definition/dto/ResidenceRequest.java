@@ -1,5 +1,8 @@
 package hu.bhr.crm.step_definition.dto;
 
+import lombok.Builder;
+
+@Builder
 public record ResidenceRequest(
         String zipCode,
         String streetAddress,

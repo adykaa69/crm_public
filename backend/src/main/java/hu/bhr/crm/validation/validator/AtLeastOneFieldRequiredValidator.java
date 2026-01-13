@@ -3,14 +3,13 @@ package hu.bhr.crm.validation.validator;
 import hu.bhr.crm.validation.annotation.AtLeastOneFieldRequired;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 
+@Slf4j
 public class AtLeastOneFieldRequiredValidator implements ConstraintValidator<AtLeastOneFieldRequired, Object> {
 
-    private static final Logger log = LoggerFactory.getLogger(AtLeastOneFieldRequiredValidator.class);
     private String message;
     private String[] fields;
 

@@ -156,11 +156,18 @@ class CustomerControllerTest {
             final UUID customerId = UUID.randomUUID();
             final UUID residenceId = UUID.randomUUID();
 
-            CustomerRequest customerRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter@gryffindor.com", null, "gryffindor",
-                    new ResidenceRequest(null, null, null, "Hogwarts", "Scotland")
-            );
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter@gryffindor.com")
+                    .relationship("gryffindor")
+                    .residence(
+                            ResidenceRequest.builder()
+                                    .city("Hogwarts")
+                                    .country("Scotland")
+                                    .build()
+                    )
+                    .build();
 
             Customer customer = Customer.builder()
                     .id(customerId)
@@ -199,10 +206,11 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenFirstNameAndNicknameMissing() throws Exception {
             // Given
-            CustomerRequest customerRequest = new CustomerRequest(
-                    null, "Potter", null,
-                    "harry.potter@gryffindor.com", null, "gryffindor", null
-            );
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .lastName("Potter")
+                    .email("harry.potter@gryffindor.com")
+                    .relationship("gryffindor")
+                    .build();
 
             // When / Then
             mockMvc.perform(post("/api/v1/customers")
@@ -218,10 +226,12 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenEmailIsInvalid() throws Exception {
             // Given
-            CustomerRequest customerRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter.invalid.email", null, "gryffindor", null
-            );
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter.invalid.email")
+                    .relationship("gryffindor")
+                    .build();
 
             // When / Then
             mockMvc.perform(post("/api/v1/customers")
@@ -237,10 +247,11 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenRelationshipIsMissing() throws Exception {
             // Given
-            CustomerRequest customerRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter@gryffindor.com", null, null, null
-            );
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter@gryffindor.com")
+                    .build();
 
             // When / Then
             mockMvc.perform(post("/api/v1/customers")
@@ -269,11 +280,19 @@ class CustomerControllerTest {
             // Given
             final UUID residenceId = UUID.randomUUID();
 
-            CustomerRequest updateRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter@hogwarts.com", null, "gryffindor",
-                    new ResidenceRequest(null, null, null, "Hogwarts", "Scotland")
-            );
+            CustomerRequest updateRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter@hogwarts.com")
+                    .relationship("gryffindor")
+                    .residence(
+                            ResidenceRequest.builder()
+                                    .city("Hogwarts")
+                                    .country("Scotland")
+                                    .build()
+                    )
+                    .build();
+
 
             Customer updatedCustomer = Customer.builder()
                     .id(customerId)
@@ -316,10 +335,12 @@ class CustomerControllerTest {
         @Test
         void shouldThrowCustomerNotFoundExceptionAndReturnStatusNotFoundWhenCustomerDoesNotExist() throws Exception{
             // Given
-            CustomerRequest updateRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter@hogwarts.com", null, "gryffindor", null
-            );
+            CustomerRequest updateRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter@hogwarts.com")
+                    .relationship("gryffindor")
+                    .build();
 
             when(customerMapper.customerRequestToCustomer(eq(customerId), any(CustomerRequest.class)))
                     .thenReturn(Customer.builder().id(customerId).build());
@@ -340,10 +361,11 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenFirstNameAndNicknameMissing() throws Exception{
             // Given
-            CustomerRequest updateRequest = new CustomerRequest(
-                    null, "Potter", null,
-                    "harry.potter@hogwarts.com", null, "gryffindor", null
-            );
+            CustomerRequest updateRequest = CustomerRequest.builder()
+                    .lastName("Potter")
+                    .email("harry.potter@hogwarts.com")
+                    .relationship("gryffindor")
+                    .build();
 
             // When / Then
             mockMvc.perform(put("/api/v1/customers/{id}", customerId)
@@ -359,10 +381,12 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenEmailIsInvalid() throws Exception {
             // Given
-            CustomerRequest updateRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter.invalid.email", null, "gryffindor", null
-            );
+            CustomerRequest updateRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter.invalid.email")
+                    .relationship("gryffindor")
+                    .build();
 
             // When / Then
             mockMvc.perform(put("/api/v1/customers/{id}", customerId)
@@ -378,10 +402,11 @@ class CustomerControllerTest {
         @Test
         void shouldReturnStatusBadRequestWhenRelationshipIsMissing() throws Exception {
             // Given
-            CustomerRequest updateRequest = new CustomerRequest(
-                    "Harry", "Potter", null,
-                    "harry.potter@hogwarts.com", null, null, null
-            );
+            CustomerRequest updateRequest = CustomerRequest.builder()
+                    .firstName("Harry")
+                    .lastName("Potter")
+                    .email("harry.potter@hogwarts.com")
+                    .build();
 
             // When / Then
             mockMvc.perform(put("/api/v1/customers/{id}", customerId)

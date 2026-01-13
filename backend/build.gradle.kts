@@ -1,6 +1,8 @@
 val javaVersion: Int = project.property("javaVersion").toString().toInt()
 val liquiBaseVersion: String by project
 val postgresVersion: String by project
+val mapstructVersion: String by project
+val lombokVersion: String by project
 
 plugins {
     id("java")
@@ -32,14 +34,22 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.liquibase:liquibase-core:$liquiBaseVersion")
     implementation("org.postgresql:postgresql:$postgresVersion")
-    implementation("org.mapstruct:mapstruct:1.6.3")
-    annotationProcessor("org.mapstruct:mapstruct-processor:1.6.3")
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
+
+    // MapStruct
+    implementation("org.mapstruct:mapstruct:$mapstructVersion")
+    annotationProcessor("org.mapstruct:mapstruct-processor:$mapstructVersion")
 
     // JUnit platform dependencies
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

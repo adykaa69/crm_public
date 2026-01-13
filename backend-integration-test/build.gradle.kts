@@ -1,5 +1,6 @@
 val javaVersion: Int = project.property("javaVersion").toString().toInt()
 val cucumberVersion: String by project
+val lombokVersion: String by project
 
 plugins {
     id("java")
@@ -31,6 +32,12 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     testImplementation("com.fasterxml.jackson.core:jackson-databind")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok:$lombokVersion")
+    annotationProcessor("org.projectlombok:lombok:$lombokVersion")
+    testCompileOnly("org.projectlombok:lombok:$lombokVersion")
+    testAnnotationProcessor("org.projectlombok:lombok:$lombokVersion")
 
     // Spring boot JPA dependencies
     testImplementation("org.springframework.boot:spring-boot-starter-data-jpa")

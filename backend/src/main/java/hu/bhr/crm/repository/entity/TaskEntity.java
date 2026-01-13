@@ -7,6 +7,11 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcType;
 import org.hibernate.annotations.SourceType;
@@ -18,25 +23,16 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "task")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class TaskEntity {
-
-    public TaskEntity(UUID id, String title, String description, Instant reminder, Instant dueDate, TaskStatus status, Instant createdAt, Instant completedAt, Instant updatedAt) {
-        this.id = id;
-        this.title = title;
-        this.description = description;
-        this.reminder = reminder;
-        this.dueDate = dueDate;
-        this.status = status;
-        this.createdAt = createdAt;
-        this.completedAt = completedAt;
-        this.updatedAt = updatedAt;
-    }
-
-    public TaskEntity() {
-    }
 
     @Id
     @Column(name = "id", nullable = false, updatable = false)
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @Column(name = "customer_id")
@@ -69,100 +65,4 @@ public class TaskEntity {
     @UpdateTimestamp(source = SourceType.VM)
     @Column(name = "updated_at")
     private Instant updatedAt;
-
-    public UUID getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(UUID customerId) {
-        this.customerId = customerId;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Instant getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(Instant reminder) {
-        this.reminder = reminder;
-    }
-
-    public Instant getDueDate() {
-        return dueDate;
-    }
-
-    public void setDueDate(Instant dueDate) {
-        this.dueDate = dueDate;
-    }
-
-    public TaskStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TaskStatus status) {
-        this.status = status;
-    }
-
-    public Instant getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Instant createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Instant getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(Instant completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public String toString() {
-        return "TaskEntity{" +
-                "id=" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", reminder=" + reminder + '\'' +
-                ", dueDate=" + dueDate + '\'' +
-                ", status=" + status + '\'' +
-                ", createdAt=" + createdAt + '\'' +
-                ", completedAt=" + completedAt + '\'' +
-                ", updatedAt=" + updatedAt + '\'' +
-                ", customerId=" + customerId + '\'' +
-                '}';
-    }
 }

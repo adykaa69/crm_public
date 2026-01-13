@@ -9,10 +9,18 @@ import hu.bhr.crm.mapper.CustomerDetailsMapper;
 import hu.bhr.crm.model.CustomerDetails;
 import hu.bhr.crm.service.CustomerDetailsService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,18 +33,14 @@ import java.util.UUID;
  * into API responses.
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/customers")
+@RequiredArgsConstructor
 public class CustomerDetailsController implements CustomerDetailsControllerApi {
 
     private final CustomerDetailsService service;
     private final CustomerDetailsMapper mapper;
-    private static final Logger log = LoggerFactory.getLogger(CustomerDetailsController.class);
-
-    public CustomerDetailsController(CustomerDetailsService service, CustomerDetailsMapper mapper) {
-        this.service = service;
-        this.mapper = mapper;
-    }
 
     /**
      * Retrieves a specific customer detail document by its unique ID.

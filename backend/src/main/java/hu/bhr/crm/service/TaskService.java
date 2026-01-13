@@ -7,6 +7,7 @@ import hu.bhr.crm.model.TaskStatus;
 import hu.bhr.crm.repository.TaskRepository;
 import hu.bhr.crm.repository.entity.TaskEntity;
 import hu.bhr.crm.scheduler.EmailSchedulerService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,20 +24,13 @@ import java.util.UUID;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class TaskService {
 
     private final TaskRepository taskRepository;
     private final TaskMapper taskMapper;
     private final CustomerService customerService;
     private final EmailSchedulerService emailSchedulerService;
-
-    public TaskService(TaskRepository taskRepository, TaskMapper taskMapper, CustomerService customerService,
-                       EmailSchedulerService emailSchedulerService)  {
-        this.taskRepository = taskRepository;
-        this.taskMapper = taskMapper;
-        this.customerService = customerService;
-        this.emailSchedulerService = emailSchedulerService;
-    }
 
     /**
      * Retrieves a single task by its unique identifier.

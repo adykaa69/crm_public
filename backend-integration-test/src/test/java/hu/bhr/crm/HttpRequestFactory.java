@@ -1,10 +1,13 @@
 package hu.bhr.crm;
 
+import lombok.experimental.UtilityClass;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
 
+@UtilityClass
 public class HttpRequestFactory {
 
     public static HttpRequest createDelete(String path) throws URISyntaxException {

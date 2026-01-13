@@ -3,12 +3,14 @@ package hu.bhr.crm.mapper;
 import hu.bhr.crm.controller.dto.TaskRequest;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.model.TaskStatus;
+import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
+@UtilityClass
 public class TaskFactory {
 
     /**

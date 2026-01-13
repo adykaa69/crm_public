@@ -5,15 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import hu.bhr.crm.step_definition.dto.ErrorResponse;
 import hu.bhr.crm.step_definition.dto.PlatformResponse;
+import lombok.experimental.UtilityClass;
 
 import java.net.http.HttpResponse;
 
+@UtilityClass
 public class ApiResponseParser {
 
     private static final ObjectMapper objectMapper =
             new ObjectMapper().registerModule(new JavaTimeModule());
-
-    private ApiResponseParser() {}
 
     public static <T> PlatformResponse<T> parseResponse(HttpResponse<String> response, TypeReference<PlatformResponse<T>> type)
             throws Exception {

@@ -7,6 +7,7 @@ import hu.bhr.crm.model.Residence;
 import hu.bhr.crm.repository.CustomerRepository;
 import hu.bhr.crm.repository.entity.CustomerEntity;
 import hu.bhr.crm.repository.entity.ResidenceEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,15 +24,11 @@ import java.util.UUID;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class CustomerService {
 
     private final CustomerRepository repository;
     private final CustomerMapper customerMapper;
-
-    public CustomerService(CustomerRepository repository, CustomerMapper customerMapper) {
-        this.repository = repository;
-        this.customerMapper = customerMapper;
-    }
 
     /**
      * Retrieves a single customer by their unique identifier.

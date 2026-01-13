@@ -1,8 +1,10 @@
 package hu.bhr.crm.assertions;
 
 import hu.bhr.crm.step_definition.dto.CustomerResponse;
+import lombok.experimental.UtilityClass;
 import org.assertj.core.api.Assertions;
 
+@UtilityClass
 public class CustomerAssertions {
 
     public static void assertCustomersEqual(CustomerResponse expectedResponse, CustomerResponse actualResponse) {

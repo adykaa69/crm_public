@@ -1,9 +1,11 @@
 package hu.bhr.crm.assertions;
 
+import lombok.experimental.UtilityClass;
 import org.assertj.core.api.Assertions;
 
 import java.net.http.HttpResponse;
 
+@UtilityClass
 public class HttpAssertions {
 
     public static void assertStatusCode(HttpResponse<?> response, int expectedStatus) {

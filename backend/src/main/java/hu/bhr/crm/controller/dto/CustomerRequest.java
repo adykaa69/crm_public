@@ -3,10 +3,12 @@ package hu.bhr.crm.controller.dto;
 import hu.bhr.crm.validation.annotation.AtLeastOneFieldRequired;
 import hu.bhr.crm.validation.annotation.ValidEmail;
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 
 @AtLeastOneFieldRequired(
         message = "At least one of First Name or Nickname is required",
         fields = {"firstName", "nickname"})
+@Builder
 public record CustomerRequest(
         String firstName,
         String lastName,

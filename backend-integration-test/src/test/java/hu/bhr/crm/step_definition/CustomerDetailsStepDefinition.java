@@ -17,23 +17,19 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import lombok.RequiredArgsConstructor;
 import org.assertj.core.api.Assertions;
 
 import java.net.http.HttpResponse;
 import java.util.List;
 
+@RequiredArgsConstructor
 public class CustomerDetailsStepDefinition {
 
     private final CustomerDetailsContext customerDetailsContext;
     private final GlobalTestContext globalTestContext;
     private final CustomerDetailsApiClient customerDetailsApiClient = new CustomerDetailsApiClient();
     private final CustomerApiClient customerApiClient = new CustomerApiClient();
-
-    public CustomerDetailsStepDefinition(CustomerDetailsContext customerDetailsContext,
-                                         GlobalTestContext globalTestContext) {
-        this.customerDetailsContext = customerDetailsContext;
-        this.globalTestContext = globalTestContext;
-    }
 
     @Given("a new customer document is created")
     public void aNewCustomerDocumentIsCreated() throws Exception {
@@ -119,9 +115,9 @@ public class CustomerDetailsStepDefinition {
 
     @When("the created customer document's details are updated")
     public void theCreatedCustomerDocumentSDetailsAreUpdated() throws Exception {
-        CustomerDetailsRequest updatedRequest = new CustomerDetailsRequest(
-                "note_updated"
-        );
+        CustomerDetailsRequest updatedRequest = CustomerDetailsRequest.builder()
+                .note("note_updated")
+                .build();
         HttpResponse<String> response = customerDetailsApiClient.updateCustomerDetails(
                 customerDetailsContext.getCreatedCustomerDetailsId(),
                 updatedRequest
@@ -180,23 +176,20 @@ public class CustomerDetailsStepDefinition {
     }
 
     private CustomerDetailsRequest buildCustomerDetailsRequest(int documentNumber) {
-        return new CustomerDetailsRequest(
-                "note_" + documentNumber
-        );
+        return CustomerDetailsRequest.builder().note("note_" + documentNumber).build();
     }
 
     private void ensureRelatedCustomerExists() throws Exception {
         if (customerDetailsContext.getCustomerId() == null) {
-            CustomerRequest request = new CustomerRequest(
-                    "firstName",
-                    "lastName",
-                    "nickname",
-                    "email@example.com",
-                    "phoneNumber",
-                    "relationship",
-                    null
-            );
-            HttpResponse<String> response = customerApiClient.createCustomer(request);
+            CustomerRequest customerRequest = CustomerRequest.builder()
+                    .firstName("firstName")
+                    .lastName("lastName")
+                    .nickname("nickname")
+                    .email("email@example.com")
+                    .phoneNumber("phoneNumber")
+                    .relationship("relationship")
+                    .build();
+            HttpResponse<String> response = customerApiClient.createCustomer(customerRequest);
             PlatformResponse<CustomerResponse> parsed =
                     ApiResponseParser.parseResponse(response, new TypeReference<>() {});
             String customerId = parsed.content().id();

@@ -7,14 +7,12 @@ import hu.bhr.crm.context.GlobalTestContext;
 import hu.bhr.crm.step_definition.dto.ErrorResponse;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Then;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 public class CommonStepDefinition {
 
     private final GlobalTestContext context;
-
-    public CommonStepDefinition(GlobalTestContext context) {
-        this.context = context;
-    }
 
     @And("the status code should be {int}")
     public void theStatusCodeShouldBe(int expectedStatus) {

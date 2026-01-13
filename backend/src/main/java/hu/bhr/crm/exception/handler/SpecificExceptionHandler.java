@@ -3,8 +3,7 @@ package hu.bhr.crm.exception.handler;
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.exception.InfrastructureException;
 import hu.bhr.crm.exception.ResourceNotFoundException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -13,11 +12,10 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+@Slf4j
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class SpecificExceptionHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(SpecificExceptionHandler.class);
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ResourceNotFoundException.class)

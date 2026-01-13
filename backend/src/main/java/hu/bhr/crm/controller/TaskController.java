@@ -9,8 +9,8 @@ import hu.bhr.crm.mapper.TaskMapper;
 import hu.bhr.crm.model.Task;
 import hu.bhr.crm.service.TaskService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -34,18 +34,14 @@ import java.util.UUID;
  * into API responses.
  * </p>
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/tasks")
+@RequiredArgsConstructor
 public class TaskController implements TaskControllerApi {
 
     private final TaskService taskService;
     private final TaskMapper taskMapper;
-    private static final Logger log = LoggerFactory.getLogger(TaskController.class);
-
-    public TaskController(TaskService taskService, TaskMapper taskMapper) {
-        this.taskService = taskService;
-        this.taskMapper = taskMapper;
-    }
 
     /**
      * Retrieves a specific task by their unique identifier.

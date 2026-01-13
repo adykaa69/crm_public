@@ -199,14 +199,13 @@ class TaskControllerTest {
         void shouldCreateTaskAndReturnStatusCreatedWhenRequestIsValid() throws Exception {
             // Given
             final UUID taskId = UUID.randomUUID();
-            final UUID customerId = UUID.randomUUID();
 
-            TaskRequest taskRequest = new TaskRequest(
-                    null, "New Task", null,
-                    ZonedDateTime.now().plusSeconds(1),
-                    ZonedDateTime.now().plusDays(1),
-                    "OPEN"
-            );
+            TaskRequest taskRequest = TaskRequest.builder()
+                    .title("New Task")
+                    .reminder(ZonedDateTime.now().plusSeconds(1))
+                    .dueDate(ZonedDateTime.now().plusDays(1))
+                    .status("OPEN")
+                    .build();
 
             Task task = createTask(taskId, taskRequest.title());
             TaskResponse taskResponse = createTaskResponse(task);
@@ -254,12 +253,12 @@ class TaskControllerTest {
         @Test
         void shouldUpdateTaskAndReturnStatusOkWhenRequestIsValid() throws Exception {
             //Given
-            TaskRequest taskRequest = new TaskRequest(
-                    null, "Updated Task", null,
-                    ZonedDateTime.now().plusSeconds(1),
-                    ZonedDateTime.now().plusDays(1),
-                    "IN_PROGRESS"
-            );
+            TaskRequest taskRequest = TaskRequest.builder()
+                    .title("Updated Task")
+                    .reminder(ZonedDateTime.now().plusSeconds(1))
+                    .dueDate(ZonedDateTime.now().plusDays(1))
+                    .status("IN_PROGRESS")
+                    .build();
 
             Task updatedTask = createTask(taskId, taskRequest.title());
             TaskResponse taskResponse = createTaskResponse(updatedTask);
@@ -281,12 +280,12 @@ class TaskControllerTest {
         @Test
         void shouldThrowTaskNotFoundExceptionAndReturnStatusNotFoundWhenTaskDoesNotExist() throws Exception {
             // Given
-            TaskRequest taskRequest = new TaskRequest(
-                    null, "Updated Task", null,
-                    ZonedDateTime.now().plusSeconds(1),
-                    ZonedDateTime.now().plusDays(1),
-                    "IN_PROGRESS"
-            );
+            TaskRequest taskRequest = TaskRequest.builder()
+                    .title("Updated Task")
+                    .reminder(ZonedDateTime.now().plusSeconds(1))
+                    .dueDate(ZonedDateTime.now().plusDays(1))
+                    .status("IN_PROGRESS")
+                    .build();
 
             when(taskService.updateTask(any(Task.class)))
                     .thenThrow(new TaskNotFoundException("Task not found"));

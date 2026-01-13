@@ -1,6 +1,7 @@
 package hu.bhr.crm.scheduler;
 
 import hu.bhr.crm.exception.EmailScheduleException;
+import lombok.RequiredArgsConstructor;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -21,13 +22,10 @@ import java.util.UUID;
  * </p>
  */
 @Service
+@RequiredArgsConstructor
 public class EmailSchedulerService {
 
     private final Scheduler scheduler;
-
-    public EmailSchedulerService(Scheduler scheduler) {
-        this.scheduler = scheduler;
-    }
 
     /**
      * Schedules a new email reminder job for a specific task.
