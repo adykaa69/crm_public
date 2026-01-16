@@ -21,12 +21,18 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: none
+      default_schema: crm
 
   datasource:
     url: ${POSTGRES_JDBC_URL}
     username: ${POSTGRES_USERNAME}
     password: ${POSTGRES_PASSWORD}
     driverClassName: org.postgresql.Driver
+
+  liquibase:
+    default-schema: crm
+    liquibase-schema: crm
+    change-log: classpath:db/changelog/db.changelog-master.yaml
 
   data:
     mongodb:
@@ -45,5 +51,5 @@ spring:
         quartz:
           jobStore:
             driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
-            tablePrefix: system.qrtz_
+            tablePrefix: quartz.qrtz_
 

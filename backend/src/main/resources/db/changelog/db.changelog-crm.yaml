@@ -1,0 +1,138 @@
+databaseChangeLog:
+  - property:
+      dbms: postgresql
+      name: now
+      value: current_timestamp
+
+  - changeSet:
+      id: crm-1
+      author: tomi
+      labels: table creation
+      changes:
+        - sql:
+            sql: >
+              CREATE TYPE status AS ENUM (
+                      'OPEN',
+                      'IN_PROGRESS',
+                      'ON_HOLD',
+                      'BLOCKED',
+                      'COMPLETED',
+                      'CANCELLED',
+                      'ARCHIVED'
+                    );
+
+        - createTable:
+              tableName: customer
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: first_name
+                    type: text
+                - column:
+                    name: last_name
+                    type: text
+                - column:
+                    name: nickname
+                    type: text
+                - column:
+                    name: email
+                    type: text
+                - column:
+                    name: phone_number
+                    type: text
+                - column:
+                    name: relationship
+                    type: text
+                    constraints:
+                      nullable: false
+                - column:
+                    name: created_at
+                    type: timestamp
+                - column:
+                    name: updated_at
+                    type: timestamp
+
+        - createTable:
+            tableName: residence
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+                  constraints:
+                    nullable: true
+                    foreignKeyName: fk_residence_customer
+                    references: customer(id)
+              - column:
+                  name: zip_code
+                  type: text
+              - column:
+                  name: street_address
+                  type: text
+              - column:
+                  name: address_line_2
+                  type: text
+              - column:
+                  name: city
+                  type: text
+              - column:
+                  name: country
+                  type: text
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp
+
+        - createTable:
+            tableName: task
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: customer_id
+                  type: uuid
+                  constraints:
+                    foreignKeyName: fk_tasks_customer
+                    references: customer(id)
+              - column:
+                  name: title
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: text
+              - column:
+                  name: reminder
+                  type: timestamp
+              - column:
+                  name: due_date
+                  type: timestamp
+              - column:
+                  name: status
+                  type: status
+              - column:
+                  name: created_at
+                  type: timestamp
+              - column:
+                  name: completed_at
+                  type: timestamp
+              - column:
+                  name: updated_at
+                  type: timestamp

@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: quartz-1
+      author: adi
+      labels: schema creation
+      changes:
+        - sql:
+            sql: CREATE SCHEMA IF NOT EXISTS quartz;
+
+  - changeSet:
+      id: quartz-2
+      author: adi
+      labels: table creation
+      changes:
+        - sqlFile:
+            path: quartz_postgres.sql
+            relativeToChangelogFile: true
