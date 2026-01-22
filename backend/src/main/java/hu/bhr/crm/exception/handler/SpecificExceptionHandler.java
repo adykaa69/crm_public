@@ -3,6 +3,7 @@ package hu.bhr.crm.exception.handler;
 import hu.bhr.crm.controller.dto.ErrorResponse;
 import hu.bhr.crm.exception.InfrastructureException;
 import hu.bhr.crm.exception.ResourceNotFoundException;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Hidden
 public class SpecificExceptionHandler {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)

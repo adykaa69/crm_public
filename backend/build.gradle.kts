@@ -3,6 +3,7 @@ val liquiBaseVersion: String by project
 val postgresVersion: String by project
 val mapstructVersion: String by project
 val lombokVersion: String by project
+val springDocVersion: String by project
 
 plugins {
     id("java")
@@ -38,6 +39,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("org.springframework.boot:spring-boot-starter-quartz")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:$springDocVersion")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
