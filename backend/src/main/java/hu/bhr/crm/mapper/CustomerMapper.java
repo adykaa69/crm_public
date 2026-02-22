@@ -4,12 +4,16 @@ import hu.bhr.crm.controller.dto.CustomerRequest;
 import hu.bhr.crm.controller.dto.CustomerResponse;
 import hu.bhr.crm.model.Customer;
 import hu.bhr.crm.repository.entity.CustomerEntity;
+import org.mapstruct.Builder;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.util.UUID;
 
-@Mapper(componentModel = "spring", uses = {ResidenceMapper.class, DateTimeMapper.class})
+@Mapper(componentModel = "spring",
+        uses = {ResidenceMapper.class, DateTimeMapper.class},
+        builder = @Builder(disableBuilder = true)
+)
 public interface CustomerMapper {
 
     Customer customerEntityToCustomer(CustomerEntity customerEntity);
@@ -22,4 +26,5 @@ public interface CustomerMapper {
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     Customer customerRequestToCustomer(UUID id,  CustomerRequest customerRequest);
+
 }

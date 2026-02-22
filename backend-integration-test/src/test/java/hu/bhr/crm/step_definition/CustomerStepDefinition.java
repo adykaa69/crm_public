@@ -104,7 +104,7 @@ public class CustomerStepDefinition {
                 .email("customer_updated@email.com")
                 .phoneNumber("customer_updatedPhoneNumber")
                 .relationship("customer_updatedRelationship")
-                .residenceRequest(ResidenceRequest.builder()
+                .residence(ResidenceRequest.builder()
                         .zipCode("residence_updatedZipCode")
                         .streetAddress("residence_UpdatedStreet")
                         .addressLine2("residence_UpdatedAddress")
@@ -153,7 +153,8 @@ public class CustomerStepDefinition {
                 .nickname("customer_nickname_" + customerNumber)
                 .phoneNumber("customer_phoneNumber_" + customerNumber)
                 .relationship("customer_relationship_" + customerNumber)
-                .residenceRequest(createResidenceRequest())
+                .email("customer_email_" + customerNumber + "@email.com")
+                .residence(createResidenceRequest())
                 .build();
     }
 
